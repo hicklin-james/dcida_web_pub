@@ -1,0 +1,125 @@
+'use strict'
+
+describe 'Controller: DecisionAidEditAboutMeCtrl', ->
+
+  # load the controller's module
+  beforeEach angular.mock.module 'dcida20App'
+
+  DecisionAidEditAboutMeCtrl = {}
+  scope = {}
+  Question = {}
+  AdminTabHelper = {}
+  modal = {}
+  Confirm = {}
+
+  mockNumberOfQuestions = 5
+  saveCalled = false
+  modalOpened = false
+  confirmOpened = false
+  cloneCalled = false
+  questionDeleteCalled = false
+
+  Question = (id) ->
+    this.id = id
+
+  Question.query = (params, fn) ->
+    questions = []
+    for i in [0..mockNumberOfQuestions - 1]
+      questions.push new Question(i)
+    fn(questions)
+
+  Question.prototype.clone = () ->
+    cloneCalled = true
+    then: (fn) ->
+      fn()
+
+  Question.prototype.$delete = () ->
+    questionDeleteCalled = true
+    then: (fn) ->
+      fn()
+
+  AdminTabHelper.saveDecisionAid = (scope, da) ->
+    saveCalled = true
+    then: (fn) ->
+      fn()
+
+  modal.open = (params) ->
+    modalOpened = true
+
+  Confirm.alert = (params) ->
+    confirmOpened = true
+
+  Confirm.show = (params) ->
+    result: 
+      then: (fn) ->
+        fn()
+
+  
+  # Initialize the controller and a mock scope
+  beforeEach inject ($controller, $rootScope) ->
+    scope = $rootScope.$new()
+    saveCalled = false
+    modalOpened = false
+    confirmOpened = false
+    cloneCalled = false
+    questionDeleteCalled = false
+    DecisionAidEditAboutMeCtrl = $controller 'DecisionAidEditAboutMeCtrl', {
+      $scope: scope
+      Question: Question
+      AdminTabHelper: AdminTabHelper
+      $uibModal: modal
+      Confirm: Confirm
+    }
+
+  it "should correctly set the loading variable", () ->
+    expect(DecisionAidEditAboutMeCtrl.loading).toBe false
+
+  it "should populate the demographic questions array", () ->
+    expect(DecisionAidEditAboutMeCtrl.demographicQuestions.length).toEqual mockNumberOfQuestions
+
+  it "should save the decision aid when save is called", () ->
+    expect(saveCalled).toBe false
+    DecisionAidEditAboutMeCtrl.save()
+    expect(saveCalled).toBe true
+
+  it "should open the preview modal when preview is called", () ->
+    expect(modalOpened).toBe false
+    DecisionAidEditAboutMeCtrl.preview(DecisionAidEditAboutMeCtrl.decisionAid)
+    expect(modalOpened).toBe true
+
+  it "should clone the question when cloneQuestion is called", () ->
+    if DecisionAidEditAboutMeCtrl.demographicQuestions.length > 0
+      q = DecisionAidEditAboutMeCtrl.demographicQuestions[0]
+      expect(cloneCalled).toBe false
+      DecisionAidEditAboutMeCtrl.cloneQuestion(q)
+      expect(cloneCalled).toBe true
+
+  it "should open the confirm modal when question is cloned", () ->
+    if DecisionAidEditAboutMeCtrl.demographicQuestions.length > 0
+      q = DecisionAidEditAboutMeCtrl.demographicQuestions[0]
+      expect(confirmOpened).toBe false
+      DecisionAidEditAboutMeCtrl.cloneQuestion(q)
+      expect(confirmOpened).toBe true
+
+  it "should delete the question when deleteQuestion is called", () ->
+    if DecisionAidEditAboutMeCtrl.demographicQuestions.length > 0
+      q = DecisionAidEditAboutMeCtrl.demographicQuestions[0]
+      expect(questionDeleteCalled).toBe false
+      DecisionAidEditAboutMeCtrl.deleteQuestion(q)
+      expect(questionDeleteCalled).toBe true
+
+  it "should save the decision aid if the form is dirty and saveAndPreview is called", () ->
+    scope.decisionAidEditForm = {}
+    scope.decisionAidEditForm.$dirty = true
+    expect(saveCalled).toBe false
+    DecisionAidEditAboutMeCtrl.saveAndPreview()
+    expect(saveCalled).toBe true
+    expect(modalOpened).toBe true
+
+  it "should not save the decision aid if the form is not dirty and saveAndPreview is called", () ->
+    scope.decisionAidEditForm = {}
+    scope.decisionAidEditForm.$dirty = false
+    DecisionAidEditAboutMeCtrl.saveAndPreview()
+    expect(saveCalled).toBe false
+    expect(modalOpened).toBe true
+

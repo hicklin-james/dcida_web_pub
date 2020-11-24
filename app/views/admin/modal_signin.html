@@ -1,0 +1,33 @@
+<div class="modal-body">
+  <div>
+    <div class="space-bottom">
+      <h5 class="text-danger">
+        Your session has expired. Please login again to continue where you left off.
+      </h5>
+    </div>
+    <div class="sign-in-dialog">
+      <div class="sign-in-dialog-header">
+        <h4>Sign In</h4>
+      </div>
+      <div class="space-top space-bottom inner-sign-in-dialog clearfix">
+        <form ng-submit="ctrl.signIn()">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Email address</label>
+            <input type="email" class="form-control" placeholder="Email" ng-model="ctrl.credentials.email">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">Password</label>
+            <input type="password" class="form-control" placeholder="Password" ng-model="ctrl.credentials.password">
+          </div>
+          <div ng-switch="ctrl.errorCode">
+            <p ng-switch-when="401" class="text-danger">
+              Username or password invalid. Please try again.
+            </p>
+          </div>
+          <div class="text-center half-space-bottom"><button class="btn btn-default">Sign in</button></div>
+          <div class="text-center"><a ui-sref="resetPasswordRequest"><span class="text-warning">Forgot your password?</span></a></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

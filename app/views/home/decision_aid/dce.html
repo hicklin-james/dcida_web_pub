@@ -1,0 +1,46 @@
+<div id="decision_aid_dce">
+  <!-- <div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+    <i class="fa fa-2x fa-spin fa-refresh"></i>
+  </div> -->
+  <div ng-show="ctrl.noDecisionAidFound">
+      <div class="alert alert-danger">
+        <table>
+          <tr>
+            <td>
+              <i class="fa fa-info-circle fa-fw fa-3x middle-align inline-block"></i>
+            </td>
+            <td>
+              <span translate="DECISION-AID-LOAD-ERROR" translate-values="{ slug: ctrl.decisionAidSlug }"></span>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  <div ng-if="ctrl.decisionAid && !ctrl.loading" class="space-bottom" id="dce_question_set_{{ctrl.currentQuestionSet}}">
+    <div ng-if="!ctrl.currentQuestionSet">
+      <div compile="::ctrl.decisionAid.injected_dce_information_published"></div>
+    </div>
+    <div ng-if="ctrl.currentQuestionSet">
+      <div ng-switch="ctrl.decisionAid.dce_type">
+        <div ng-switch-when="conditional">
+          <div ng-include="'views/home/decision_aid/dce/dce_conditional.html'"></div>
+        </div>
+        <div ng-switch-when="normal">
+          <div ng-include="'views/home/decision_aid/dce/dce_standard.html'"></div>
+        </div>
+        <div ng-switch-when="opt_out">
+          <div ng-include="'views/home/decision_aid/dce/dce_opt_out.html'"></div>
+        </div>
+        <div ng-switch-default>
+          <span class="text-warning">Invalid DCE type</span>
+        </div>
+      </div>
+      <div class="clearfix">
+        <div class="half-space-bottom pull-left">
+          <button class="btn btn-warning" ng-click="ctrl.resetResponses()"><span>{{'RESET-QUESTION-BUTTON' | translate}}</span></button>
+        </div>
+      </div>
+    </div>
+    <sd-bottom-nav sa-show-next="{{'NEXT-BUTTON' | translate}}" sa-should-hide-next="((!ctrl.userSetResponse.id && ctrl.decisionAid.properties_auto_submit) && ctrl.currentQuestionSet)" sa-next-submit="ctrl.submitNext()" sa-show-prev="{{'BACK-BUTTON' | translate}}" sa-prev-link="ctrl.prevLink()"></sd-bottom-nav>
+  </div>
+</div>

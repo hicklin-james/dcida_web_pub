@@ -1,0 +1,106 @@
+'use strict'
+
+describe 'Controller: DecisionAidShowCtrl', ->
+
+  beforeEach angular.mock.module 'dcida20App'
+
+  DecisionAidShowCtrl = {}
+  scope = {}
+  DecisionAid = {}
+
+  deleteDecisionAidCalled = false
+
+  mockDecisionAidId = 123
+
+  Confirm = {}
+  Confirm.show = (params) ->
+    result: 
+      then: (fn) ->
+        fn()
+
+  DecisionAid = (id) ->
+    this.id = id
+
+  DecisionAid.get = (params, fn) ->
+    da = new DecisionAid(mockDecisionAidId)
+    fn(da)
+
+  DecisionAid.prototype.$delete = (params, successFn, errorFn) ->
+    deleteDecisionAidCalled = true
+    successFn()
+
+  # make timeouts happen immediately in tests
+  timeout = (fn) ->
+    fn()
+
+  state = {}
+  state.current = 
+    name: "decisionAidShow"
+    data:
+      stateName: "decisionAidShow"
+
+  # Initialize the controller and a mock scope
+  beforeEach inject ($controller, $rootScope) ->
+    
+    state.go = (goToState, a, b) ->
+      $rootScope.$broadcast "$stateChangeSuccess", {data: stateName: goToState}
+
+    deleteDecisionAidCalled = false
+
+    scope = $rootScope.$new()
+    spyOn(scope, '$broadcast')
+    DecisionAidShowCtrl = $controller 'DecisionAidShowCtrl', {
+      $scope: scope
+      DecisionAid: DecisionAid
+      $timeout: timeout
+      $state: state
+      Confirm: Confirm
+    }
+
+  describe "loading", () ->
+  
+    it "should correctly set the loading variable on load", () ->
+      expect(DecisionAidShowCtrl.loading).toBe false  
+
+    it "should set the decision aid on load", () ->
+      expect(DecisionAidShowCtrl.decisionAid.id).toEqual mockDecisionAidId
+
+    it "should broadcast the change event on load", () ->
+      expect(scope.$broadcast).toHaveBeenCalledWith('decisionAidChanged', DecisionAidShowCtrl.decisionAid)
+
+  describe "setActiveTab", () ->
+
+    it "should change the activeTab when a new state is set", () ->
+      expect(DecisionAidShowCtrl.activeTab).toEqual 'decisionAidShow.instructions'
+      changedStateName = "myOptions"
+      newState =
+        data:
+          stateName: changedStateName
+      DecisionAidShowCtrl.setActiveTab(newState)
+      expect(DecisionAidShowCtrl.activeTab).toEqual changedStateName
+
+    it "should change to instructions when a state is set that doesn't have a stateName", () ->
+      expect(DecisionAidShowCtrl.activeTab).toEqual 'decisionAidShow.instructions'
+      newState =
+        data: undefined
+      DecisionAidShowCtrl.setActiveTab(newState)
+      expect(DecisionAidShowCtrl.activeTab).toEqual 'decisionAidShow.instructions'
+
+  describe "changeTab", () ->
+
+    it "should set the tabToChangeTo variable when a tab change is requested", () ->
+      newTab = "myChoice"
+      DecisionAidShowCtrl.changeTab(newTab)
+      expect(DecisionAidShowCtrl.tabToChangeTo).toEqual newTab
+
+    it "should broadcast a tabChangeRequested event", () ->
+      newTab = "myChoice"
+      DecisionAidShowCtrl.changeTab(newTab)
+      expect(scope.$broadcast).toHaveBeenCalledWith("tabChangeRequested")
+
+  describe "deleteDecisionAid", () ->
+
+    it "should call the delete funtion", () ->
+      DecisionAidShowCtrl.deleteDecisionAid()
+      expect(deleteDecisionAidCalled).toBe true
+

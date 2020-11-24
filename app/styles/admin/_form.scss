@@ -1,0 +1,111 @@
+// get a larger input, and align it with submit button
+.inline-form-group.form-group > div.col-xs-8 {
+    padding-left: 0;
+    padding-right: 0;
+}
+// vertical align label
+.inline-form-group label {
+    line-height: 34px;
+}
+// force inline control to fit container width
+// http://getbootstrap.com/css/#forms-inline
+.inline-form-group .form-control {
+    width: 100%;
+}
+// Reset margin-bottom for our multiline form
+@media (min-width: 768px) {
+  .inline-form-group.form-group {
+    margin-bottom: 15px;
+  }
+}
+
+.help-block {
+  color: #d9534f;
+}
+
+.invalid-field {
+  border-color: #d9534f;
+}
+
+.select-field {
+  width: 220px;
+}
+
+.question-response-field {
+  width: 220px !important;
+}
+
+.question-response-drag-icon {
+  margin-right: 6px;
+  margin-top: 6px;
+  /** float: right; **/
+}
+
+.question-response-wrapper {
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.admin-question-response-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.drag-arrows {
+  color: grey;
+}
+
+.table > tbody > tr > td.vertical-align {
+  vertical-align: middle;
+}
+
+.accordion-content-wrapper {
+  border: 2px solid lightgrey;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+
+  .accordion-content-expand {
+    margin: 10px;
+  }
+}
+
+.small-button {
+  font-size: 0.9em;
+}
+
+.flashing-success {
+  webkit-animation-name: blinker;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-iteration-count: infinite;
+
+  -moz-animation-name: blinker;
+  -moz-animation-duration: 1s;
+  -moz-animation-timing-function: linear;
+  -moz-animation-iteration-count: infinite;
+
+  animation-name: blinker;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@-moz-keyframes blinker {  
+  0% { opacity: 0.0; }
+  50% { opacity: 1.0; }
+  100% { opacity: 0.0; }
+}
+
+@-webkit-keyframes blinker {  
+  0% { opacity: 0.0; }
+  50% { opacity: 1.0; }
+  100% { opacity: 0.0; }
+}
+
+@keyframes blinker {  
+  0% { opacity: 0.0; }
+  50% { opacity: 1.0; }
+  100% { opacity: 0.0; }
+}

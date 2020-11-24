@@ -1,0 +1,218 @@
+'use strict'
+
+describe 'Controller: IntroPageEditCtrl', ->
+  beforeEach angular.mock.module 'dcida20App'
+
+  IntroPageEditCtrl = {}
+
+  scope = {}
+  _ = {}
+  stateParams = {}
+  stateTarget = null
+  state = {}
+  state.go = (target) ->
+    stateTarget = target
+    null
+
+  mockIntroPageId = 123
+  getError = false
+  introPageGetCalled = false
+  introPageDeleteCalled = false
+  introPageSaveCalled = false
+  introPageUpdateCalled = false
+  confirmCalled = false
+
+  introPageDeleteError = false
+  introPageUpdateError = false
+  introPageSaveError = false
+
+  Confirm = {}
+  Confirm.show = (params) ->
+    confirmCalled = true
+    result:
+      then: (fn) ->
+        fn()
+
+  q = {}
+  q.all = (promises) ->
+    then: (fn) ->
+      fn()
+
+  IntroPage = () ->
+    this.id = mockIntroPageId
+    this
+
+  IntroPage.get = (params, successFn, errorFn) ->
+    introPageGetCalled = true
+    ip = new IntroPage
+    if getError
+      errorFn(ip)
+    else
+      successFn(ip)
+
+  IntroPage.prototype.$delete = (params, successFn, errorFn) ->
+    introPageDeleteCalled = true
+    if introPageDeleteError
+      errorFn({data: errors: "This is an error!"})
+    else
+      successFn()
+
+  IntroPage.prototype.$save = (params, successFn, errorFn) ->
+    introPageSaveCalled = true
+    if introPageSaveError
+      errorFn({data: errors: "This is an error!"})
+    else
+      successFn()
+
+  IntroPage.prototype.$update = (params, successFn, errorFn) ->
+    introPageUpdateCalled = true
+    if introPageUpdateError
+      errorFn({data: errors: "This is an error!"})
+    else
+      successFn()
+
+   # Initialize the controller and a mock scope
+  beforeEach inject ($controller, $rootScope, ___) ->
+    getError = false
+    confirmCalled = false
+    introPageGetCalled = false
+    introPageDeleteCalled = false
+    introPageSaveCalled = false
+    introPageUpdateCalled = false
+    stateTarget = null
+    introPageDeleteError = false
+    introPageUpdateError = false
+    introPageSaveError = false
+
+    stateParams = {decisionAidId: 123}
+    scope = $rootScope.$new()
+    _ = ___
+    IntroPageEditCtrl = $controller 'IntroPageEditCtrl', {
+      $scope: scope
+      IntroPage: IntroPage
+      $stateParams: stateParams
+      $q: q
+      Confirm: Confirm
+      $state: state
+    }
+
+  describe "loading", () ->
+    it "should correctly set the loading variable", () ->
+      expect(IntroPageEditCtrl.loading).toBeFalsy()
+
+    it "should not make a server request", () ->
+      expect(introPageGetCalled).toBeFalsy()
+
+    it "should set the isNewIntroPage to true", () ->
+      expect(IntroPageEditCtrl.isNewIntroPage).toBeTruthy()
+
+    describe "saveIntroPage", () ->
+      describe "success", () ->
+        beforeEach () ->
+          IntroPageEditCtrl.saveIntroPage()
+
+        it "should not set introPageUpdateCalled to true", () ->
+            expect(introPageUpdateCalled).toBeFalsy()
+
+        it "should set introPageSaveCalled to true", () ->
+          expect(introPageSaveCalled).toBeTruthy()
+
+        it "should go to 'decisionAidShow.introduction' state", () ->
+          expect(stateTarget).toEqual('decisionAidShow.introduction')
+
+      describe "error", () ->
+        beforeEach () ->
+          introPageSaveError = true
+          IntroPageEditCtrl.saveIntroPage()
+
+        it "should not go to 'decisionAidShow.introduction' state", () ->
+          expect(stateTarget).toBeNull()
+
+        it "should set the errors var", () ->
+          expect(IntroPageEditCtrl.errors).toBeDefined()
+
+    describe "id in stateparams", () ->
+      beforeEach inject ($controller, $rootScope, ___) ->
+        stateParams = {decisionAidId: 123, id: 543}
+        IntroPageEditCtrl = $controller 'IntroPageEditCtrl', {
+            $scope: scope
+            IntroPage: IntroPage
+            $stateParams: stateParams
+            $q: q
+            Confirm: Confirm
+            $state: state
+          }
+
+      it "should correctly set the loading variable", () ->
+        expect(IntroPageEditCtrl.loading).toBeFalsy()
+
+      it "should make a server request", () ->
+        expect(introPageGetCalled).toBeTruthy()
+
+      it "should set the isNewIntroPage to false", () ->
+        expect(IntroPageEditCtrl.isNewIntroPage).toBeFalsy()
+
+      describe "saveIntroPage", () ->
+        describe "success", () ->
+          beforeEach () ->
+            IntroPageEditCtrl.saveIntroPage()
+
+          it "should set introPageUpdateCalled to true", () ->
+            expect(introPageUpdateCalled).toBeTruthy()
+
+          it "should not set introPageSaveCalled to true", () ->
+            expect(introPageSaveCalled).toBeFalsy()
+
+          it "should go to 'decisionAidShow.introduction' state", () ->
+            expect(stateTarget).toEqual('decisionAidShow.introduction')
+
+        describe "error", () ->
+          beforeEach () ->
+            introPageUpdateError = true
+            IntroPageEditCtrl.saveIntroPage()
+
+          it "should not go to 'decisionAidShow.introduction' state", () ->
+            expect(stateTarget).toBeNull()
+
+          it "should set the errors var", () ->
+            expect(IntroPageEditCtrl.errors).toBeDefined()
+
+      describe "deleteIntroPage", () ->
+        describe "success", () ->
+          beforeEach () ->
+            IntroPageEditCtrl.deleteIntroPage()
+
+          it "should show a confirmation when called", () ->
+            expect(confirmCalled).toBeTruthy()
+
+          it "should call $delete when called", () ->
+            expect(introPageDeleteCalled).toBeTruthy()
+
+          it "should go to 'decisionAidShow.introduction' state", () ->
+            expect(stateTarget).toEqual('decisionAidShow.introduction')
+
+        describe "error", () ->
+          beforeEach () ->
+            introPageDeleteError = true
+            IntroPageEditCtrl.deleteIntroPage()
+
+          it "should not go to 'decisionAidShow.introduction' state", () ->
+            expect(stateTarget).toBeNull()
+
+          it "should set the errors var", () ->
+            expect(IntroPageEditCtrl.errors).toBeDefined()
+
+      describe "get error", () ->
+        beforeEach inject ($controller, $rootScope, ___) ->
+          getError = true
+          IntroPageEditCtrl = $controller 'IntroPageEditCtrl', {
+            $scope: scope
+            IntroPage: IntroPage
+            $stateParams: stateParams
+            $q: q
+            Confirm: Confirm
+            $state: state
+          }
+          
+        it "should set the errors variable on intro page get error", () ->
+          expect(IntroPageEditCtrl.errors).toBeDefined()

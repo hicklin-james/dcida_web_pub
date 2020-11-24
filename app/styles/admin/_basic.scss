@@ -1,0 +1,21 @@
+.slug-example {
+  margin-top: 10px;
+  display: inline-block;
+  font-style: italic;
+}
+
+.question-page-wrapper {
+  padding: 10px;
+  border: 1px solid lightgrey;
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  .headers {
+    padding: 10px;
+  }
+
+  .content {
+    padding: 10px;
+    border-top: 1px solid lightgrey;
+  }
+}

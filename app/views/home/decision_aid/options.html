@@ -1,0 +1,33 @@
+<div id="decision_aid_options">
+  <div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+    <i class="fa fa-2x fa-spin fa-refresh"></i>
+  </div>
+  <div ng-show="ctrl.noDecisionAidFound">
+    <div class="alert alert-danger">No Decision was found with the url: {{ctrl.decisionAidSlug}}</div>
+  </div>
+  <div ng-if="ctrl.decisionAid && !ctrl.loading" class="space-bottom">
+    <div class="space-bottom" compile="::ctrl.subDecision.injected_options_information_published"></div>
+    <div>
+      <div ng-repeat="option in ctrl.options" class="space-bottom space-left space-right">
+        <div class="clearfix">
+          <div class="clearfix">
+            <div class="half-space-right half-space-bottom pull-left option-image-wrapper">
+              <img class="img-responsive" ng-src="{{::option.results_image_url}}" />
+            </div>
+            <h3>{{::option.title}}</h3>
+          </div>
+          <div compile="::option.injected_description_published"></div>
+        </div>
+        <hr />
+      </div>
+    </div>
+    <div ng-show="ctrl.subDecision.injected_other_options_information_published">
+      <hr />
+      <div>
+        <h4>Other Options</h4>
+        <div compile="::ctrl.subDecision.injected_other_options_information_published"></div>
+      </div>
+    </div>
+    <sd-bottom-nav sa-show-next="{{'NEXT-BUTTON' | translate}}" sa-next-submit="ctrl.submitNext()" sa-show-prev="{{'BACK-BUTTON' | translate}}" sa-prev-link="ctrl.prevLink()"></sd-bottom-nav>
+  </div>
+</div>

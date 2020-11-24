@@ -1,0 +1,82 @@
+<script type="text/ng-template" id="property_level_node">
+  <div class="space-top">
+    <h5 class="text-muted"><i class="fa clickable fa-trash-o text-danger" ng-click="ctrl.deletePropertyLevel(propertyLevel)"></i>&nbsp;&nbsp;Level {{propertyLevel.level_id}}</h5>
+    <div class="form-group">
+      <label>Level Information</label>
+      <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAidId}}"><textarea class="form-control" ng-model="propertyLevel.information" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'questionSelector', 'video']}"></textarea></sd-redactor-wrapper>
+    </div>
+  </div>
+</script>
+
+<div class="text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-spin fa-refresh"></i>
+</div>
+<div ng-if="!ctrl.loading">
+  <div class="pull-right" ng-show="!ctrl.isNewProperty">
+    <button ng-click="ctrl.deleteProperty()" class="btn btn-danger">Delete Property</button>
+  </div>
+  <h2>{{ctrl.title}}</h2>
+  <div sd-error-scroll sa-errors="ctrl.errors"></div>
+  <form class="space-bottom space-top" ng-submit="ctrl.saveProperty()">
+    <div id="property_edit_wrapper">
+      <div class="form-group">
+        <label for="property_title">Title</label>
+        <sd-information>The title of the property.</sd-information>
+        <input class="form-control" id="property_title" placeholder="Title" ng-model="ctrl.property.title" />
+      </div>
+      <div class="form-group">
+        <label>Backend Identifier</label>
+        <sd-information>This is used to identify the property in various backend pages.</sd-information>
+        <input ng-model="ctrl.property.backend_identifier" class="form-control" />
+      </div>
+      <div class="form-group">
+        <label for="property_short_label">Short Label</label>
+        <sd-information>The short label of the property.</sd-information>
+        <input class="form-control" id="property_short_label" placeholder="Short Label" ng-model="ctrl.property.short_label" />
+      </div>
+      <div class="form-group">
+        <label for="property_property_group_title">Property group title</label>
+        <sd-information>The property group title of the property.</sd-information>
+        <input class="form-control" id="property_property_group_title" placeholder="Group" ng-model="ctrl.property.property_group_title" />
+      </div>
+      <div class="form-group">
+        <label for="property_selection_about">Selection About</label>
+        <sd-information>The selection about of the property.</sd-information>
+        <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAidId}}"><textarea class="form-control" id="property_selection_about" placeholder="Selection About" ng-model="ctrl.property.selection_about" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'questionSelector', 'video']}"></textarea></sd-redactor-wrapper>
+      </div>
+      <div class="form-group">
+        <label for="property_long_about">Long About</label>
+        <sd-information>The long about of the property.</sd-information>
+        <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAidId}}"><textarea class="form-control" id="property_long_about" placeholder="Long About" ng-model="ctrl.property.long_about" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'questionSelector', 'video']}"></textarea></sd-redactor-wrapper>
+      </div>
+<!--       <div class="form-group space-bottom">
+        <div><label><span>Property group</span></label></div>
+        <select class="form-control" ng-model="ctrl.property.property_grouping_id" ng-options="pg.id as pg.grouping_title for pg in ctrl.propertyGroupings"> 
+          <option value=""></option>
+        </select>
+      </div> -->
+      <div class="form-group">
+        <div><label><span>Is property weighable</span></label></div>
+        <label class="clickable half-space-right" name="property-is-weighable-yes">Yes <input id="property-is-weighable-yes" class="clickable" type="radio" ng-model="ctrl.property.is_property_weighable" ng-value="true"></label>
+        <label class="clickable" name="property-is-weighable-no">No <input id="property-is-weighable-no" class="clickable" type="radio" ng-model="ctrl.property.is_property_weighable" ng-value="false"></label>
+      </div>
+      <div class="form-group">
+        <div><label><span>Are option properties weighable</span></label></div>
+        <label class="clickable half-space-right" name="property-are-option-properties-weighable-yes">Yes <input id="property-are-option-properties-weighable-yes" class="clickable" type="radio" ng-model="ctrl.property.are_option_properties_weighable" ng-value="true"></label>
+        <label class="clickable" name="property-are-option-properties-weighable-no">No <input id="property-are-option-properties-weighable-no" class="clickable" type="radio" ng-model="ctrl.property.are_option_properties_weighable" ng-value="false"></label>
+      </div>
+      <div class="clearfix space-bottom" ng-show="ctrl.levelsActive">
+        <div class="pull-right">
+          <button class="btn btn-info" type="button" ng-click="ctrl.addPropertyLevel()"><i class="fa fa-plus"></i> Add Property Level</button>
+        </div>
+        <h4>Property Levels</h4>
+        <div class="half-space-top half-space-bottom half-space-right half-space-left">
+          <div ng-repeat="propertyLevel in ctrl.property.property_levels">
+            <div ng-include="'property_level_node'"></div>
+          </div>
+        </div>
+      </div>
+      <input type="submit" value="Save" class="btn btn-primary" />
+    </div>
+  </form>
+</div>

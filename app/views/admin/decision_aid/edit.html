@@ -1,0 +1,70 @@
+<h2>{{ctrl.title}}</h2>
+<div sd-error-scroll sa-errors="ctrl.errors"></div>
+<div ng-show="ctrl.decisionAid">
+  <form class="space-bottom space-top" name="decisionAidEditForm" ng-submit="ctrl.saveDecisionAid()">
+  	<div id="decision_aid_edit_wrapper">
+  		<div class="form-group">
+        <label for="decision_aid_title" input-required>Title</label>
+        <input class="form-control" id="decision_aid_title" placeholder="Title" ng-model="ctrl.decisionAid.title" />
+      </div>
+      <div class="form-group">
+        <label for="decision_aid_slug" input-required>Slug</label>
+        <input class="form-control" id="decision_aid_slug" placeholder="Slug" ng-model="ctrl.decisionAid.slug" />
+      </div>
+      <div class="form-group">
+        <label for="decision_aid_decision_aid_type" input-required>Decision Aid Type</label>
+        <ul class="nav nav-tabs" id="decision-aid-type-selector">
+          <li role="presentation" ng-repeat="dat in ctrl.decisionAidTypes track by dat.key" ng-class="{'active': ctrl.decisionAid.decision_aid_type === dat.key}"><a class="clickable" ng-click="ctrl.setDecisionAidType(dat)">{{::dat.label}}</a></li>
+        </ul>
+        <div class="space-top space-left space-right space-bottom">
+          <div ng-switch="ctrl.decisionAid.decision_aid_type">
+            <div ng-switch-when="dce">
+              This is a DCE decision aid. The best option is determined by the results of a discrete choice experiment. The baseline data is uploaded through CSV files and the front-end user participates in a discrete choice experiment.
+            </div>
+            <div ng-switch-when="treatment_results">
+              <p>
+                This is similar to the regular decision aid, but the option specific property weights are defined by the administrator instead of by the front-end-user.
+              </p>
+            </div>
+            <div ng-switch-when="standard">
+              <p>
+                This is the regular decision aid. The best option is determined by front-end-user-defined weights that are input into a weighted sum model.
+              </p>
+            </div>
+            <div ng-switch-when="best_worst">
+              <p>
+                This is the best-worst decision aid. The user is guided through a best-worst exercise, and the best option is determined based on their responses to the best-worst questions.
+              </p>
+            </div>
+            <div ng-switch-when="traditional">
+              <p>
+                Traditional
+              </p>
+            </div>
+            <div ng-switch-when="best_worst_no_results">
+              <p>
+                This is similar to a best-worst decision aid, but there are no results presented to the user.
+              </p>
+            </div>
+            <div ng-switch-when="risk_calculator">
+              <p>
+                This is a risk calculator. There are no options or properties associated with this type - only some questions and a summary page.
+              </p>
+            </div>
+            <div ng-switch-when="traditional_no_rankings">
+              <p>
+                Traditional no rankings
+              </p>
+            </div>
+            <div ng-switch-when="dce_no_results">
+              <p>
+                Simplified DCE with no results page.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="save-button" type="submit">Save</button>
+  	</div>
+  </form>
+</div>

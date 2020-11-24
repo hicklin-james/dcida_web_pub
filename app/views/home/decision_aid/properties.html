@@ -1,0 +1,112 @@
+<div id="decision_aid_properties">
+  <!-- <div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+    <i class="fa fa-2x fa-spin fa-refresh"></i>
+  </div> -->
+  <div ng-show="ctrl.noDecisionAidFound">
+    <div class="alert alert-danger">No Decision was found with the url: {{ctrl.decisionAidSlug}}</div>
+  </div>
+  <div ng-if="!ctrl.loading && ctrl.decisionAid">
+    <div ng-show="ctrl.decisionAid" class="space-bottom">
+      <div compile="::ctrl.decisionAid.injected_properties_information_published"></div>
+    </div>
+    <div>
+      <div class="properties-selection-wrapper space-bottom">
+        <div ng-switch="ctrl.checkPropertiesLength() < ctrl.decisionAid.minimum_property_count">
+          <div ng-switch-when="true">
+            <p>
+              <span class="label label-warning">Warning</span><br>
+              <span class="text-warning warning-text">You must select at least {{ctrl.remainingProperties()}} <ng-pluralize count="ctrl.remainingProperties()" when="{'one': 'more property', 'other': 'more properties'}"></ng-pluralize> to proceed.</span>
+            </p>
+          </div>
+          <div ng-switch-when="false">
+            <p>
+              <span class="label label-success">Success</span><br>
+              <span class="text-success warning-text">You have selected enough properties to proceed! You can always select additional properties.</span>
+            </p>
+          </div>
+        </div>
+        <div ng-repeat="property in ctrl.properties" class="property-wrapper">
+          <div class="clearfix">
+            <div class="clearfix clickable" ng-click="ctrl.selectProperty(property)">
+              <div class="pull-left half-space-right half-space-bottom">
+                <i class="fa fa-3x property-selection-button" ng-class="{'fa-check-circle-o selected': ctrl.propertiesHash[property.id], 'fa-circle-o': !ctrl.propertiesHash[property.id]}"></i>
+              </div>
+              <h4>{{::property.title}}</h4>
+            </div>
+            <div compile="::property.injected_selection_about_published"></div>
+          </div>
+          <hr />
+        </div>
+      </div>
+      <div ng-if="ctrl.checkPropertiesLength() >= ctrl.decisionAid.minimum_property_count" id="relative-importance-charts">
+        <hr />
+        <div compile="::ctrl.decisionAid.injected_property_weight_information_published"></div>
+        <div class="row">
+          <div class="col-md-5">
+            <div ng-repeat="prop in ctrl.orderedProperties" class="half-space-top half-space-bottom" id="property_{{$index + 1}}">
+              <div class="half-space-bottom text-center"><strong>{{::prop.property_title}}</strong></div>
+              <div class="row">
+                <div class="col-xs-12">
+<!--                   <div class="slider-cover-wrapper">
+                    <div class="slider-cover" ng-style="{'background': prop.color, 'width': prop.weight + '%'}">
+
+                    </div>
+                  </div> -->
+                  <div ui-slider="{min: 0, max: 100, range: 'min'}" step="10" segment ng-change="ctrl.valChanged(property)" ng-model="prop.weight" class="specialslider" ng-style="{}">
+                    <div class="ui-slider-segment" style="margin-left: 10%;"></div>
+                    <div class="ui-slider-segment" style="margin-left: 10%;"></div>
+                    <div class="ui-slider-segment" style="margin-left: 10%;"></div>
+                    <div class="ui-slider-segment" style="margin-left: 10%;"></div>
+                    <div class="ui-slider-segment" style="margin-left: 10%;"></div>
+                    <div class="ui-slider-segment" style="margin-left: 10%;"></div>
+                    <div class="ui-slider-segment" style="margin-left: 10%;"></div>
+                    <div class="ui-slider-segment" style="margin-left: 10%;"></div>
+                    <div class="ui-slider-segment" style="margin-left: 10%;"></div>
+                  </div>
+
+<!--                   <div ui-slider="ctrl.sliderOptions" id="prop_{{$index + 1}}" min="0" max="100" step="{{ctrl.step}}" tick ng-model="prop.weight" class="specialslider"></div>
+                  <div class="property-tick-label clearfix">
+                    <div class="pull-left">
+                      0
+                    </div>
+                    <div class="pull-right">
+                      10
+                    </div>
+                  </div> -->
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-6 text-left">
+                  (Not important)
+                </div>
+                <div class="col-xs-6 text-right">
+                  (Very important)
+                </div>
+              </div>
+            </div>
+            <!-- <div>
+              <i class="fa fa-lg fa-info-circle dcida-info-icon"></i> <span class="warning-text">Feel free to scroll up and select additional properties. They will automatically be added to the chart!</span>
+            </div> -->
+          </div>
+          <div class="col-md-7">
+            <div class="text-center half-space-bottom"><strong>The relative importance of each attribute</strong></div>
+            <div ng-switch="ctrl.decisionAid.chart_type" class="text-center">
+              <div ng-switch-when="pie">
+                <div sd-pie-chart sa-chart-items="ctrl.orderedProperties" style="margin: auto;"></div>
+              </div>
+              <div ng-switch-when="bar">
+                <div sd-bar-chart sa-chart-items="ctrl.orderedProperties" style="margin: auto;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div ng-if="ctrl.checkPropertiesLength() >= ctrl.decisionAid.minimum_property_count">
+        <sd-bottom-nav sa-show-next="{{'NEXT-BUTTON' | translate}}" sa-next-submit="ctrl.submitNext()" sa-show-prev="{{'BACK-BUTTON' | translate}}" sa-prev-link="ctrl.prevLink()"></sd-bottom-nav>
+      </div>
+      <div ng-if="ctrl.checkPropertiesLength() < ctrl.decisionAid.minimum_property_count">
+        <sd-bottom-nav sa-show-prev="{{'BACK-BUTTON' | translate}}" sa-prev-link="ctrl.prevLink()"></sd-bottom-nav>
+      </div>
+    </div>
+  </div>
+</div>

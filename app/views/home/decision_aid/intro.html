@@ -1,0 +1,32 @@
+<div id="decision_aid_intro">
+  <!-- <div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+    <i class="fa fa-2x fa-spin fa-refresh"></i>
+  </div> -->
+  <div ng-show="ctrl.noDecisionAidFound">
+    <div class="alert alert-danger">
+      <table>
+        <tr>
+          <td>
+            <i class="fa fa-info-circle fa-fw fa-3x middle-align inline-block"></i>
+          </td>
+          <td>
+            <span translate="DECISION-AID-LOAD-ERROR" translate-values="{ slug: ctrl.decisionAidSlug }"></span>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div ng-if="ctrl.decisionAid && !ctrl.loading" id='intro-page-wrapper'>
+    <div compile="ctrl.currentPage.injected_description_published"></div>
+<!--     <div ng-init="showChatbot = false;">
+      <sd-botpress-webchat sa-show="showChatbot" sa-decision-aid-user-id="ctrl.decisionAidUser.id"></sd-botpress-webchat> 
+      <button class="btn btn-default" ng-click="showChatbot = !showChatbot;">Show chatbot</button>
+    </div> -->
+    <div ng-if="ctrl.currentPage.intro_page_order === 1">
+      <sd-bottom-nav sa-show-next="{{ctrl.decisionAid.begin_button_text}}" sa-next-submit="ctrl.submitNext()" sa-show-prev="{{'BACK-BUTTON' | translate}}" sa-prev-link="ctrl.prevLink()" sa-should-hide-prev="ctrl.currentPage.intro_page_order === 1" sa-center-nav="true"></sd-bottom-nav>
+    </div>
+    <div ng-if="ctrl.currentPage.intro_page_order !== 1">
+      <sd-bottom-nav sa-show-next="{{'NEXT-BUTTON' | translate}}" sa-next-submit="ctrl.submitNext()" sa-show-prev="{{'BACK-BUTTON' | translate}}" sa-prev-link="ctrl.prevLink()" sa-should-hide-prev="ctrl.currentPage.intro_page_order === 1"></sd-bottom-nav>
+    </div>
+  </div>
+</div>

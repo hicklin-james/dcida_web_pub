@@ -1,0 +1,466 @@
+'use strict'
+
+describe 'Controller: OptionPropertyEditCtrl', () ->
+  beforeEach angular.mock.module 'dcida20App'
+
+  OptionPropertyEditCtrl = {}
+
+  scope = {}
+  _ = {}
+  q = {}
+  stateParams = {}
+  stateTarget = null
+  state = {}
+  state.go = (target) ->
+    stateTarget = target
+    null
+
+  decisionAid = 
+    id: 1
+
+  decisionAidGetCalled = false
+  decisionAidGetError = false
+
+  DecisionAid = () ->
+    this.id = decisionAid.id
+    this
+
+  DecisionAid.get = (params, successFn, errorFn) ->
+    da = new DecisionAid
+    decisionAidGetCalled = true
+    if decisionAidGetError
+      errorFn({data: errors: "This is an error!"})
+    else
+      successFn(da)
+
+  getOptionWithSubOptions = false
+  getOptionError = false
+
+  optionWithSubOptions = 
+    id: 11
+    has_sub_options: true
+
+  optionWithoutSubOptions = 
+    id: 10
+    has_sub_options: false
+
+  Option = () ->
+    if getOptionWithSubOptions
+      this.id = optionWithSubOptions.id
+      this.has_sub_options = optionWithSubOptions.has_sub_options
+    else
+      this.id = optionWithoutSubOptions.id
+      this.has_sub_options = optionWithoutSubOptions.has_sub_options
+    this
+
+  Option.get = (params, successFn, errorFn) ->
+    o = new Option
+    if getOptionError
+      errorFn({data: errors: "This is an error!"})
+    else
+      successFn(o)
+
+  mockOptionPropertyId = 123
+  getError = false
+  optionPropertyGetCalled = false
+  optionPropertyDeleteCalled = false
+  optionPropertySaveCalled = false
+  optionPropertyUpdateCalled = false
+  optionPropertyQueryCalled = false
+
+  optionPropertyDeleteError = false
+  optionPropertyUpdateError = false
+  optionPropertySaveError = false
+  confirmCalled = false
+
+  uibModal = {}
+  uibModalCalled = false
+  uibModal.open = (params) ->
+    uibModalCalled = true
+    params.resolve.options()
+    q = 
+      id: 10
+    return result: then: (fn) -> fn(q)
+
+  Confirm = {}
+  Confirm.show = (params) ->
+    confirmCalled = true
+    result:
+      then: (fn) ->
+        fn()
+
+  OptionProperty = () ->
+    this.id = mockOptionPropertyId
+    this
+
+  OptionProperty.get = (params, successFn, errorFn) ->
+    optionPropertyGetCalled = true
+    op = new OptionProperty
+    if getError
+      errorFn({data: errors: "This is an error!"})
+    else
+      successFn(op)
+
+  optionPropertyUpdateBulkCalled = false
+  optionPropertyUpdateBulkError = false
+
+  OptionProperty.updateBulk = (params) ->
+    optionPropertyUpdateBulkCalled = true
+    then: (successFn, errorFn) ->
+      if optionPropertyUpdateBulkError
+        errorFn(errors: option_properties: {"error": "error value"})
+      else
+        successFn()
+
+  OptionProperty.query = (params, successFn, errorFn) ->
+    optionPropertyQueryCalled = true
+    optionProps = []
+    for i in [1..10]
+      nop = new OptionProperty
+      nop.id = i
+      optionProps.push(nop)
+    
+    if getError
+      errorFn({data: errors: "This is an error!"})
+    else
+      successFn(optionProps)
+
+  OptionProperty.addNewOptionProperties = (ops, option, propId) ->
+    ops
+
+  OptionProperty.prototype.$delete = (params, successFn, errorFn) ->
+    optionPropertyDeleteCalled = true
+    if optionPropertyDeleteError
+      errorFn({data: errors: "This is an error!"})
+    else
+      successFn()
+
+  OptionProperty.prototype.$save = (params, successFn, errorFn) ->
+    optionPropertySaveCalled = true
+    if optionPropertySaveError
+      errorFn({data: errors: "This is an error!"})
+    else
+      successFn()
+
+  OptionProperty.prototype.$update = (params, successFn, errorFn) ->
+    optionPropertyUpdateCalled = true
+    if optionPropertyUpdateError
+      errorFn({data: errors: "This is an error!"})
+    else
+      successFn()
+
+  beforeEach inject ($controller, $rootScope, ___, _$q_) ->
+    getError = false
+    confirmCalled = false
+    optionPropertyGetCalled = false
+    optionPropertyDeleteCalled = false
+    optionPropertySaveCalled = false
+    optionPropertyUpdateCalled = false
+    stateTarget = null
+    optionPropertyDeleteError = false
+    optionPropertyUpdateError = false
+    optionPropertySaveError = false
+    getOptionWithSubOptions = false
+    getOptionError = false
+    decisionAidGetError = false
+    optionPropertyQueryCalled = false
+    optionPropertyUpdateBulkCalled = false
+    optionPropertyUpdateBulkError = false
+    confirmCalled = false
+    uibModalCalled = false
+
+    stateParams = {decisionAidId: 123, optionId: 10, propertyId: 10}
+    scope = $rootScope.$new()
+    _ = ___
+    q = _$q_
+    OptionPropertyEditCtrl = $controller 'OptionPropertyEditCtrl', {
+      $scope: scope
+      OptionProperty: OptionProperty
+      Option: Option
+      DecisionAid: DecisionAid
+      $stateParams: stateParams
+      $q: q
+      Confirm: Confirm
+      $state: state
+    }
+    scope.$digest()
+
+  describe "loading", () ->
+    it "should correctly set the loading variable", () ->
+      expect(OptionPropertyEditCtrl.loading).toBeFalsy()
+
+    it "should not make a server request if there is no id in the stateparams", () ->
+      expect(optionPropertyGetCalled).toBeFalsy()
+
+    it "should set the isNewOptionProperty var to true", () ->
+      expect(OptionPropertyEditCtrl.isNewOptionProperty).toBeTruthy()
+
+    it "should make a server request to get the decision aid", () ->
+      expect(decisionAidGetCalled).toBeTruthy()
+
+    describe "error getting decision aid", () ->
+      beforeEach inject ($controller, $rootScope, ___, _$q_) ->
+        decisionAidGetError = true
+        stateParams = {decisionAidId: 123, optionId: 10, propertyId: 10, id: mockOptionPropertyId}
+        scope = $rootScope.$new()
+        _ = ___
+        q = _$q_
+        OptionPropertyEditCtrl = $controller 'OptionPropertyEditCtrl', {
+          $scope: scope
+          OptionProperty: OptionProperty
+          Option: Option
+          DecisionAid: DecisionAid
+          $stateParams: stateParams
+          $q: q
+          Confirm: Confirm
+          $state: state
+        }
+        scope.$digest()
+
+      it "should set the errors var", () ->
+        expect(OptionPropertyEditCtrl.errors).toBeDefined()
+
+    describe "error getting option", () ->
+      beforeEach inject ($controller, $rootScope, ___, _$q_) ->
+        getOptionError = true
+        stateParams = {decisionAidId: 123, optionId: 10, propertyId: 10, id: mockOptionPropertyId}
+        scope = $rootScope.$new()
+        _ = ___
+        q = _$q_
+        OptionPropertyEditCtrl = $controller 'OptionPropertyEditCtrl', {
+          $scope: scope
+          OptionProperty: OptionProperty
+          Option: Option
+          DecisionAid: DecisionAid
+          $stateParams: stateParams
+          $q: q
+          Confirm: Confirm
+          $state: state
+        }
+        scope.$digest()
+
+      it "should set the errors var", () ->
+        expect(OptionPropertyEditCtrl.errors).toBeDefined()
+
+    describe "saveOptionProperty", () ->
+      describe "success", () ->
+        beforeEach () ->
+          OptionPropertyEditCtrl.saveOptionProperty()
+
+        it "should not set optionPropertyUpdateCalled to true", () ->
+            expect(optionPropertyUpdateCalled).toBeFalsy()
+
+        it "should set optionPropertySaveCalled to true", () ->
+          expect(optionPropertySaveCalled).toBeTruthy()
+
+        it "should go to 'decisionAidShow.introduction' state", () ->
+          expect(stateTarget).toEqual('decisionAidShow.myOptions')
+
+      describe "error", () ->
+        beforeEach () ->
+          optionPropertySaveError = true
+          OptionPropertyEditCtrl.saveOptionProperty()
+
+        it "should not go to 'decisionAidShow.myOptions' state", () ->
+          expect(stateTarget).toBeNull()
+
+        it "should set the errors var", () ->
+          expect(OptionPropertyEditCtrl.errors).toBeDefined()
+
+    describe "id in stateparams", () ->
+      beforeEach inject ($controller, $rootScope, ___, _$q_) ->
+        stateParams = {decisionAidId: 123, optionId: 10, propertyId: 10, id: mockOptionPropertyId}
+        scope = $rootScope.$new()
+        _ = ___
+        q = _$q_
+        OptionPropertyEditCtrl = $controller 'OptionPropertyEditCtrl', {
+          $scope: scope
+          OptionProperty: OptionProperty
+          Option: Option
+          DecisionAid: DecisionAid
+          $stateParams: stateParams
+          $q: q
+          Confirm: Confirm
+          $state: state
+        }
+        scope.$digest()
+
+      it "should correctly set the loading variable", () ->
+        expect(OptionPropertyEditCtrl.loading).toBeFalsy()
+
+      it "should make a server request to get the option property", () ->
+        expect(optionPropertyGetCalled).toBeTruthy()
+
+      it "should set the isNewOptionProperty var to false", () ->
+        expect(OptionPropertyEditCtrl.isNewOptionProperty).toBeFalsy()
+
+      describe "error getting option property", () ->
+        beforeEach inject ($controller, $rootScope, ___, _$q_) ->
+          getError = true
+          stateParams = {decisionAidId: 123, optionId: 10, propertyId: 10, id: mockOptionPropertyId}
+          scope = $rootScope.$new()
+          _ = ___
+          q = _$q_
+          OptionPropertyEditCtrl = $controller 'OptionPropertyEditCtrl', {
+            $scope: scope
+            OptionProperty: OptionProperty
+            Option: Option
+            DecisionAid: DecisionAid
+            $stateParams: stateParams
+            $q: q
+            Confirm: Confirm
+            $state: state
+          }
+          scope.$digest()
+
+        it "should set the errors variable", () ->
+          expect(OptionPropertyEditCtrl.errors).toBeDefined()
+
+      describe "saveOptionProperty", () ->
+        describe "success", () ->
+          beforeEach () ->
+            OptionPropertyEditCtrl.saveOptionProperty()
+
+          it "should set optionPropertyUpdateCalled to true", () ->
+              expect(optionPropertyUpdateCalled).toBeTruthy()
+
+          it "should not set optionPropertySaveCalled to true", () ->
+            expect(optionPropertySaveCalled).toBeFalsy()
+
+          it "should go to 'decisionAidShow.myOptions' state", () ->
+            expect(stateTarget).toEqual('decisionAidShow.myOptions')
+
+        describe "error", () ->
+          beforeEach () ->
+            optionPropertyUpdateError = true
+            OptionPropertyEditCtrl.saveOptionProperty()
+
+          it "should not go to 'decisionAidShow.myOptions' state", () ->
+            expect(stateTarget).toBeNull()
+
+          it "should set the errors var", () ->
+            expect(OptionPropertyEditCtrl.errors).toBeDefined()
+
+      describe "deleteOptionProperty", () ->
+        describe "success", () ->
+          beforeEach () ->
+            OptionPropertyEditCtrl.deleteOptionProperty()
+
+          it "should set optionPropertyDeleteCalled to true", () ->
+            expect(optionPropertyDeleteCalled).toBeTruthy()
+
+          it "should go to 'decisionAidShow.myOptions' state", () ->
+            expect(stateTarget).toEqual("decisionAidShow.myOptions")
+
+        describe "error", () ->
+          beforeEach () ->
+            optionPropertyDeleteError = true
+            OptionPropertyEditCtrl.deleteOptionProperty()
+
+          it "should not change state", () ->
+            expect(stateTarget).toBeNull()
+
+          it "should set the errors var", () ->
+            expect(OptionPropertyEditCtrl.errors).toBeDefined()
+
+      describe "option has sub options", () ->
+        describe "no query error", () ->
+          beforeEach inject ($controller, $rootScope, ___, _$q_) ->
+            stateParams = {decisionAidId: 123, optionId: 10, propertyId: 10, id: mockOptionPropertyId}
+            scope = $rootScope.$new()
+            _ = ___
+            q = _$q_
+            getOptionWithSubOptions = true
+            OptionPropertyEditCtrl = $controller 'OptionPropertyEditCtrl', {
+              $scope: scope
+              OptionProperty: OptionProperty
+              Option: Option
+              DecisionAid: DecisionAid
+              $stateParams: stateParams
+              $q: q
+              Confirm: Confirm
+              $uibModal: uibModal
+              $state: state
+            }
+            scope.$digest()
+
+          it "should call query instead of get", () ->
+            expect(optionPropertyQueryCalled).toBeTruthy()
+
+          it "should correctly set the loading variable", () ->
+            expect(OptionPropertyEditCtrl.loading).toBeFalsy()
+
+          it "shouldnt set any errors", () ->
+            expect(OptionPropertyEditCtrl.errors).not.toBeDefined()
+      
+          describe "changedRankingType", () ->
+            it "should set the currently editing ranking to null", () ->
+              OptionPropertyEditCtrl.currentlyEditing.ranking = 10
+              OptionPropertyEditCtrl.changedRankingType()
+              expect(OptionPropertyEditCtrl.currentlyEditing.ranking).toBeNull()
+
+          describe "selectQuestion", () ->
+            it "should open the question modal", () ->
+              expect(uibModalCalled).toBeFalsy()
+              OptionPropertyEditCtrl.selectQuestion()
+              expect(uibModalCalled).toBeTruthy()
+
+          describe "selectOptionProperty", () ->
+            it "should change the currentlyEditing option property", () ->
+              ops = OptionPropertyEditCtrl.optionProperties
+              expect(ops[0]).toBe(OptionPropertyEditCtrl.currentlyEditing)
+              nop = ops[1]
+              OptionPropertyEditCtrl.selectOptionProperty(nop)
+              expect(ops[0]).not.toBe(OptionPropertyEditCtrl.currentlyEditing)
+              expect(nop).toBe(OptionPropertyEditCtrl.currentlyEditing)
+
+          describe "saveOptionProperty success", () ->
+            beforeEach () ->
+              OptionPropertyEditCtrl.saveOptionProperty()
+
+            it "should call updateBulk", () ->
+              expect(optionPropertyUpdateBulkCalled).toBeTruthy()
+
+            it "should go to 'decisionAidShow.myOptions' state", () ->
+              expect(stateTarget).toEqual("decisionAidShow.myOptions")
+
+          describe "saveOptionProperty error", () ->
+            beforeEach () ->
+              optionPropertyUpdateBulkError = true
+              OptionPropertyEditCtrl.saveOptionProperty()
+
+            it "should call updateBulk", () ->
+              expect(optionPropertyUpdateBulkCalled).toBeTruthy()
+
+            it "shouldnt change state", () ->
+              expect(stateTarget).toBeNull()
+
+            it "should set the errors variable", () ->
+              expect(OptionPropertyEditCtrl.errors).toBeDefined()
+
+      describe "query error", () ->
+        beforeEach inject ($controller, $rootScope, ___, _$q_) ->
+          stateParams = {decisionAidId: 123, optionId: 10, propertyId: 10, id: mockOptionPropertyId}
+          scope = $rootScope.$new()
+          _ = ___
+          q = _$q_
+          getOptionWithSubOptions = true
+          getError = true
+          OptionPropertyEditCtrl = $controller 'OptionPropertyEditCtrl', {
+            $scope: scope
+            OptionProperty: OptionProperty
+            Option: Option
+            DecisionAid: DecisionAid
+            $stateParams: stateParams
+            $q: q
+            Confirm: Confirm
+            $state: state
+          }
+          scope.$digest()
+
+        it "should call query instead of get", () ->
+          expect(optionPropertyQueryCalled).toBeTruthy()
+
+        it "should set the errors variable", () ->
+          expect(OptionPropertyEditCtrl.errors).toBeDefined()
+

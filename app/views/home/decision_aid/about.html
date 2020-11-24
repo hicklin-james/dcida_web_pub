@@ -1,0 +1,403 @@
+<div id="decision_aid_about">
+  <div>
+    <div ng-show="ctrl.noDecisionAidFound">
+      <div class="alert alert-danger">
+        <table>
+          <tr>
+            <td>
+              <i class="fa fa-info-circle fa-fw fa-3x middle-align inline-block"></i>
+            </td>
+            <td>
+              <span translate="DECISION-AID-LOAD-ERROR" translate-values="{ slug: ctrl.decisionAidSlug }"></span>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div ng-if="ctrl.decisionAid && !ctrl.loading" id="about_content">
+      <div sd-error-scroll sa-errors="ctrl.errors"></div>
+
+      <div ng-if="!ctrl.qc.currentQuestionPage" class="space-bottom" compile="ctrl.decisionAid.injected_about_information_published"></div>
+
+      <div>
+        <div class="space-bottom">
+        </div>
+        <div ng-repeat="currentQuestion in ctrl.qc.questions track by currentQuestion.id">
+          <div ng-if="currentQuestion" class="question-response-form-wrapper">
+            <form ng-show="currentQuestion" class="question-response-form" ng-submit="ctrl.saveUserResponses()">
+              <div class="question-wrapper">
+                <div ng-show="ctrl.qc.validationErrors[currentQuestion.id]" class="inline-block">
+                  <div class="question-validation-alert">
+                    <i class="fa fa-exclamation-triangle text-danger"></i> 
+                    {{ctrl.qc.validationErrors[currentQuestion.id]}}
+                  </div>
+                </div>
+                <div compile="currentQuestion.question_text_published" class="question-text-wrapper space-bottom"></div>
+                <div ng-switch="currentQuestion.question_response_type" class="space-bottom">
+                  <div ng-switch-when="radio" class="radio-question-type">
+                    <div ng-switch="currentQuestion.question_response_style">
+                      <div ng-switch-when="horizontal_radio" class="horizontal-radio-wrap">
+                        <div class="clearfix">
+                          <div ng-repeat="chunked_responses in currentQuestion.chunked_responses" class="row-fluid half-space-bottom clearfix">
+                            <div class="col-sm-2 half-space-bottom" ng-repeat="response in chunked_responses">
+                              <div>
+                                <button class="btn btn-default full-width response-button" ng-click="ctrl.selectResponse(currentQuestion, response)" ng-class="{'btn-success': ctrl.qc.responsesHash[currentQuestion.id].question_response_id == response.id}"><span compile="response.question_response_value"></span></button>
+                                <div class="radio-text-response" ng-if="response.is_text_response" ng-show="ctrl.qc.responsesHash[currentQuestion.id].question_response_id === response.id">
+                                  <input placeholder="Please specify" ng-model="ctrl.qc.responsesHash[currentQuestion.id].response_value" ng-disabled="currentQuestion.nonEditable" class="form-control" />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div ng-switch-when="vertical_radio" class="vertical-radio-wrap">
+                        <table class="table top-row-no-border">
+                          <tbody>
+                            <tr class="clickable" ng-click="ctrl.selectResponse(currentQuestion, response)" ng-repeat="response in currentQuestion.question_responses">
+                              <td class="col-xs-11 middle-align">
+                                <div class="dtable">
+                                  <div class="table-row">
+                                    <span compile="response.question_response_value" class="padding-right table-cell middle-align"></span>
+                                    <div class="table-cell middle-align radio-text-response " ng-if="response.is_text_response" ng-show="ctrl.qc.responsesHash[currentQuestion.id].question_response_id === response.id">
+                                      <input placeholder="Please specify" ng-model="ctrl.qc.responsesHash[currentQuestion.id].response_value" ng-disabled="currentQuestion.nonEditable" class="form-control" />
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td class="col-xs-1">
+                                <i class="fa fa-2x" ng-class="{'fa-check-circle-o text-success': ctrl.qc.responsesHash[currentQuestion.id].question_response_id === response.id, 'fa-circle-o': ctrl.qc.responsesHash[currentQuestion.id].question_response_id !== response.id}"></i>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div ng-switch-when="dropdown_radio" class="vertical-radio-wrap">
+                        <div class="input-group">
+                          <span uib-dropdown class="input-group-btn">
+                            <button uib-dropdown-toggle class="btn btn-primary radio-dropdown">
+                              {{((currentQuestion.indexedResponses[ctrl.qc.responsesHash[currentQuestion.id].question_response_id] ? currentQuestion.indexedResponses[ctrl.qc.responsesHash[currentQuestion.id].question_response_id].question_response_value : "Select an option") | ellipsify:16)}} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu pre-scrollable" uib-dropdown-menu>
+                              <li ng-repeat="response in currentQuestion.question_responses" class="clickable" ng-click="ctrl.selectResponse(currentQuestion, response)">
+                                <a compile="response.question_response_value"></a>
+                              </li>
+                            </ul>
+                          </span>
+                          <div class="radio-text-response space-left" ng-show="currentQuestion.indexedResponses[ctrl.qc.responsesHash[currentQuestion.id].question_response_id].is_text_response">
+                            <input placeholder="Please specify" ng-model="ctrl.qc.responsesHash[currentQuestion.id].response_value" ng-disabled="currentQuestion.nonEditable" class="form-control" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div ng-switch-when="yes_no" class="yes-no-question-type">
+                    <div ng-init="ctrl.qc.responsesHash[currentQuestion.id].question_response_id = (ctrl.qc.responsesHash[currentQuestion.id].question_response_id ? ctrl.qc.responsesHash[currentQuestion.id].question_response_id : currentQuestion.question_responses[1].id)">
+                      <i class="clickable fa fa-2x" ng-class="{'fa-check-square-o text-success': ctrl.qc.responsesHash[currentQuestion.id].question_response_id === currentQuestion.question_responses[0].id, 'fa-square-o': ctrl.qc.responsesHash[currentQuestion.id].question_response_id !== currentQuestion.question_responses[0].id}" ng-click="ctrl.selectYesNoResponse(currentQuestion)"></i>
+                    </div>
+                  </div>
+                  <div ng-switch-when="slider" class="slider-question-type">
+                    <div ng-init="ctrl.qc.responsesHash[currentQuestion.id].number_response_value = (ctrl.qc.responsesHash[currentQuestion.id].number_response_value || ctrl.qc.responsesHash[currentQuestion.id].number_response_value === 0 ? ctrl.qc.responsesHash[currentQuestion.id].number_response_value : currentQuestion.min_chars)">
+                      <div ng-switch="currentQuestion.question_response_style">
+                        <div ng-switch-when="horizontal_slider" class="question-slider">
+                          <div>
+                            <div ui-slider min="{{currentQuestion.min_number}}" max="{{currentQuestion.max_number}}" step="{{currentQuestion.slider_granularity}}" ng-model="ctrl.qc.responsesHash[currentQuestion.id].number_response_value" class="half-space-bottom horizontal-slider" ng-disabled="currentQuestion.nonEditable" ng-mousedown="ctrl.qc.setEvaluated(ctrl.qc.responsesHash[currentQuestion.id])" ng-class="{'unanswered': !ctrl.qc.responsesHash[currentQuestion.id].evaluated}">
+                              <div class="inner-div ninja"></div>
+                              <div ng-repeat="i in ctrl.qc.getRange(currentQuestion.min_number, currentQuestion.max_number) track by $index" class="ui-slider-segment ninja" style="left: {{(100 / (currentQuestion.max_number - currentQuestion.min_number)) * $index}}%;">
+                                <div class="inner-segment-text">{{$index + currentQuestion.min_number}}</div>
+                              </div>
+                              <a class="ui-slider-handle ui-state-default ui-corner-all clickable"></a>
+                            </div>
+                            <div class="property-tick-label clearfix">
+                              <div class="row clearfix">
+                                <div class="col-xs-4">
+                                  <div class="pull-left">
+                                    {{currentQuestion.slider_left_label}}
+                                  </div>
+                                </div>
+                                <div class="col-xs-4">
+                                  <div class="text-center">
+                                    {{currentQuestion.slider_midpoint_label}}
+                                  </div>
+                                </div>
+                                <div class="col-xs-4">
+                                  <div class="pull-right text-right">
+                                    {{currentQuestion.slider_right_label}}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="half-space-top">
+                            <div class="text-center">
+                              <input style="width: 50px;" ng-model="ctrl.qc.responsesHash[currentQuestion.id].number_response_value" disabled="disabled" class="text-center slider-input-value" ng-class="{'input-text-hidden':  !ctrl.qc.responsesHash[currentQuestion.id].evaluated}" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div ng-switch="currentQuestion.question_response_style">
+                        <div ng-switch-when="vertical_slider" class="question-slider">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <div compile="currentQuestion.side_text_published"></div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="relative-position">
+                                <div ui-slider="{orientation: 'vertical'}" min="{{currentQuestion.min_number}}" max="{{currentQuestion.max_number}}" step="{{currentQuestion.slider_granularity}}" ng-model="ctrl.qc.responsesHash[currentQuestion.id].number_response_value" class="vertical-slider" ng-disabled="currentQuestion.nonEditable" ng-mousedown="ctrl.qc.setEvaluated(ctrl.qc.responsesHash[currentQuestion.id])" ng-class="{'unanswered': !ctrl.qc.responsesHash[currentQuestion.id].evaluated}">
+                                  <div class="inner-div ninja"></div>
+                                  <div ng-repeat="i in ctrl.qc.getRange(currentQuestion.min_number, currentQuestion.max_number) track by $index" class="ui-slider-segment ninja" style="top: {{(100 / (currentQuestion.max_number - currentQuestion.min_number)) * $index}}%; left: 2px;">
+                                    <div class="inner-segment-text">{{$index + currentQuestion.min_number}}</div>
+                                  </div>
+                                  <a class="ui-slider-handle ui-state-default ui-corner-all"></a>
+                                </div>
+                                <div class="vertical-property-tick-label clearfix">
+                                  <div class="pull-left vertical-label vertical-low-label">
+                                    {{currentQuestion.slider_left_label}}
+                                  </div>
+                                  <div class="pull-left vertical-label vertical-middle-label">
+                                    {{currentQuestion.slider_midpoint_label}}
+                                  </div>
+                                  <div class="pull-right vertical-label vertical-high-label">
+                                    {{currentQuestion.slider_right_label}}
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="space-top">
+                                <input style="width: 50px; margin-left: -9px;" ng-model="ctrl.qc.responsesHash[currentQuestion.id].number_response_value" disabled="disabled" class="text-center" ng-class="{'input-text-hidden':  !ctrl.qc.responsesHash[currentQuestion.id].evaluated}" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div ng-switch-when="current_treatment" class="current-treatment-question-type">  
+                    <table class="table top-row-no-border">
+                      <tbody>
+                        <tr class="clickable" ng-click="ctrl.selectOption(currentQuestion, option)" ng-repeat="option in currentQuestion.current_treatments">
+                          <td class="col-xs-1">
+                            <i class="fa fa-2x fa-fw" ng-class="{'fa-check-circle-o text-success': ctrl.qc.responsesHash[currentQuestion.id].option_id === option.id, 'fa-circle-o': ctrl.qc.responsesHash[currentQuestion.id].option_id !== option.id}"></i>
+                            
+                          </td>
+                          <td class="col-xs-11">
+                            <div>
+                              <div class="current-treatment-main">
+                                <span>{{option.title}}</span>
+                              </div>
+                              <div class="current-treatment-sub" ng-show="option.generic_name">
+                                <span>({{option.generic_name}})</span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div ng-switch-when="text" class="text-question-type">
+                    <textarea rows="5" ng-disabled="currentQuestion.nonEditable" class="form-control" sd-limit-text-words-to sa-valid-length="200" ng-model="ctrl.qc.responsesHash[currentQuestion.id].response_value"></textarea>
+                  </div>
+
+                  <div ng-switch-when="ranking" class="ranking-question-type">
+                    <div class="row space-bottom">
+                      <div class="col-md-6 selectable-options">
+                        <h4>Response options</h4>
+                        <div ng-repeat="qr in currentQuestion.question_responses" ng-click="ctrl.qc.addResponseToOrderedRanks(currentQuestion, qr)" class="rank-option-wrapper clickable" ng-class="{'disabled': qr.inOrderedRanks || currentQuestion.nonEditable}">
+                          <table class="qr-rank-option-table">
+                            <tr>
+                              <td class="rank-qr-text">
+                                {{qr.question_response_value}}
+                              </td>
+                            </tr>
+                          </table>
+    <!--                       <div class="rank-qr-text">
+                            {{qr.question_response_value}}
+                          </div>
+                          <div class="rank-inline-value">
+                            {{ctrl.qc.responsesHash[currentQuestion.id].json_response_value[qr.id] ? ctrl.qc.responsesHash[currentQuestion.id].json_response_value[qr.id] : "&nbsp;"}}
+                          </div> -->
+                        </div>
+                      </div>
+                      <div class="col-md-6 selected-options">
+                        <h4>Your rankings</h4>
+                        <div ng-show="currentQuestion.orderedRanks.length === 0">
+                          <span class="text-warning">No responses have been ranked. Select them in the order that you would like to rank them from the "Response Options" list.</span>
+                        </div>
+                        <div sv-root sv-part="currentQuestion.orderedRanks">
+                          <div sv-element ng-repeat="qr in currentQuestion.orderedRanks track by qr.id" class="rank-option-wrapper">
+                          <table class="qr-rank-option-table">
+                            <tr>
+                              <td class="rank-value rank-left">
+                                <span compile="ctrl.qc.stringifiedRanks[$index]"></span>
+                              </td>
+                              <td class="rank-qr-text">
+                                {{qr.question_response_value}}
+                              </td>
+                              <td class="drag-icon" sv-handle ng-class="{'disabled': currentQuestion.nonEditable}">
+                                <i class='fa fa-arrows drag-arrows movable' sv-handle-disabled="{{currentQuestion.nonEditable}}"></i>
+                              </td>
+                            </tr>
+                          </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="clearfix">
+                      <div class="pull-right">
+                        <button class="btn btn-warning" ng-click="ctrl.qc.clearOrderedRanks(currentQuestion)">Clear rankings</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Sum to N -->
+                  <div ng-switch-when="sum_to_n" class="sum-to-n-question-type">
+                    <div ng-switch="currentQuestion.question_response_style">
+                      <div ng-switch-when="vertical_sum_to_n">
+                        <div ng-repeat="response in currentQuestion.question_responses" class="form-inline half-space-bottom">
+                          <input ng-disabled="currentQuestion.nonEditable" ng-model="ctrl.qc.responsesHash[currentQuestion.id].json_response_value[response.id]" class="form-control tiny-input inline-block half-space-right">
+                          <label>{{response.question_response_value}}</label>
+                        </div>
+                        <div class="form-inline remaining-allocatable-wrapper">
+                          <input disabled="disabled" ng-value="currentQuestion.summedResponseValues.toString() + ' / ' + currentQuestion.max_number.toString()" class="form-control remaining-allocatable" ng-class="{'too-much': currentQuestion.summedResponseValues > currentQuestion.max_number, 'valid': currentQuestion.summedResponseValues === currentQuestion.max_number, 'too-little': currentQuestion.summedResponseValues < currentQuestion.max_number}">
+                          <label>Total</label>
+                        </div>
+                      </div>
+                      <div ng-switch-when="horizontal_sum_to_n">
+                        <div class="form-inline">
+                          <div ng-repeat="response in currentQuestion.question_responses" class="half-space-bottom inline-block space-right">
+                            <label>{{response.question_response_value}}</label>
+                            <input ng-disabled="currentQuestion.nonEditable" ng-model="ctrl.qc.responsesHash[currentQuestion.id].json_response_value[response.id]" class="form-control tiny-input">
+                          </div>
+                        </div>
+                        <div class="form-inline remaining-allocatable-wrapper">
+                          <input disabled="disabled" ng-value="currentQuestion.summedResponseValues.toString() + ' / ' + currentQuestion.max_number.toString()" class="form-control remaining-allocatable" ng-class="{'too-much': currentQuestion.summedResponseValues > currentQuestion.max_number, 'valid': currentQuestion.summedResponseValues === currentQuestion.max_number, 'too-little': currentQuestion.summedResponseValues < currentQuestion.max_number}">
+                          <label>Total</label>
+                        </div>
+                      </div>
+                      <div ng-switch-when="stacking_sum_to_n">
+                        <div class="row">
+                          <div class="col-xs-12">
+                            <div class="table fixed-table-layout">
+                              <div class="table-row">
+                                <div class="table-cell middle-align light-border-bottom stack-identifier">
+                                  <div>Points:</div>
+                                  <div class="small text-muted">{{currentQuestion.sourceStack.length}} remaining</div>
+                                </div>
+                                <div class="table-cell constant-sum-btns light-border-bottom">
+                                </div>
+                                <div class="table-cell constant-sum-btns light-border-bottom">
+                                </div>
+                                <div class="table-cell stack-wrapper middle-align light-border-bottom">
+                                  <div ng-repeat="stackItem in currentQuestion.sourceStack track by $index" class="stack-item source-item">
+
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="table-row" ng-repeat="qr in currentQuestion.question_responses">
+                                <div class="table-cell middle-align">
+                                  {{qr.question_response_value}}
+                                </div>
+                                <div class="table-cell middle-align constant-sum-btns">
+                                  <button class="btn btn-primary" ng-disabled="qr.destStack.length === 0" ng-click="ctrl.qc.removeFromConstantSumStack(currentQuestion, qr)"><i class="fa fa-minus"></i></button>
+                                </div>
+                                 <div class="table-cell middle-align constant-sum-btns">
+                                  <button class="btn btn-primary" ng-disabled="currentQuestion.sourceStack.length === 0" ng-click="ctrl.qc.addToConstantSumStack(currentQuestion, qr)"><i class="fa fa-plus"></i></button>
+                                </div>
+                                <div class="table-cell stack-wrapper middle-align">
+                                  <div ng-repeat="stackItem in qr.destStack track by $index" class="stack-item target-item">
+                                    
+                                  </div>
+                                </div>
+                               
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Number question types -->
+                  <div ng-switch-when="number" class="number-question-type">
+                    <div class="table">
+                      <div class="table-row">
+                        <div class="table-cell number-input">
+                          <div class="space-right">
+                            <div class="input-group full-width">
+                              <input class="form-control" type="number" ng-model="ctrl.qc.responsesHash[currentQuestion.id].number_response_value" ng-disabled="currentQuestion.nonEditable" />
+                              <!-- if units_array length is 1, just show it as an addon -->
+                              <span ng-if="currentQuestion.units_array.length === 1" class="input-group-addon">{{currentQuestion.units_array[0]}}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- if units_array length is > 1, show a single select input -->
+                        <div ng-if="currentQuestion.units_array.length > 1" class="table-cell">
+                          <div ng-show="currentQuestion.unit_of_measurement" class="measurement-instructions-text">{{currentQuestion.unit_of_measurement}}</div>
+                          <select ng-model="ctrl.qc.responsesHash[currentQuestion.id].selected_unit" size="{{currentQuestion.units_array.length}}" class="unit-select" ng-options="unit as unit for unit in currentQuestion.units_array"></select>
+                            <!-- <option ng-repeat="unit in currentQuestion.units_array" value="{{unit}}">{{unit}}</option> -->
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div ng-switch-when="grid" class="grid-question-type">
+                    <div ng-switch="currentQuestion.grid_questions[0].question_response_type">
+                      <div ng-switch-when="radio">
+                        <table class="table grid-question-table table-responsive fixed-table-layout">
+                          <thead>
+                            <th ng-class="[currentQuestion.questionClass]"></th>
+                            <th ng-class="[currentQuestion.responseClass]" class="text-center" ng-repeat="r in currentQuestion.grid_questions[0].question_responses">
+                              <span compile="r.question_response_value"></span>
+                            </th>
+                            <th ng-if="ctrl.qc.hasPostQuestionText" ng-class="[currentQuestion.postQuestionClass]"></th>
+                          </thead>
+                          <tbody>
+                            <tr ng-repeat="q in currentQuestion.grid_questions">
+                              <td>
+                                <span compile="q.question_text_published"></span>
+                              </td>
+                              <td data-title="{{currentQuestion.grid_questions[0].question_responses[$index].question_response_value | removeHTMLTags}}" class="text-center response-button-td clickable" ng-repeat="r in q.question_responses" ng-click="ctrl.selectResponse(q, r)">
+                                <i class="fa fa-lg fa-fw" ng-class="{'fa-check-circle-o text-success': ctrl.qc.responsesHash[q.id].question_response_id == r.id, 'fa-circle-o': ctrl.qc.responsesHash[q.id].question_response_id !== r.id}" type="checkbox"></i>
+                              </td>
+                              <td ng-if="ctrl.qc.hasPostQuestionText"><span compile="q.post_question_text_published"></span></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div ng-switch-when="yes_no">
+                        <div ng-switch="currentQuestion.special_flag">
+                          <div ng-switch-when="normal">
+                            <table class="table top-row-no-border table-responsive">
+                              <tbody>
+                                <tr ng-repeat="q in currentQuestion.grid_questions" ng-click="ctrl.selectYesNoResponse(q, $event)" class="clickable">
+                                  <td ng-class="[currentQuestion.questionClass]">
+                                    <span compile="q.question_text_published"></span>
+                                  </td>
+                                  <td class="text-center" ng-init="ctrl.qc.responsesHash[q.id].question_response_id = (ctrl.qc.responsesHash[q.id].question_response_id ? ctrl.qc.responsesHash[q.id].question_response_id : q.question_responses[1].id)" ng-class="[currentQuestion.responseClass]">
+                                    <i class="clickable fa fa-2x" ng-class="{'fa-check-circle-o text-success': ctrl.qc.responsesHash[q.id].question_response_id === q.question_responses[0].id, 'fa-circle-o': ctrl.qc.responsesHash[q.id].question_response_id !== q.question_responses[0].id}" />
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                          <div ng-switch-when="body_heatmap">
+                            <div class="row">
+                              <div class="col-sm-offset-2 col-sm-8" sd-human-body-heatmap-question sa-question="currentQuestion" sa-toggle-question="ctrl.selectYesNoResponse(question, $event)" sa-responses="ctrl.qc.responsesHash"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div ng-show="currentQuestion.post_question_text_published" class="space-bottom">
+                  <div compile="currentQuestion.post_question_text_published" class="post-question-text-wrapper"></div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <hr ng-show="$index !== ctrl.qc.questions.length-1" />
+        </div>
+      </div>
+      <sd-bottom-nav sa-show-next="{{'NEXT-BUTTON' | translate}}" sa-next-submit="ctrl.submitNext()" sa-show-prev="{{'BACK-BUTTON' | translate}}" sa-prev-link="ctrl.prevLink()"></sd-bottom-nav>
+    </div>
+  </div>
+</div>

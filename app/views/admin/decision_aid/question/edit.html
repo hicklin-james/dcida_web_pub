@@ -1,0 +1,674 @@
+<div class="text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-refresh fa-spin"></i>
+</div>
+<div ng-show="!ctrl.loading">
+  <div class="pull-right" ng-show="!ctrl.isNewQuestion">
+    <button ng-click="ctrl.deleteQuestion()" class="btn btn-danger">Delete Question</button>
+  </div>
+  <h2>{{ctrl.title}}</h2>
+  <div sd-error-scroll sa-errors="ctrl.errors"></div>
+  <form class="space-bottom space-top" name="questionEditForm" ng-submit="ctrl.saveQuestion()" novalidate>
+    <div id="question_edit_wrapper">
+      <div class="space-bottom">
+        <div class="form-group space-right" ng-if="!ctrl.questionTypeSet">
+          <label for="question_question_type" class="half-space-right">Question Type</label>
+          <sd-information>Choose whether your question will be a demographic question or quiz question.</sd-information>
+          <select required name="question_question_type" class="form-control select-field" ng-model="ctrl.question.question_type" ng-options="qt.value as qt.key for qt in ctrl.questionTypes" ng-change="ctrl.questionTypeChanged()" ng-disabled="ctrl.question.question_response_type === 'json'"></select>
+        </div>
+        <div class="form-group space-right">
+          <label for="question_question_response_type" class="half-space-right">Question Response Type</label>
+          <sd-information>Choose what kind of question to show with this dropdown.</sd-information>
+          <select required name="question_question_response_type" class="form-control select-field" ng-model="ctrl.question.question_response_type" ng-options="qrt.value as qrt.key disable when qrt.disabled for qrt in ctrl.questionResponseTypes" ng-change="ctrl.questionResponseTypeChanged()" ng-disabled="ctrl.question.question_response_type === 'json'"></select>
+        </div>
+        <div class="form-group">
+          <label>Backend Identifier</label>
+          <sd-information>This is used to identify the question in various backend pages.</sd-information>
+          <input ng-model="ctrl.question.backend_identifier" class="form-control" />
+        </div>
+        <div class="form-group space-right">
+          <label for="question_question_response_style" class="half-space-right">Question Response Style</label>
+          <sd-information>Some question response types have different styles that can be used. Select which style you would like to use with this dropdown. This dropdown will be disabled until you have selected a question response type.</sd-information>
+          <select required name="question_question_response_style" class="form-control select-field" ng-model="ctrl.question.question_response_style" ng-options="qrst.value as qrst.name for qrst in ctrl.questionResponseStyles[ctrl.question.question_response_type].styles" ng-disabled="!ctrl.question.question_response_type || ctrl.question.question_response_type === 'json'"></select>
+        </div>
+        <div class="form-group" ng-show="!ctrl.question.hidden">
+          <div><label><span>Skippable</span></label></div>
+          <sd-information>Select yes to allow this question to be skipped in the decision aid.</sd-information>
+          <label class="clickable half-space-right" name="question-skippable-yes">Yes <input id="question-skippable-yes" class="clickable" type="radio" ng-model="ctrl.question.skippable" ng-value="true"></label>
+          <label class="clickable" name="question-skippable-no">No <input id="question-skippable-no" class="clickable" type="radio" ng-model="ctrl.question.skippable" ng-value="false"></label>
+        </div>
+        <div class="form-inline">
+          <div class="checkbox-inline no-pad">
+            <!-- <label ng-class="{'disabled': ctrl.question.question_response_type !== 'radio' && ctrl.question.question_response_type !== 'number' && ctrl.question.question_response_type !== 'yes_no', 'clickable': ctrl.question.question_response_type === 'radio' || ctrl.question.question_response_type === 'number' || ctrl.question.question_response_type === 'yes_no'}">Hide Question?&nbsp;<input ng-disabled="ctrl.question.question_response_type !== 'radio' && ctrl.question.question_response_type !== 'number' && ctrl.question.question_response_type !== 'yes_no'" class="clickable half-space-right" id="question_hidden" type="checkbox" ng-model="ctrl.question.hidden"></label> -->
+            
+            <!-- <sd-general-info-popup sa-title="Hidden Questions" sa-info-template-url="views/info_templates/hidden_questions_info.html">
+              <span><i class="fa fa-question"></i> How do hidden questions work</span>
+            </sd-general-info-popup> -->
+          </div>
+          <sd-information>Some question response types can be hidden. This checkbox will be enabled if your question can be hidden.</sd-information>
+        </div>
+
+        <!-- Remote data targets -->
+        <!-- 
+        <div class="form-inline">
+          <div class="checkbox-inline no-pad">
+            <label class="clickable" ng-class="{'disabled': ctrl.question.remote_data_source}">Use Remote Data Target?&nbsp;
+              <input class="clickable" ng-model="ctrl.question.remote_data_target" type="checkbox" ng-disabled="ctrl.question.remote_data_source" />
+            </label>
+          </div>
+          <sd-information>If you want to populate a remote data target using this question's response value (e.g. REDCap), tick this box.</sd-information>
+        </div>
+        <div ng-if="ctrl.question.remote_data_target"> 
+          <div class="form-group">
+            <label class="half-space-right">Remote Data Target Type</label>
+            <sd-information>Choose which remote data target you would like to use for this question.</sd-information>
+            <select class="form-control select-field" ng-model="ctrl.question.remote_data_target_type" ng-options="dt.value as dt.key for dt in ctrl.remoteDataTargetTypes"></select>
+          </div>
+          <div ng-switch="ctrl.question.remote_data_target_type" ng-show="ctrl.question.question_response_type !== 'grid'">
+            <div ng-switch-when="redcap_t">
+              <div class="form-group">
+                <label>REDCap Field Name</label>
+                <sd-information>This should be the name of the target question within a REDCap survey.</sd-information>
+                <input ng-model="ctrl.question.redcap_field_name" class="form-control" />
+              </div>
+            </div>
+            <div class="form-group">
+              <button type="button" class="btn btn-default" ng-click="ctrl.testRedcapConnection(ctrl.question)"><i class="fa fa-lg" ng-class="{'fa-check-circle-o text-success': ctrl.question.redcapConnectionSuccess === 1, 'fa-question-circle text-warning': ctrl.question.redcapConnectionSuccess === 2, 'fa-times-circle-o text-danger': ctrl.question.redcapConnectionSuccess === 3, 'fa-refresh fa-spin': ctrl.question.redcapConnectionSuccess === 4}"></i> Test Connection</button>
+            </div>
+          </div>
+        </div>
+        -->
+        <!-- Remote data sources -->
+        <div class="form-inline" ng-show="ctrl.question.hidden">
+          <div class="checkbox-inline no-pad">
+            <label ng-class="{'disabled': ctrl.question.remote_data_source_type === 'my_sql'}" class="clickable">Use Remote Data Source?&nbsp;
+              <input class="clickable" ng-model="ctrl.question.remote_data_source" type="checkbox" ng-disabled="ctrl.question.remote_data_source_type === 'my_sql'" />
+            </label>
+          </div>
+          <sd-information>If you want to retrieve this question's value from a remote data source (e.g. REDCap), tick this box.</sd-information>
+        </div>
+        <div ng-if="ctrl.question.remote_data_source"> 
+          <div class="form-group">
+            <label class="half-space-right">Remote Data Source Type</label>
+            <sd-information>Choose which remote data source you would like to use for this question.</sd-information>
+            <select class="form-control select-field" ng-model="ctrl.question.remote_data_source_type" ng-options="ds.value as ds.key disable when ds.disabled for ds in ctrl.remoteDataSourceTypes" ng-disabled="ctrl.question.remote_data_source_type === 'my_sql'"></select>
+          </div>
+          <div ng-switch="ctrl.question.remote_data_source_type">
+            <div ng-switch-when="redcap">
+              <div class="form-group">
+                <label>REDCap Field Name</label>
+                <sd-information>This should be the name of the source question within a REDCap survey.</sd-information>
+                <input ng-model="ctrl.question.redcap_field_name" class="form-control" />
+              </div>
+            </div>
+            <div ng-switch-when="my_sql">
+              <div class="form-group">
+                <label>MySQL Procedure name</label>
+                <sd-information>This should be the name of the MySQL procedure that will return some data and be parsed into JSON.</sd-information>
+                <input class="form-control" ng-model="ctrl.question.my_sql_procedure_name" disabled="disabled" />
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <button ng-if="ctrl.question.remote_data_source_type === 'redcap'" type="button" class="btn btn-default" ng-click="ctrl.testRedcapConnection(ctrl.question)"><i class="fa fa-lg" ng-class="{'fa-check-circle-o text-success': ctrl.question.redcapConnectionSuccess === 1, 'fa-question-circle text-warning': ctrl.question.redcapConnectionSuccess === 2, 'fa-times-circle-o text-danger': ctrl.question.redcapConnectionSuccess === 3, 'fa-refresh fa-spin': ctrl.question.redcapConnectionSuccess === 4}"></i> Test Connection</button>
+          </div>
+        </div>
+        <div ng-if="!ctrl.question.remote_data_source">
+          <div ng-if="ctrl.question.hidden && ctrl.question.question_response_type !== 'lookup_table'" class="form-group">
+            <div class="form-group">
+              <label>How many decimal points should the result be rounded to?</label>
+              <input class="form-control" style="width: 200px;" ng-model="ctrl.question.num_decimals_to_round_to" type="number" min="0" max="12" />
+            </div>
+            <div class="form-group">
+              <label>Question Response Value Calculation</label>
+              <sd-information>Use the equation editor to develop the calculation that will determine the response value for this question.</sd-information>
+              <div class="form-control" style="height: auto;">&nbsp;{{ctrl.question.response_value_calculation}}</div>
+              <div sd-equation-editor ng-model="ctrl.question.response_value_calculation" sa-question-type="{{ctrl.question.question_type}}" sa-decision-aid-id="{{ctrl.$stateParams.decisionAidId}}"></div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group" ng-if="!ctrl.question.hidden">
+          <div><label for="question-can-change-response" class="clickable">Response editable?</label></div>
+          <label class="clickable half-space-right" name="question-can-change-response-yes">Yes <input id="question-can-change-response-yes" class="clickable" type="radio" ng-model="ctrl.question.can_change_response" ng-value="true"></label>
+          <label class="clickable" name="question-can-change-response-no">No <input id="question-can-change-response-no" class="clickable" type="radio" ng-model="ctrl.question.can_change_response" ng-value="false"></label>
+          <sd-information>Untick this box if you want to prevent users from changing their answer to this question</sd-information>
+        </div>
+        <div class="form-group">
+          <label for="question_question_text">Question Content</label>
+          <sd-information>This is the main text of the question.</sd-information>
+          <sd-redactor-wrapper sa-decision-aid-id="{{ctrl.decisionAidId}}" sa-include-question-selector sa-question-types="quiz,demographic"><textarea required name="question_question_text" class="form-control" id="question_question_text" placeholder="Question Text" ng-model="ctrl.question.question_text" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'video', 'questionSelector']}"></textarea></sd-redactor-wrapper>
+        </div>
+        <div class="form-group" ng-show="!ctrl.question.hidden">
+          <label for="question_post_question_text">Post Question Content</label>
+          <sd-information>This text appears after the question.</sd-information>
+          <sd-redactor-wrapper sa-decision-aid-id="{{ctrl.decisionAidId}}" sa-include-question-selector sa-question-types="quiz,demographic"><textarea required name="question_post_question_text" class="form-control" id="question_post_question_text" placeholder="Post Question Text" ng-model="ctrl.question.post_question_text" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'video', 'questionSelector']}"></textarea></sd-redactor-wrapper>
+        </div>
+
+<!--         <div class="form-group" ng-show="!ctrl.question.hidden">
+          <label for="question_post_question_text">Skip Logic</label>
+          <sd-information>Use the button below to open the skip logic configuration for this question</sd-information>
+          <button type="button" class="btn btn-info" ng-click="ctrl.openSkipLogicEditor()">Skip Logic Editor</button>
+        </div> -->
+      </div>
+      <div class="space-bottom form-group" ng-switch="ctrl.question.question_response_type">
+        <div ng-switch-when="number">
+          <div class="form-group" ng-show="!ctrl.question.hidden">
+            <label>Units of measurement</label>
+            <sd-information>If multiple units of measurements are defined, they will show as a selectable dropdown list.</sd-information>
+            <div class="space-left space-right">
+              <div ng-show="ctrl.question.units_array.length > 1" class="half-space-bottom">
+                <label>Unit instructions</label>
+                <sd-information>Unit instruction text (e.g. "Currency")</sd-information>
+                <input ng-model="ctrl.question.unit_of_measurement" class="form-control half-width" />
+              </div>
+              <div ng-repeat="unit in ctrl.question.units_array track by $index" class="space-bottom form-inline">
+                <a ng-click="ctrl.removeUnit($index)" class="clickable"><i class="fa fa-fw fa-trash text-danger"></i></a>
+                <input class="form-control" placeholder="Enter unit text" ng-model="ctrl.question.units_array[$index]" />
+              </div>
+              <div ng-show="ctrl.question.units_array.length === 0" class="half-space-bottom">
+                <div class="text-warning">
+                  No units of measurement are defined for this question.
+                </div>
+              </div>
+              <div>
+                <a class="btn btn-primary" ng-click="ctrl.addUnit()"><i class="fa fa-fw fa-plus"></i> Add unit of measurement</a>
+              </div>
+            </div>
+          </div>
+          <div class="form-group" ng-show="!ctrl.question.hidden">
+            <label>Maximum value</label>
+            <input class="form-control half-width" ng-model="ctrl.question.max_number" />
+          </div>
+          <div class="form-group" ng-show="!ctrl.question.hidden">
+            <label>Minimum value</label>
+            <input class="form-control half-width" ng-model="ctrl.question.min_number" />
+          </div>
+          <div class="form-group" ng-show="!ctrl.question.hidden">
+            <label>Maximum # of characters</label>
+            <input class="form-control half-width" ng-model="ctrl.question.max_chars" />
+          </div>
+          <div class="form-group" ng-show="!ctrl.question.hidden">
+            <label>Minimum # of characters</label>
+            <input class="form-control half-width" ng-model="ctrl.question.min_chars" />
+          </div>
+        </div>
+        <div ng-switch-when="json">
+          <div class="form-group">
+            <div ng-repeat="p in ctrl.question.my_sql_question_params" class="space-bottom">
+              <div class="half-space-bottom">
+                <label>Parameter source</label>
+                <select ng-options="ps.value as ps.key for ps in ctrl.mysqlParamSources" disabled="disabled" ng-model="p.param_source" class="form-control half-space-bottom"></select>
+              </div>
+              <div class="half-space-bottom">
+                <label>Value</label>
+                <input ng-model="p.value" disabled="disabled" class="form-control"/>
+              </div>
+              <div>
+                <label>Parameter type</label>
+                <input ng-model="p.param_type" disabled="disabled" class="form-control"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div ng-switch-when="current_treatment">
+          <div class="form-group">
+            <label>Sub Decision</label>
+            <select ng-model="ctrl.question.sub_decision_id" ng-options="sd.id as sd.sub_decision_order for sd in ctrl.subDecisions" ng-change="ctrl.subDecisionChanged()"></select>
+          </div>
+          <div class="form-group" ng-if="ctrl.question.sub_decision_id">
+            <label>Options to include in question</label>
+            <div class="form-inline">
+              <div ng-repeat="option in ctrl.options[ctrl.question.sub_decision_id]" class="inline-block space-right clickable">
+                <label for="{{option.title + String(option.id)}}" class="clickable">{{option.title}}</label>
+                <input id="{{option.title + String(option.id)}}" ng-model="option.selected" type="checkbox" class="clickable" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div ng-switch-when="lookup_table" ng-show="ctrl.radioQuestions">
+
+          <label>Dimensions</label>
+          <sd-information>Define the dimensions for your lookup table based on existing questions.</sd-information>
+          <div ng-repeat="question_id in ctrl.question.lookup_table_dimensions">
+            <div class="form-group">
+              <label>Dimension {{$index}}</label>
+              <select ng-options="q.id as (q.question_text | html_stripped | ellipsify:47 | limitTo:50) for q in (ctrl.radioQuestions | filteredQuestions:ctrl.question.lookup_table_dimensions:question_id)" ng-model="ctrl.question.lookup_table_dimensions[$index]" ng-change="ctrl.changedLookupValAtIndex($index)">
+                <option value=""></option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Dimension {{ctrl.question.lookup_table_dimensions.length}}</label>
+            <select ng-options="q.id as (q.question_text | html_stripped | ellipsify:47 | limitTo:50) for q in (ctrl.radioQuestions | filteredQuestions:ctrl.question.lookup_table_dimensions:question_id)" ng-model="ctrl.question.lookup_table_dimensions[ctrl.question.lookup_table_dimensions.length]" ng-change="ctrl.changedLookupValAtIndex(ctrl.question.lookup_table_dimensions.length)">
+              <option value=""></option>
+            </select>
+          </div>
+
+          <div class="form-group" ng-if="ctrl.question.lookup_table_dimensions.length > 0">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th ng-repeat="dim in ctrl.perms[0]">
+                    <div compile="((ctrl.radioQuestionHash[dim.question_id].question_text | html_stripped | limitTo:25) + ((ctrl.radioQuestionHash[dim.question_id].question_text | html_stripped).length > 25 ? '...' : ''))"></div>
+                  </th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="perm in ctrl.perms">
+                  <td ng-repeat="dim in perm">
+                    <strong>{{dim.question_response_value}}</strong></td>
+                  </td>
+                  <td>
+                    <input class="form-control" ng-model="ctrl.tempLookupTable[ctrl._.pluck(perm, 'id')]"/>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div ng-switch-when="slider">
+          <div>
+            <div class="form-group" ng-show="!ctrl.question.hidden" ng-if="ctrl.question.question_response_style === 'vertical_slider'">
+              <label for="question_side_text">Side Content</label>
+              <sd-information>This text appears to the left of the slider.</sd-information>
+              <sd-redactor-wrapper sa-decision-aid-id="{{ctrl.decisionAidId}}" sa-include-question-selector sa-question-types="quiz,demographic"><textarea required name="question_side_text" class="form-control" id="question_side_text" placeholder="Side Text" ng-model="ctrl.question.side_text" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'video', 'questionSelector']}"></textarea></sd-redactor-wrapper>
+            </div>
+            <div class="form-group">
+              <label>Left slider label</label>
+              <input class="form-control half-width" ng-model="ctrl.question.slider_left_label" />
+            </div>
+            <div class="form-group">
+              <label>Midpoint slider label</label>
+              <input class="form-control half-width" ng-model="ctrl.question.slider_midpoint_label" />
+            </div>
+            <div class="form-group">
+              <label>Right slider label</label>
+              <input class="form-control half-width" ng-model="ctrl.question.slider_right_label" />
+            </div>
+            <div class="form-group">
+              <label>Min value</label>
+              <sd-information>This is the minimum value of the slider (must be >= 0)</sd-information>
+              <input class="form-control half-width" ng-model="ctrl.question.min_number" type="number" />
+            </div>
+            <div class="form-group">
+              <label>Max value</label>
+              <sd-information>This is the maximum value of the slider (must be > minimum value)</sd-information>
+              <input class="form-control half-width" ng-model="ctrl.question.max_number" type="number" />
+            </div>
+            <div class="form-group">
+              <label>Step size</label>
+              <sd-information>This is an integer that represents how big the "steps" in the slider will be.</sd-information>
+              <input class="form-control half-width" ng-model="ctrl.question.slider_granularity" type="number" />
+            </div>
+            <div class="form-group">
+              <label>Start position</label>
+              <sd-information>This is where the slider will start. It must be a value between the minimum and maximum values</sd-information>
+              <input class="form-control half-width" ng-model="ctrl.question.min_chars" type="number" />
+            </div>
+          </div>
+        </div>
+        <div ng-switch-when="ranking">
+          <div>
+            <h4>Question Responses</h4>
+            <ul sv-root sv-part="ctrl.question.question_responses" class="admin-question-response-list">
+              <li sv-element ng-repeat="qr in ctrl.question.question_responses" class="half-space-bottom">
+                <div class="question-response-wrapper">
+                  <div>
+                    <div class="clearfix">
+                      <div sv-handle class="question-response-drag-icon pull-right"><i class="fa fa-lg fa-arrows drag-arrows movable"></i></div>
+                      <a ng-click="ctrl.markQuestionResponseForDestruction(qr)" class="clickable pull-left text-danger"><i class="fa fa-lg fa-trash"></i></a>
+                    </div>
+                    <div class="row">
+                      <div class="form-group half-space-top col-sm-6">
+                        <label for="question_response_question_response_value" class="half-space-right">Response</label>
+                        <!-- <sd-information ng-show="$index === 0">The text for the question response.</sd-information> -->
+                        <input type="text" class="form-control" ng-model="qr.question_response_value" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <div class="space-top">
+              <a class="clickable" ng-click="ctrl.addNewQuestionResponse()"><i class="fa fa-fw fa-plus"></i> New Question Response</a>
+            </div>
+          </div>
+        </div>
+        <div ng-switch-when="sum_to_n">
+          <div class="form-group">
+            <label>Allocatable sum</label>
+            <input class="form-control half-width" ng-model="ctrl.question.max_number" />
+          </div>
+          <div>
+            <h4>Question Responses</h4>
+            <ul sv-root sv-part="ctrl.question.question_responses" class="admin-question-response-list">
+              <li sv-element ng-repeat="qr in ctrl.question.question_responses" class="half-space-bottom">
+                <div class="question-response-wrapper">
+                  <div>
+                    <div class="clearfix">
+                      <div sv-handle class="question-response-drag-icon pull-right"><i class="fa fa-lg fa-arrows drag-arrows movable"></i></div>
+                      <a ng-click="ctrl.markQuestionResponseForDestruction(qr)" class="clickable pull-left text-danger"><i class="fa fa-lg fa-trash"></i></a>
+                    </div>
+                    <div class="row">
+                      <div class="form-group half-space-top col-sm-6">
+                        <label for="question_response_question_response_value" class="half-space-right">Response</label>
+                        <!-- <sd-information ng-show="$index === 0">The text for the question response.</sd-information> -->
+                        <input type="text" class="form-control" ng-model="qr.question_response_value" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <div class="space-top">
+              <a class="clickable" ng-click="ctrl.addNewQuestionResponse()"><i class="fa fa-fw fa-plus"></i> New Question Response</a>
+            </div>
+          </div>
+        </div>
+        <div ng-switch-when="radio">
+          <div class="form-group">
+            <div><label><span>Randomize response order</span></label></div>
+            <sd-information>Select yes to randomize the order of responses for users.</sd-information>
+            <label class="clickable half-space-right" name="question-randomize-order-yes">Yes <input id="question-randomize-order-yes" class="clickable" type="radio" ng-model="ctrl.question.randomized_response_order" ng-value="true"></label>
+            <label class="clickable" name="question-randomize-order-no">No <input id="question-randomize-order-no" class="clickable" type="radio" ng-model="ctrl.question.randomized_response_order" ng-value="false"></label>
+          </div>
+          <div>
+            <h4>Question Responses</h4>
+            <ul sv-root sv-part="ctrl.question.question_responses" class="admin-question-response-list">
+              <li sv-element ng-repeat="qr in ctrl.question.question_responses" class="half-space-bottom">
+                <div class="question-response-wrapper">
+                  <div>
+                    <div class="clearfix">
+                      <div sv-handle class="question-response-drag-icon pull-right"><i class="fa fa-lg fa-arrows drag-arrows movable"></i></div>
+                      <a ng-click="ctrl.markQuestionResponseForDestruction(qr)" class="clickable pull-left text-danger"><i class="fa fa-lg fa-trash"></i></a>
+                    </div>
+                    <div class="row">
+                      <div class="form-group half-space-top col-sm-6">
+                        <label for="question_response_question_response_value" class="half-space-right">Response</label>
+                        <!-- <sd-information ng-show="$index === 0">The text for the question response.</sd-information> -->
+                        <input type="text" class="form-control" ng-model="qr.question_response_value" />
+                      </div>
+                      <div class="form-group half-space-top col-sm-6">
+                        <label for="question_response_numeric_value" class="half-space-right">Numeric Value</label>
+                        <!-- <sd-information ng-show="$index === 0">The question response's numeric value.</sd-information> -->
+                        <input type="number" step="any" class="form-control" ng-model="qr.numeric_value" />
+                      </div>
+                    </div>
+                    <div class="form-inline half-space-top" ng-if="!ctrl.question.hidden">
+                      <div class="checkbox-inline no-pad">
+                        <label class="half-space-right clickable">Use text response&nbsp;
+                          <input class="clickable" type="checkbox" ng-model="qr.is_text_response" />
+                        </label>
+                      </div>
+                      <!-- <sd-information ng-show="$index === 0">Ticking this box allows you to show a popup when this response is selected.</sd-information> -->
+                    </div>
+                    <div class="form-inline half-space-top" ng-if="!ctrl.question.hidden">
+                      <div class="checkbox-inline no-pad">
+                        <label class="half-space-right clickable">Include Response Popup?&nbsp;
+                          <input class="clickable" type="checkbox" ng-model="qr.include_popup_information" />
+                        </label>
+                      </div>
+                      <!-- <sd-information ng-show="$index === 0">Ticking this box allows you to show a popup when this response is selected.</sd-information> -->
+                    </div>
+                    <div class="form-group half-space-top" ng-if="qr.include_popup_information">
+                      <label for="question_response_popup_information">Question Response Popup Information</label>
+                      <!-- <sd-information ng-show="$index === 0">This information will appear when this response is selected.</sd-information> -->
+                      <sd-redactor-wrapper sa-include-question-selector sa-question-types="quiz,demographic" sa-decision-aid-id="{{ctrl.decisionAidId}}"><textarea required name="question_response_popup_information" class="form-control" id="question_response_popup_information" placeholder="Question Response Popup Information" ng-model="qr.popup_information" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'video', 'questionSelector']}"></textarea></sd-redactor-wrapper>
+                    </div>
+                    <div class="form-inline half-space-top" ng-if="!ctrl.question.hidden">
+                      <div class="checkbox-inline no-pad">
+                        <label class="half-space-right clickable">Activate Skip Logic?&nbsp;
+                          <input class="clickable" type="checkbox" ng-model="qr.has_skip_logic" ng-change="ctrl.skipLogicActivatedForQuestionResponse(qr)" />
+                        </label>
+                      </div>
+                      <!-- <sd-information ng-show="$index === 0">Ticking this box activates skip logic for this question response.</sd-information> -->
+                    </div>
+                    <div ng-if="ctrl.question.remote_data_source && ctrl.question.remote_data_source_type === 'redcap'" class="form-group space-right half-space-top">
+                      <label class="half-space-right">REDCap Response Value</label>
+                      <!-- <sd-information ng-show="$index === 0">This is the variable name of the corresponding REDCap question.</sd-information> -->
+                      <input class="form-control question-response-field" ng-model="qr.redcap_response_value" />
+                    </div>
+                  </div>
+                  <div class="form-group half-space-top" ng-if="qr.has_skip_logic && qr.skip_logic_targets.length === 1">
+                    <label for="question_response_popup_information">Skip logic type</label>
+                    <!-- <sd-information ng-show="$index === 0">There are various ways to use skip logic. Choose your skip logic type using this dropdown.</sd-information> -->
+                    <select required name="question_response_skip_logic_type" class="form-control select-field" ng-model="qr.skip_logic_targets[0].target_entity" ng-options="qt.value as qt.key for qt in ctrl.questionResponseSkips" ng-change="ctrl.responseSkipLogicTargetChanged(qr)"></select>
+                  </div>
+                  <div ng-switch="qr.skip_logic_targets[0].target_entity">
+                    <div ng-switch-when="question_page">
+                      <div class="form-inline">
+                        <label>Question Page</label>
+                        <select required name="question_page_entity" class="form-control select-field" ng-model="qr.skip_logic_targets[0].skip_question_page_id" ng-options="qp.id as qp.name for qp in ctrl.questionPages"></select>
+                        <!-- <input disabled="disabled" class="form-control" value="{{qr.skip_logic_targets[0].skip_question_id ? 'question id=' + qr.skip_logic_targets[0].skip_question_id : ''}}" />
+                        <button type="button" class="btn btn-default" ng-click="ctrl.openQuestionPicker(qr)">Select Question</button> -->
+                        <!-- <sd-information ng-show="$index === 0">This is the question to skip to if this response is selected.</sd-information> -->
+                      </div>
+                    </div>
+                    <div ng-switch-when="external_page">
+                      <div>
+                        <label>External Page Url</label>
+                        <!-- <sd-information ng-show="$index === 0">This is the url for the page to skip to.</sd-information> -->
+                        <input class="form-control" ng-model="qr.skip_logic_targets[0].skip_page_url" />
+                      </div>
+                    </div>
+                    <div ng-switch-when="other_section">
+                      <div>
+                        <label>Section target</label>
+                        <select class="form-control select-field" ng-model="qr.skip_logic_targets[0].skip_page_url" ng-options="st.value as st.key for st in ctrl.skipSectionTargets"></select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <div class="space-top">
+              <a class="clickable" ng-click="ctrl.addNewQuestionResponse()"><i class="fa fa-fw fa-plus"></i> New Question Response</a>
+            </div>
+          </div>
+        </div>
+        <div ng-switch-when="yes_no">
+          <div>
+            <label>Question Responses</label>
+            <ul class="admin-question-response-list">
+              <li ng-repeat="qr in ctrl.question.question_responses" class="half-space-bottom">
+                <div class="question-response-wrapper">
+                  <div>
+                    <div class="row">
+                      <div class="form-group col-sm-6">
+                        <label for="question_response_question_response_value" class="half-space-right">Response</label>
+                        <!-- <sd-information ng-show="$index === 0">The text for the question response.</sd-information> -->
+                        <input type="text" disabled="disabled" class="form-control question-response-field" ng-model="qr.question_response_value" />
+                      </div>
+                      <div class="form-group col-sm-6">
+                        <label for="question_response_numeric_value" class="half-space-right">Numeric Value</label>
+                        <!-- <sd-information ng-show="$index === 0">The question response's numeric value.</sd-information> -->
+                        <input type="number" step="any" class="form-control question-response-field" ng-model="qr.numeric_value" />
+                      </div>
+                    </div>
+                    <div class="form-group half-space-top" ng-if="!ctrl.question.hidden">
+                      <label class="half-space-right clickable">Include response popup?
+                        <input class="clickable" type="checkbox" ng-model="qr.include_popup_information" />
+                      </label>
+                      <!-- <sd-information ng-show="$index === 0">Ticking this box allows you to show a popup when this response is selected.</sd-information> -->
+                    </div>
+                    <div class="form-group half-space-top" ng-if="qr.include_popup_information">
+                      <label for="question_response_popup_information">Question response popup information</label>
+                      <!-- <sd-information ng-show="$index === 0">This information will appear when this response is selected.</sd-information> -->
+                      <sd-redactor-wrapper sa-include-question-selector sa-question-types="quiz,demographic" sa-decision-aid-id="{{ctrl.decisionAidId}}"><textarea required name="question_response_popup_information" class="form-control" id="question_response_popup_information" placeholder="Question Response Popup Information" ng-model="qr.popup_information" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'video', 'questionSelector']}"></textarea></sd-redactor-wrapper>
+                    </div>
+                    <div class="form-group half-space-top" ng-if="!ctrl.question.hidden">
+                      <label class="half-space-right clickable">Activate skip logic?
+                        <input class="clickable" type="checkbox" ng-model="qr.has_skip_logic" ng-change="ctrl.skipLogicActivatedForQuestionResponse(qr)" />
+                      </label>
+                      <!-- <sd-information ng-show="$index === 0">Ticking this box activates skip logic for this question response.</sd-information> -->
+                    </div>
+                  </div>
+                  <div ng-if="ctrl.question.remote_data_source && ctrl.question.remote_data_source_type === 'redcap'" class="form-group space-right half-space-top">
+                    <label class="half-space-right">REDCap Response Value</label>
+                    <!-- <sd-information ng-show="$index === 0">This is the variable name of the corresponding REDCap question.</sd-information> -->
+                    <input class="form-control question-response-field" ng-model="qr.redcap_response_value" />
+                  </div>
+                  <div class="form-group half-space-top" ng-if="qr.has_skip_logic">
+                    <label for="question_response_popup_information">Skip logic type</label>
+                    <!-- <sd-information ng-show="$index === 0">There are various ways to use skip logic. Choose your skip logic type using this dropdown.</sd-information> -->
+                    <select required name="question_response_skip_logic_type" class="form-control select-field" ng-model="qr.skip_logic_targets[0].target_entity" ng-options="qt.value as qt.key for qt in ctrl.questionResponseSkips" ng-change="ctrl.responseSkipLogicTargetChanged(qr)"></select>
+                  </div>
+                  <div ng-switch="qr.skip_logic_targets[0].target_entity">
+                    <div ng-switch-when="question_page">
+                      <div class="form-inline">
+                        <label>Question Page</label>
+                        <select required name="question_page_entity" class="form-control select-field" ng-model="qr.skip_logic_targets[0].skip_question_page_id" ng-options="qp.id as qp.name for qp in ctrl.questionPages"></select>
+                        <!-- <input disabled="disabled" class="form-control" value="{{qr.skip_question_id ? 'question id=' + qr.skip_question_id : ''}}" />
+                        <button type="button" class="btn btn-default" ng-click="ctrl.openQuestionPicker(qr)">Select Question</button> -->
+                        <!-- <sd-information ng-show="$index === 0">This is the question to skip to if this response is selected.</sd-information> -->
+                      </div>
+                    </div>
+                    <div ng-switch-when="external_page">
+                      <div>
+                        <label>External Page Url</label>
+                        <!-- <sd-information ng-show="$index === 0">This is the url for the page to skip to.</sd-information> -->
+                        <input clas="form-control" ng-model="qr.skip_logic_targets[0].skip_page_url" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div ng-switch-when="grid">
+          <div ng-if="ctrl.question.special_flag !== 'normal'">
+            <div class="text-center text-warning">
+              <p>This is a customized question that cannot be further altered</p>
+            </div>
+          </div>
+          <div ng-if="ctrl.question.special_flag === 'normal'">
+            <div class="space-bottom">
+              <div class="form-group">
+                <label>Grid response type <i class="fa fa-lg fa-question-circle dcida-info-icon" uib-tooltip="You can choose between 'radio' and 'yes/no' question response types in a grid question. Once you have saved your grid question, this attribute cannot be changed." tooltip-placement="right" tooltip-append-to-body></i></label>
+                <select ng-disabled="ctrl.question.id" class="form-control select-field" ng-model="ctrl.gridQrt" ng-options="qrt.value as qrt.key for qrt in ctrl.gridQrts" ng-change="ctrl.gridQrtChanged()"></select>
+              </div>
+
+              <div class="form-group" ng-show="ctrl.gridQrt === 'yes_no'">
+                <label>Minimum 'Yes' responses</label>
+                <sd-information>For yes/no grid questions, you can specify the minimum number of 'Yes' selections that are required. Leave unset or set to 0 for no minimum value.</sd-information>
+                <input ng-model="ctrl.question.min_number" class="form-control" type="number" min="0" max="{{ctrl.question.grid_questions.length}}" />
+              </div>
+
+              <label>Grid Questions</label>
+              <ul sv-root sv-part="ctrl.question.grid_questions" class="admin-question-response-list">
+                <li sv-element ng-repeat="q in ctrl.question.grid_questions" class="space-top space-bo">
+                  <div class="question-response-wrapper">
+                    <div class="clearfix half-space-bottom">
+                      <div sv-handle class="question-response-drag-icon inline-block"><i class="fa fa-lg fa-arrows drag-arrows movable"></i></div>
+                      <a ng-click="ctrl.deleteGridQuestion(q)" class="clickable space-right text-danger"><i class="fa fa-lg fa-trash"></i></a>
+                    </div>
+                    <div class="form-group space-right full-width">
+                      <label class="half-space-right">Question Label</label>
+                      <input type="text" class="form-control" ng-model="q.question_text" />
+                    </div>
+                    <div class="form-group space-right full-width">
+                      <label class="half-space-right">Post question Label</label>
+                      <input type="text" class="form-control" ng-model="q.post_question_text" />
+                    </div>
+                    <div class="form-group space-right full-width">
+                      <label class="half-space-right">Backend Identifier</label>
+                      <input type="text" class="form-control" ng-model="q.backend_identifier" />
+                    </div>
+                    <div ng-show="q.question_response_type === 'yes_no'" class="clickable half-space-bottom form-inline">
+                      <div class="checkbox-inline no-pad">
+                        <label class="half-space-right clickable">Exclusive?&nbsp;
+                          <input type="checkbox" ng-model="q.is_exclusive" class="clickable" />
+                        </label>
+                      </div>
+                    </div>
+                    <!--
+                    <div ng-switch="ctrl.question.remote_data_target_type" ng-show="ctrl.question.remote_data_target">
+                      <div ng-switch-when="redcap_t">
+                        <div class="form-group">
+                          <label>REDCap Field Name</label>
+                          <sd-information>This should be the name of the target question within a REDCap survey.</sd-information>
+                          <input ng-model="q.redcap_field_name" class="form-control" />
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <button type="button" class="btn btn-default" ng-click="ctrl.testRedcapConnection(q)"><i class="fa fa-lg" ng-class="{'fa-check-circle-o text-success': q.redcapConnectionSuccess === 1, 'fa-question-circle text-warning': q.redcapConnectionSuccess === 2, 'fa-times-circle-o text-danger': q.redcapConnectionSuccess === 3, 'fa-refresh fa-spin': q.redcapConnectionSuccess === 4}"></i> Test Connection</button>
+                      </div>
+                    </div>
+                  -->
+                    <div ng-repeat="qr in (q.question_responses | filter:{_destroy: '!1'})" class="half-space-bottom">
+                      <div class="form-inline">
+                        <div class="form-group space-right">
+                          <label for="question_response_question_response_value" class="half-space-right">Response</label>
+                          <input type="text" disabled="disabled" class="form-control question-response-field" ng-model="qr.question_response_value" />
+                        </div>
+                        <div class="form-group space-right">
+                          <label for="question_response_numeric_value" class="half-space-right">Numeric Value</label>
+                          <input type="number" step="any" class="form-control question-response-field" ng-model="qr.numeric_value" />
+                        </div>
+                        <div class="form-group" ng-if="!ctrl.question.hidden">
+                          <div class="checkbox-inline no-pad">
+                            <label class="half-space-right clickable">Include response popup?&nbsp;
+                              <input class="clickable" type="checkbox" ng-model="qr.include_popup_information" />
+                            </label>
+                          </div>
+                        </div>
+                        <div ng-if="ctrl.question.remote_data_source && ctrl.question.remote_data_source_type === 'redcap'" class="form-group space-right half-space-top">
+                          <label class="half-space-right">REDCap Response Value</label>
+                          <!-- <sd-information ng-show="$index === 0">This is the variable name of the corresponding REDCap question.</sd-information> -->
+                          <input class="form-control question-response-field" ng-model="qr.redcap_response_value" />
+                        </div>
+                      </div>
+                      <div class="form-group half-space-top" ng-if="qr.include_popup_information">
+                        <label for="question_response_popup_information">Question response popup information</label>
+                        <sd-redactor-wrapper sa-include-question-selector sa-question-types="quiz,demographic" sa-decision-aid-id="{{ctrl.decisionAidId}}"><textarea required name="question_response_popup_information" class="form-control" id="question_response_popup_information" placeholder="Question Response Popup Information" ng-model="qr.popup_information" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'video', 'questionSelector']}"></textarea></sd-redactor-wrapper>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <div class="space-top">
+                <a class="clickable" ng-click="ctrl.addNewGridQuestion()"><i class="fa fa-fw fa-plus"></i> New Grid Question</a>
+              </div>
+            </div>
+            <div class="space-bottom">
+              <label>Grid Responses</label>
+              <div ng-switch="ctrl.gridQrt">
+                <div ng-switch-when="radio">
+                  <ul sv-root sv-part="ctrl.gridResponses" sv-on-sort="ctrl.gridResponseSort($item, $partFrom, $partTo, $indexFrom, $indexTo)" class="admin-question-response-list">
+                    <li sv-element ng-repeat="qr in (ctrl.gridResponses | filter:{_destroy: '!1'})" class="half-space-bottom">
+                      <div class="form-inline question-response-wrapper">
+                        <div sv-handle class="question-response-drag-icon"><i class="fa fa-lg fa-arrows drag-arrows movable"></i></div>
+                        <a ng-click="ctrl.markGridQuestionResponseForDestruction(qr)" class="clickable space-right text-danger"><i class="fa fa-lg fa-trash"></i></a>
+                        <div class="form-group space-right">
+                          <label for="question_response_question_response_value" class="half-space-right">Response</label>
+                          <input type="text" class="form-control question-response-field" ng-model="qr.question_response_value" />
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                  <div class="space-top">
+                    <a class="clickable" ng-click="ctrl.addNewGridResponse()"><i class="fa fa-fw fa-plus"></i> New Grid Response</a>
+                  </div>
+                </div>
+                <div ng-switch-when="yes_no">
+                  <ul class="admin-question-response-list">
+                    <li ng-repeat="qr in (ctrl.gridResponses | filter:{_destroy: '!1'})" class="half-space-bottom">
+                      <div class="form-inline question-response-wrapper">
+                        <div class="form-group space-right">
+                          <label for="question_response_question_response_value" class="half-space-right">Response</label>
+                          <input type="text" disabled="disabled" class="form-control question-response-field half-space-right" ng-model="qr.question_response_value" />
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <input type="submit" value="Save" class="btn btn-primary" />
+    </div>
+  </form>
+</div>

@@ -1,0 +1,74 @@
+<div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-spin fa-refresh"></i>
+</div>
+<div ng-show="!ctrl.loading">
+  <div class="space-bottom clearfix">
+    <div class="pull-right">
+      <span class="text-success flashing-success" ng-if="ctrl.saveSuccess">Saved! <i class="fa fa-lg fa-check-circle"></i></span>
+      <button class="btn btn-info" ng-disabled="!decisionAidEditForm.$dirty" ng-click="ctrl.save()">Save</button>
+    </div>
+    <h3>Data Targets</h3>
+  </div>
+  <sd-extra-info>
+    <p>You can define new external data targets on this page to connect your DCIDA data to external applications. For example, you could choose to export certain question responses to REDCap.</p>
+  </sd-extra-info>
+  <div>
+    <div class="btn-group pull-right">
+      <a class="btn btn-primary small-button" ui-sref="dataTargetNew (::{decisionAidId: ctrl.decisionAid.id})"><i class="fa fa-fw fa-plus"></i> Add Data Target</a>
+    </div>
+  </div>
+  <table class="table fixed-table-layout">
+    <thead>
+      <tr>
+        <th class="col-xs-1">
+        </th>
+        <th class="col-xs-2">
+          DCIDA Type
+        </th>
+        <th class="col-xs-3">
+          DCIDA Object
+        </th>
+        <th class="col-xs-3">
+          External Variable
+        </th>
+        <th class="col-xs-2">
+          Export To
+        </th>
+        <th class="col-xs-1"></th>
+      </tr>
+    </thead>
+    <tbody sv-root sv-part="ctrl.dataTargets" sv-on-sort="ctrl.onSort($item, $partFrom, $partTo, $indexFrom, $indexTo)" class="sortable-table">
+      <tr sv-element ng-repeat="dataTarget in ctrl.dataTargets track by dataTarget.id" >
+        <td class="col-xs-1">
+          <div class="inline-block" uib-dropdown dropdown-append-to-body>
+            <a type="button" id="dropdownMenu1" uib-dropdown-toggle aria-haspopup="true" aria-expanded="true">
+              <div class="clickable" class="inline-block"><i class="fa fa-gear"></i><span class="caret"></span></div>
+            </a>
+            <ul uib-dropdown-menu aria-labelledby="dropdownMenu1">
+              <li><a ui-sref="dataTargetEdit(::{ decisionAidId: ctrl.decisionAid.id, id: dataTarget.id })"><i class="fa fa-edit fa-fw"></i> Edit</a></li>
+              <li><a class="clickable" ng-click="ctrl.deleteDataTarget(dataTarget)"><i class="fa fa-trash fa-fw"></i> Delete</a></li>
+            </ul>
+          </div>
+        </td>
+        <td class="col-xs-2">
+          {{dataTarget.exporter_type}}
+        </td>
+        <td class="col-xs-3">
+          {{dataTarget.backend_identifier}}
+        </td>
+        <td class="col-xs-3">
+          <span ng-if="dataTarget.data_target_type === 'redcap'">{{dataTarget.redcap_field_name}}</span>
+        </td>
+        <td class="col-xs-2">
+          {{dataTarget.data_target_type | capitalize}}
+        </td>
+        <td class="col-xs-1">
+          <div sv-handle class="question-response-drag-icon"><i class="fa fa-lg fa-arrows drag-arrows movable"></i></div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="text-center text-warning space-top space-bottom" ng-show="ctrl.dataTargets.length === 0">
+    <span>There are no data targets yet. Add some using the button above!</span>
+  </div>
+</div>

@@ -1,0 +1,71 @@
+<div class="text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-spin fa-refresh"></i>
+</div>
+<div ng-if="!ctrl.loading">
+  <div class="pull-right" ng-show="!ctrl.isNewDataTarget">
+    <button ng-click="ctrl.deleteDataExportField()" class="btn btn-danger">Delete Data Target</button>
+  </div>
+  <h2>{{ctrl.title}}</h2>
+  <div sd-error-scroll sa-errors="ctrl.errors"></div>
+  <form class="space-bottom space-top" ng-submit="ctrl.saveDataExportField()">
+    <div class="form-group">
+      <label class="half-space-right">Data Target Type</label>
+      <sd-information>Choose which data target you would like to use for this question.</sd-information>
+      <select class="form-control select-field" ng-model="ctrl.dataTarget.data_target_type" ng-options="dt.value as dt.key for dt in ctrl.dataTargetTypes"></select>
+    </div>
+    <div class="form-group">
+      <label class="half-space-right">DCIDA data type</label>
+      <sd-information>Choose which data type you would like to export from DCIDA</sd-information>
+      <select class="form-control select-field" ng-model="ctrl.dataTarget.exporter_type" ng-options="dt.value as dt.key for dt in ctrl.validExporterTypes"></select>
+    </div>
+    <div ng-switch="ctrl.dataTarget.exporter_type">
+      <div ng-switch-when="Question">
+        <div class="form-group">
+          <label for="question">Selected question</label>
+          <input class="inline-block half-space-right" disabled="disabled" class="form-control half-width" ng-value="ctrl.dataTarget.exporter.backend_identifier ? ctrl.dataTarget.exporter.backend_identifier : ( ctrl.dataTarget.exporter_id ? 'Question ' + ctrl.dataTarget.exporter_id : '' )" />
+          <button class="inline-block btn btn-default" ng-click="ctrl.selectQuestion()" type="button">Select question</button>
+        </div>
+      </div>
+      <div ng-switch-when="Property">
+        <div class="form-group">
+          <label for="question">Selected property</label>
+          <select class="form-control select-field" ng-model="ctrl.dataTarget.exporter_id" ng-options="p.id as p.title for p in ctrl.properties"></select>
+        </div>
+      </div>
+      <div ng-switch-when="SummaryPage">
+        <div class="form-group">
+          <label for="question">Selected summary page</label>
+          <select class="form-control select-field" ng-model="ctrl.dataTarget.exporter_id" ng-options="p.id as p.title for p in ctrl.summaryPages"></select>
+        </div>
+      </div>
+      <div ng-switch-when="Other">
+        <div class="form-group">
+          <label for="question">Data accessor</label>
+          <input class="form-control half-width" ng-model="ctrl.dataTarget.data_accessor"></select>
+        </div>
+      </div>
+    </div>
+    <div ng-switch="ctrl.dataTarget.data_target_type">
+      <div ng-switch-when="redcap">
+        <div class="form-group">
+          <div><label>REDCap field name</label></div>
+          <input class="inline-block half-space-right form-control half-width" ng-model="ctrl.dataTarget.redcap_field_name" /> 
+        </div>
+        <div class="form-group">
+          <button type="button" class="btn btn-default" ng-click="ctrl.testRedcapConnection()"><i class="fa fa-lg" ng-class="{'fa-check-circle-o text-success': ctrl.redcapConnectionSuccess === 1, 'fa-question-circle text-warning': ctrl.redcapConnectionSuccess === 2, 'fa-times-circle-o text-danger': ctrl.redcapConnectionSuccess === 3, 'fa-refresh fa-spin': ctrl.redcapConnectionSuccess === 4}"></i> Test Connection</button>
+        </div>
+        <div ng-show="ctrl.dataTarget.exporter.question_response_type === 'radio' || ctrl.dataTarget.exporter.question_response_type === 'yes_no'">
+          <div class="space-bottom">
+            <label>REDCap response mappings</label>
+            <sd-information>Each response must map to a valid response in REDCap</sd-information>
+          </div>
+          <div ng-repeat="qr in ctrl.dataTarget.exporter.question_responses" class="form-group">
+            <div><label>{{qr.question_response_value}}</label></div>
+            <input class="inline-block half-space-right form-control half-width" ng-model="ctrl.dataTarget.redcap_response_mapping[qr.id]" /> 
+          </div>
+        </div>
+      </div>
+    </div>
+    <input type="submit" value="Save" class="btn btn-primary" />
+  </form>
+</div>

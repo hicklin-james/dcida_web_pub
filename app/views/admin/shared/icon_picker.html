@@ -1,0 +1,79 @@
+<div class="modal-header">
+  <div class="pull-right">
+    <button class="btn btn-primary" ng-click="ctrl.saveAll()">Save</button>
+    <button class="btn btn-default" ng-click="ctrl.cancelImagePicker()">Cancel</button>
+  </div>
+  <ul class="nav nav-pills">
+    <li class="clickable" role="presentation" ng-click="ctrl.setCurrentTab('select')" ng-class="{active: ctrl.currentTab === 'select'}"><a>Select Image</a></li>
+    <li class="clickable" role="presentation" ng-click="ctrl.setCurrentTab('upload')" ng-class="{active: ctrl.currentTab === 'upload'}"><a>Upload Image</a></li>
+  </ul>
+</div>
+<div class="modal-body">
+  <div ng-show="ctrl.currentTab === 'upload'">
+    <div class="text-center">
+      <div class="btn btn-default button" ngf-select ng-model="ctrl.fileToUpload" name="file" ngf-pattern="'image/*" accept="image/*">Select File</div>
+      <div class="full-width text-center space-top">
+        <div class="half-width inline-block">
+          <div class="table">
+            <div ngf-drop ng-model="ctrl.fileToUpload" class="drop-box" ngf-drag-over-class="dragover" ngf-multiple="true" ngf-pattern="'image/*,application/pdf'">
+              <span ng-show="!ctrl.inProgress" class="media-drop-text">Drop image here</span>
+              <div ng-show="ctrl.inProgress" class="half-space-top"><i class="fa fa-lg fa-refresh fa-spin"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div ng-if="ctrl.cropper.imageToCrop">
+      <div class="half-space-bottom text-center" style="width: 100%; height: 300px;">
+        <!-- <canvas width="500" height="300" id="canvas" image-cropper image="ctrl.cropper.imageToCrop" cropped-image="ctrl.cropper.imageToUpload" crop-width="200" crop-height="200" keep-aspect="true" touch-radius="30" crop-area-bounds="bounds"></canvas> -->
+        <ui-cropper image="ctrl.cropper.imageToCrop" result-image="ctrl.croppedImage" area-type="square"></ui-cropper>
+      </div>
+      <!--<span class="label label-warning">Warning</span><br><span class="text-warning warning-text">Your image will be cropped if it is not a square image.</span>-->
+      <div class="form-group">
+        <label>Image Link</label>
+        <input class="form-control" ng-model="ctrl.imageUrl" />
+      </div>
+      <button class="btn btn-primary" type="button" ng-click="ctrl.uploadImage()">Upload</button>
+    </div>
+  </div>
+  <div ng-show="ctrl.currentTab === 'select'">
+    <div class="currently-selected-wrapper" ng-if="ctrl.currentlyEditing">
+      <div class="row">
+        <div class="col-md-2">
+          <div class="half-space-bottom logo-editor-wrapper">
+            <img class="img-responsive" ng-src="{{ctrl.currentlyEditing.image}}" />
+          </div>
+        </div>
+        <div class="col-md-10">
+          <div class="form-group">
+            <label>Image Link</label>
+            <input class="form-control" ng-model="ctrl.currentlyEditing.url" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="text-center text-warning">
+      <h5>Drag images from one side to the other to add/remove.</h5>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <h3 class="text-center">Available Icons</h3>
+        <!-- <div class="icons-container" ui-sortable="ctrl.sortOptions"  ng-model="ctrl.availableImages"> -->
+        <div class="icons-container" data-drop="ctrl.checkIfDropEnabled(ctrl.availableImages)" jqyoui-droppable="{onDrop: 'ctrl.testDrop', onOver: 'ctrl.testOver', onOut: 'ctrl.testOut'}" ng-model="ctrl.availableImages" ng-class="{'dragover': ctrl.fromList === ctrl.selectedImages}">
+          <div data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable="{onStart: 'ctrl.testStart(img, ctrl.availableImages)', onStop: 'ctrl.testStop'}" class="relative-position image-picker-img-wrapper inline-block" ng-model="img" ng-repeat="img in ctrl.availableImages">
+            <img class="img-responsive selectable-image full-width clickable" ng-src="{{img.image}}" ng-click="ctrl.setCurrentlyEditing(img)"/>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <h3 class="text-center">{{ctrl.multiSelect ? 'Selected Icons' : 'Selected Icon'}}</h3>
+        <!-- <div class="icons-container" ui-sortable="ctrl.sortOptions" ng-model="ctrl.selectedImages"> -->
+        <div class="icons-container" data-drop="ctrl.checkIfDropEnabled(ctrl.selectedImages)" jqyoui-droppable="{onDrop: 'ctrl.testDrop', onOver: 'ctrl.testOver', onOut: 'ctrl.testOut'}" ng-model="ctrl.selectedImages" ng-class="{'dragover': ctrl.fromList === ctrl.availableImages}">
+          <div class="relative-position image-picker-img-wrapper inline-block" ng-repeat="img in ctrl.selectedImages" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable="{onStart: 'ctrl.testStart(img, ctrl.selectedImages)', onStop: 'ctrl.testStop'}" ng-model="img">
+            <img class="img-responsive selectable-image full-width clickable" ng-src="{{img.image}}" ng-click="ctrl.setCurrentlyEditing(img)" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

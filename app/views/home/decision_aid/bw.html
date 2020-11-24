@@ -1,0 +1,42 @@
+<div id="decision_aid_best_worst">
+  <!-- <div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+    <i class="fa fa-2x fa-spin fa-refresh"></i>
+  </div> -->
+  <div ng-show="ctrl.noDecisionAidFound">
+    <div class="alert alert-danger">No Decision was found with the url: {{ctrl.decisionAidSlug}}</div>
+  </div>
+  <div ng-if="ctrl.decisionAid && !ctrl.loading" class="space-bottom">
+    <div ng-if="!ctrl.currentQuestionSet">
+      <div compile="::ctrl.decisionAid.injected_best_worst_information_published"></div>
+    </div>
+    <div ng-if="ctrl.currentQuestionSet">
+      <div compile="::ctrl.decisionAid.injected_best_worst_specific_information_published"></div>
+      <div class="space-top space-bottom">
+        <div class="space-bottom">
+          <h4 translate="QUESTION-X-OF-N" translate-values="{x: ctrl.currentQuestionSet, n: ctrl.decisionAid.bw_question_set_count}"></h4>
+          <table class="table text-center">
+            <thead>
+              <tr class="text-center">
+                <th class="text-center">{{ctrl.decisionAid.best_wording}}</th> 
+                <th class="text-center"></th>
+                <th class="text-center">{{ctrl.decisionAid.worst_wording}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="level in ctrl.propertyLevels" ng-class="{'half-opaque': level.id === ctrl.decisionAidUserBwQuestionSetResponse.worst_property_level_id || level.id === ctrl.decisionAidUserBwQuestionSetResponse.best_property_level_id}">
+                <td ng-click="ctrl.setPropertyLevel(level, 'best')" class="clickable">
+                  <a ng-class="{'clickable': ctrl.decisionAidUserBwQuestionSetResponse.worst_property_level_id !== level.id}"><i class="text-success fa fa-2x" ng-class="{'fa-check-square-o': level.id === ctrl.decisionAidUserBwQuestionSetResponse.best_property_level_id, 'fa-square-o': level.id !== ctrl.decisionAidUserBwQuestionSetResponse.best_property_level_id}"></i></a>
+                </td>
+                <td><strong>{{::level.property_title}}</strong><span compile="::level.injected_information_published"></span></td>
+                <td ng-click="ctrl.setPropertyLevel(level, 'worst')" class="clickable">
+                  <a ng-class="{'clickable': ctrl.decisionAidUserBwQuestionSetResponse.best_property_level_id !== level.id}"><i class="text-danger fa fa-2x" ng-class="{'fa-check-square-o': level.id === ctrl.decisionAidUserBwQuestionSetResponse.worst_property_level_id, 'fa-square-o': level.id !== ctrl.decisionAidUserBwQuestionSetResponse.worst_property_level_id}"></i></a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <sd-bottom-nav sa-show-next="{{'NEXT-BUTTON' | translate}}" sa-next-submit="ctrl.submitNext()" sa-enable-next="!ctrl.currentQuestionSet || (ctrl.decisionAidUserBwQuestionSetResponse.best_property_level_id && ctrl.decisionAidUserBwQuestionSetResponse.worst_property_level_id)" sa-show-prev="{{'BACK-BUTTON' | translate}}" sa-prev-link="ctrl.prevLink()"></sd-bottom-nav>
+  </div>
+</div>

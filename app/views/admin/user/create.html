@@ -1,0 +1,47 @@
+<div class="text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-refresh fa-spin"></i>
+</div>
+<div ng-show="!ctrl.loading">
+  <div sd-error-scroll sa-errors="ctrl.errors"></div>
+  <h1>{{ctrl.title}}</h1>
+  <form class="form">
+    <div class="form-group">
+      <label for="user_first_name" input-required>First Name</label>
+      <input id="user_first_name" class="form-control" ng-model="ctrl.user.first_name"></input>
+    </div>
+
+    <div class="form-group">
+      <label for="user_last_name" input-required>Last Name</label>
+      <input id="user_last_name" class="form-control" ng-model="ctrl.user.last_name"></input>
+    </div>
+
+    <div class="form-group">
+      <label for="user_email" input-required>Email</label>
+      <input id="user_email" disabled="disabled" class="form-control" ng-model="ctrl.user.email"></input>
+    </div>
+
+    <div class="form-group">
+      <label for="user_password" input-required>Password</label>
+      <input type="password" id="user_password" class="form-control" ng-model="ctrl.user.password"></input>
+    </div>
+
+    <div class="form-group">
+      <label for="user_password_repeat" input-required>Password Confirmation</label>
+      <input type="password" id="user_password_repeat" class="form-control" ng-model="ctrl.user.password_confirmation"></input>
+    </div>
+
+    <div class="form-group">
+      <div>
+        <a href="" ng-click="ctrl.readTerms()">Click here to read the terms of service</a>
+        <sd-information>You must read the terms of service before you can accept them. You must use the "Close" button at the bottom of the terms of service popup to indicate that you have read the terms. The checkbox below will activate when you have done so.</sd-information>
+      </div>
+      <label ng-class="{'disabled': !ctrl.termsRead}" for="accept-terms" input-required>Accept terms of service?
+        <input id="accept-terms" ng-model="ctrl.user.terms_accepted" type="checkbox" ng-disabled="!ctrl.termsRead" />
+      </label>
+    </div>
+
+    <div>
+      <button ng-click="ctrl.saveUser()" class="btn btn-primary">Create</button>
+    </div>
+  </form>
+</div>

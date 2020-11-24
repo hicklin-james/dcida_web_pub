@@ -1,0 +1,40 @@
+<div class="text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-refresh fa-spin"></i>
+</div>
+<div ng-show="!ctrl.loading">
+  <div class="button-group pull-right">
+    <button ng-if="ctrl.currentUser.is_superadmin && ctrl.currentUser.id !== ctrl.user.id" class="btn btn-danger" ng-click="ctrl.deleteUser()">Delete User</button>
+  </div>
+  <h1>{{ctrl.title}}</h1>
+  <form class="form">
+    <div class="form-group">
+      <label for="user_first_name">First Name</label>
+      <input id="user_first_name" class="form-control" ng-model="ctrl.user.first_name"></input>
+    </div>
+
+    <div class="form-group">
+      <label for="user_last_name">Last Name</label>
+      <input id="user_last_name" class="form-control" ng-model="ctrl.user.last_name"></input>
+    </div>
+
+    <div ng-if="ctrl.isNewUser" class="form-group">
+      <label for="user_email">Email</label>
+      <input id="user_email" class="form-control" ng-model="ctrl.user.email"></input>
+    </div>
+
+    <div ng-if="ctrl.isNewUser" class="form-group">
+      <label for="user_password">Password</label>
+      <input type="password" id="user_password" class="form-control" ng-model="ctrl.user.password"></input>
+    </div>
+
+    <div class="form-group" ng-if="ctrl.currentUser.is_superadmin">
+      <label ng-class="{'half-opaque': ctrl.user.id === ctrl.currentUser.id, 'clickable': ctrl.user.id !== ctrl.currentUser.id}" for="user_is_superadmin">Is Superadmin?
+        <input id="user_is_superadmin" type="checkbox" class="clickable" ng-disabled="ctrl.user.id === ctrl.currentUser.id" ng-model="ctrl.user.is_superadmin"></input>
+      </label>
+    </div>
+
+    <div>
+      <button ng-click="ctrl.saveUser()" class="btn btn-primary">Save</button>
+    </div>
+  </form>
+</div>

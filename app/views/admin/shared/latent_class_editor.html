@@ -1,0 +1,50 @@
+<div class="modal-header">
+  <button ng-show="!ctrl.loading" ng-click="ctrl.addLatentClass()" class="btn btn-primary pull-right"><i class="fa fa-fw fa-plus"></i> Add Latent Class</button>
+  <h4>Latent Class Editor</h4>
+</div>
+<div class="modal-body">
+  <div ng-show="ctrl.loading" class="text-center space-top space-bottom">
+    <i class="fa fa-lg fa-refresh fa-spin"></i>
+  </div>
+  <div ng-show="!ctrl.loading">
+    <div sd-error-scroll sa-errors="ctrl.errors"></div>
+    <div ng-show="ctrl.latentClasses.length === 0" class="alert alert-warning">
+      <p class="text-center">You have not added any latent classes. Use the button above to add one.</p>
+    </div>
+    <div ng-show="ctrl.latentClasses.length > 0">
+      <sd-information>Use the inputs below to fill in the latent classes. You can always add additional latent classes using the button above.</sd-information>
+      <table class="table table-condensed table-bordered">
+        <tr>
+          <td class="col-xs-4"><h5>Attribute weights by class</h5></td>
+          <td ng-repeat="latentClass in ctrl.latentClasses | filter:{_destroy:'!true'}">
+            <h5 class="inline-block">Class {{$index + 1}}</h5>
+            <i class="fa clickable text-danger fa-trash fa-fw half-space-top" ng-click="ctrl.deleteLatentClass(latentClass)"></i>
+          </td>
+        </tr>
+        <tr ng-repeat="property in ctrl.properties">
+          <td class="middle-align">
+            {{property.title}}
+          </td>
+          <td ng-repeat="latentClass in ctrl.latentClasses | filter:{_destroy:'!true'}">
+            <input type="number" class="form-control" ng-model="latentClass.latent_class_properties[property.id].weight" />
+          </td>
+        </tr>
+        <tr>
+          <td colspan="{{1 + ctrl.latentClasses.length}}"><h5>Treatment weight by class</h5></td>
+        </tr>
+        <tr ng-repeat="option in ctrl.options">
+          <td class="middle-align">
+            {{option.title}}
+          </td>
+          <td ng-repeat="latentClass in ctrl.latentClasses | filter:{_destroy:'!true'}">
+            <input type="number" class="form-control" ng-model="latentClass.latent_class_options[option.id].weight" />
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button ng-click="ctrl.cancel()" class="btn btn-default pull-left">Cancel</button>
+  <button ng-click="ctrl.saveAndClose()" class="btn btn-primary pull-right">Save and close</button>
+</div>

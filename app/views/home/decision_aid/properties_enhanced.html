@@ -1,0 +1,87 @@
+<div id="decision_aid_properties">
+  <!-- <div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+    <i class="fa fa-2x fa-spin fa-refresh"></i>
+  </div> -->
+  <div ng-show="ctrl.noDecisionAidFound">
+    <div class="alert alert-danger">No Decision was found with the url: {{ctrl.decisionAidSlug}}</div>
+  </div>
+  <div ng-if="!ctrl.loading && ctrl.decisionAid">
+    <div ng-show="ctrl.decisionAid" class="pageheader">
+      <div class="space-bottom" compile="::ctrl.decisionAid.injected_properties_information_published"></div>
+    </div>
+    <div>
+      <div class="space-bottom space-top">
+        <div class="row">
+          <div class="col-md-7">
+            <div class="row space-bottom" ng-repeat="property in ctrl.properties" id="property_{{$index + 1}}" >
+              <div class="col-md-12">
+                <div style="font-size: 20px; font-weight: 200; line-height: 1.21;" class="space-bottom">
+                  <i class="fa fa-fw fa-question-circle clickable" style="color: #1abc9c;" sd-confirm sa-header="{{::property.title}}" sa-message="{{::property.injected_selection_about_published}}"></i>
+                  <strong>{{::property.title}}</strong>
+                </div>
+                <!-- Slider -->
+                <div class="row space-bottom">
+                  <div class="col-md-6">
+                    <div>
+                      <div ui-slider="{min: 0, max: 100, range: 'min'}" step="{{ctrl.step}}" segment ng-change="ctrl.valChanged(property)" ng-model="property.weight" class="specialslider" ng-style="{}">
+                        <div class="ui-slider-segment" style="margin-left: 10%;"></div>
+                        <div class="ui-slider-segment" style="margin-left: 10%;"></div>
+                        <div class="ui-slider-segment" style="margin-left: 10%;"></div>
+                        <div class="ui-slider-segment" style="margin-left: 10%;"></div>
+                        <div class="ui-slider-segment" style="margin-left: 10%;"></div>
+                        <div class="ui-slider-segment" style="margin-left: 10%;"></div>
+                        <div class="ui-slider-segment" style="margin-left: 10%;"></div>
+                        <div class="ui-slider-segment" style="margin-left: 10%;"></div>
+                        <div class="ui-slider-segment" style="margin-left: 10%;"></div>
+                      </div>
+                      <div class="clearfix">
+                        <div class="pull-left" style="font-size: 14px;">
+                          &lt;&lt;Not Important
+                        </div>
+                        <div class="pull-right" style="font-size: 14px;">
+                          Very important&gt;&gt;
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="pull-right clearfix">
+                      <button type="button" class="videobutton" sd-confirm sa-header="{{::property.title}}" sa-message="{{::property.injected_long_about_published}}">Play Video</button>
+                  </div>
+                </div>
+              </div>
+              <div class="row space-bottom">
+                <div ng-repeat="op in ctrl.groupedOptionProperties[property.id]" class="col-md-12">
+                  <div>
+                    {{op.button_label}}
+                  </div>
+                  <div>
+                    <button class="btn btn-primary property-button" ng-class="{'active': ctrl.dauopsHash[op.property_id][op.option_id].value === 1}" ng-click="ctrl.setOptionPropertyValue(ctrl.dauopsHash[op.property_id][op.option_id], 1, op)">Bad</button>
+                    <button class="btn btn-primary property-button" ng-class="{'active': ctrl.dauopsHash[op.property_id][op.option_id].value === 3}" ng-click="ctrl.setOptionPropertyValue(ctrl.dauopsHash[op.property_id][op.option_id], 3, op)">Neutral</button>
+                    <button class="btn btn-primary property-button" ng-class="{'active': ctrl.dauopsHash[op.property_id][op.option_id].value === 5}" ng-click="ctrl.setOptionPropertyValue(ctrl.dauopsHash[op.property_id][op.option_id], 5, op)">Good</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div ng-switch="ctrl.decisionAid.chart_type" class="text-center">
+            <div ng-switch-when="pie">
+              <div sd-pie-chart sa-chart-items="ctrl.orderedProperties" style="margin: auto;"></div>
+            </div>
+            <div ng-switch-when="bar">
+              <div sd-bar-chart sa-chart-items="ctrl.orderedProperties" style="margin: auto;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div ng-show="ctrl.checkPropertiesLength() >= ctrl.decisionAid.minimum_property_count">
+        <sd-bottom-nav sa-show-next="{{'NEXT-BUTTON' | translate}}" sa-next-submit="ctrl.submitNext()" sa-show-prev="{{'BACK-BUTTON' | translate}}" sa-prev-link="ctrl.prevLink()"></sd-bottom-nav>
+      </div>
+      <div ng-show="ctrl.checkPropertiesLength() < ctrl.decisionAid.minimum_property_count">
+        <sd-bottom-nav sa-show-prev="{{'BACK-BUTTON' | translate}}" sa-prev-link="ctrl.prevLink()"></sd-bottom-nav>
+      </div>
+    </div>
+  </div>
+</div>

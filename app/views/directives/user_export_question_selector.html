@@ -1,0 +1,21 @@
+<div>
+  <div class="clearfix">
+    <div class="space-bottom">
+      <div><i class="fa fa-lg fa-fw clickable" ng-click="selectAll()" ng-class="{'fa-check-circle-o': all, 'fa-circle-o': !all}"></i> All</div>
+      <div><i class="fa fa-lg fa-fw clickable" ng-click="selectNone()" ng-class="{'fa-check-circle-o': none, 'fa-circle-o': !none}"></i> None</div>
+    </div>
+    <table class="table">
+      <tr ng-repeat="q in questions">
+        <td class="col-xs-1 middle-align text-center">
+          <sd-fa-checkbox ng-model="q.checked"></sd-fa-checkbox>
+        </td>
+        <td class="col-xs-11">
+          <div compile="q.question_text"></div>
+        </td>
+      </tr>
+      <tr ng-if="questions.length === 0">
+        <td class="text-center text-warning">No items exist.</td>
+      </tr>
+    </table>
+  </div>
+</div>

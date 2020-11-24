@@ -1,0 +1,293 @@
+.results-table {
+
+  table-layout: fixed;
+  word-wrap: break-word;
+
+  .no-border {
+    border: none;
+  }
+
+  tr.best-match-row th {
+    border-bottom: none;
+    vertical-align: bottom !important;
+    padding-bottom: 0;
+  }
+
+  .arrow-inactive {
+    opacity: 0.5;
+  }
+
+  .arrow-active {
+    opacity: 1;
+  }
+
+  .property-title-box {
+    width: 80%;
+    vertical-align: middle;
+  }
+
+  .property-more-info-box {
+    width: 20%;
+    vertical-align: middle;
+    text-align: right
+  }
+
+  border: 1px solid white;
+
+  .results-option-image-cell {
+    text-align: center;
+    border-left: 1px solid white;
+    border-top: 1px solid white;
+    border-right: 1px solid white;
+    border-bottom-width: 1px;
+
+    .results-option-image-cell-div {
+      /** min-width: 200px; **/
+      max-width: 280px;
+      margin: auto;
+    
+      .results-option-image {
+        max-height: 200px;
+        display: inline-block;
+      }
+    }
+  }
+
+  .option-property-info {
+    /** max-width: 280px; **/
+    /** margin: 10px; **/
+    height: 100%;
+    /** display: block; **/
+    width: 100%;
+  }
+
+  td.selected, td.selected .option-property-info.table {
+    background: #D8DDF0;
+  }
+
+  .property-label {
+    /** min-width: 150px; **/
+  }
+}
+
+.more-info-option-image {
+  max-width: 100px;
+}
+
+.importance-info {
+  font-size: 7pt;
+  font-weight: bold;
+}
+
+.transformable {
+  -webkit-transition: height 400ms linear;
+  -moz-transition: height 400ms linear;
+  -o-transition: height 400ms linear;
+  -ms-transition: height 400ms linear;
+  transition: height 400ms linear;
+}
+
+.best-match-div {
+  height: 40px;
+  width: 100%;
+  background-color: #74D893;
+  display: table;
+  margin-bottom: 4px;
+}
+
+.inner-best-match-div {
+  display: table-cell; 
+  vertical-align: middle;
+  color: white;
+}
+
+.doctor-match-div {
+  height: 40px;
+  width: 100%;
+  background-color: #5BB1B1;
+  display: table;
+  margin-bottom: 4px;
+}
+
+.inner-doctor-match-div {
+  display: table-cell; 
+  vertical-align: middle;
+  color: white;
+}
+
+.text-grey {
+  color: grey;
+}
+
+.text-lightgrey {
+  color: lightgrey;
+}
+
+.text-black {
+  color: black;
+}
+
+.text-white {
+  color: white;
+}
+
+.full-size-cover {
+  position: absolute; 
+  left: 0; 
+  top: 0; 
+  width: 100%; 
+  height: 100%;
+}
+
+.table-arrow {
+  width: 45px;
+}
+
+.standard-enhanced {
+
+  .actual-option-title {
+    background-color: #1B9BFF;
+    border-left: 1px solid #1B9BFF;
+    border-top: 1px solid #1B9BFF;
+    border-right: 1px solid #1B9BFF;
+
+    .matched-rank-text {
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 0;
+    }
+
+    .option-title-text {
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .option-subtitle {
+      color: white;
+      font-size: 16px; 
+      line-height: 16px;
+      font-weight: 300;
+    }
+  }
+
+  &.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #E2E2E2;
+  }
+
+  .property-label {
+    min-width: auto;
+    text-align: right;
+  }
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: #E2E2E2;
+}
+
+.more-info-option-image {
+  max-width: 100px;
+}
+
+.importance-info {
+  font-size: 7pt;
+  font-weight: bold;
+}
+
+.transformable {
+  -webkit-transition: height 400ms linear;
+  -moz-transition: height 400ms linear;
+  -o-transition: height 400ms linear;
+  -ms-transition: height 400ms linear;
+  transition: height 400ms linear;
+}
+
+.best-match-div {
+  height: 40px;
+  width: 100%;
+  background-color: #74D893;
+  display: table;
+  margin-bottom: 4px;
+}
+
+.inner-best-match-div {
+  display: table-cell; 
+  vertical-align: middle;
+  color: white;
+}
+
+.doctor-match-div {
+  height: 40px;
+  width: 100%;
+  background-color: #5BB1B1;
+  display: table;
+  margin-bottom: 4px;
+}
+
+.inner-doctor-match-div {
+  display: table-cell; 
+  vertical-align: middle;
+  color: white;
+}
+
+.text-grey {
+  color: grey;
+}
+
+.text-lightgrey {
+  color: lightgrey;
+}
+
+.text-black {
+  color: black;
+}
+
+.text-white {
+  color: white;
+}
+
+.full-size-cover {
+  position: absolute; 
+  left: 0; 
+  top: 0; 
+  width: 100%; 
+  height: 100%;
+}
+
+.table-arrow {
+  width: 45px;
+}
+
+.prop-group-header {
+  background-color: #1B9BFF !important;
+  color: white !important;
+}
+
+.results-table .prop-group-header .property-label {
+  text-align: left;
+  min-height: 25px;
+}
+
+.mobile-option-rankings-results {
+  margin: 0 25px;
+  text-align: left;
+
+  .mobile-carousel-item {
+    margin: 20px;
+
+    .property-title {
+      line-height: 1.1;
+      padding: 10px;
+      background: #1B9BFF;
+      color: white;
+    }
+
+    .option-title {
+      line-height: 1.1;
+      padding: 10px;
+      background: #48c9b0;
+      color: white;
+    }
+  }
+}

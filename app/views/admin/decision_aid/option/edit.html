@@ -1,0 +1,136 @@
+<script type="text/ng-template" id="option_edit_node">
+  <div>
+    <div class="form-group">
+      <label for="option_label">Label</label>
+      <sd-information>The label for your option.</sd-information>
+      <input class="form-control" id="option_label" placeholder="Label" ng-model="ctrl.currentlyEditing.label" />
+    </div>
+    <div class="form-group">
+      <label for="option_description">Description</label>
+      <sd-information>The description for your option.</sd-information>
+      <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAidId}}"><textarea class="form-control" id="option_description" placeholder="Description" ng-model="ctrl.currentlyEditing.description" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'questionSelector', 'video']}"></textarea></sd-redactor-wrapper>
+    </div>
+    <!-- <div class="form-group">
+      <label for="option_summary_text">Summary Text</label>
+      <sd-information>The long about of the property.</sd-information>
+      <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAidId}}"><textarea class="form-control" id="option_summary_text" placeholder="Summary Text" ng-model="ctrl.currentlyEditing.summary_text" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'questionSelector', 'video']}"></textarea></sd-redactor-wrapper>
+    </div> -->
+    <div class="form-group">
+      <label for="media_file_id">Option Image</label>
+      <button type="button" class="btn btn-default" ng-click="ctrl.openImagePicker()">Select Image</button>
+      <div class="half-space-top" ng-show="ctrl.currentlyEditing.image">
+        <img ng-src="{{ctrl.currentlyEditing.image_thumb}}" />
+        <div class="half-space-left inline-block clickable" ng-click="ctrl.removeImage()" ng-show="ctrl.currentlyEditing.image_thumb"><i class="fa fa-lg fa-times text-danger"></i></div>
+      </div>
+    </div>
+
+    <h4>Question responses</h4>
+    <sd-information>Choose the question responses that will show this option. If a user answers a question using a response that is not checked here, this option will not show up as an available option for that user. This includes all hidden questions.</sd-information>
+    <table class="table fixed-table-layout">
+      <thead>
+        <tr>
+          <th>Question</th>
+          <th>
+            <div>
+              <span>Responses</span>
+              <div style="font-weight: normal;">
+                <div><span class="clickable" ng-click="ctrl.selectAllQuestionResponses()"><i class="fa fa-lg" ng-class="{'fa-check-circle-o text-success': ctrl.allQuestionsSelected(), 'fa-circle-o': !ctrl.allQuestionsSelected()}"></i> All</span></div>
+                <div><span class="clickable" ng-click="ctrl.selectNoQuestionResponses()"><i class="fa fa-lg" ng-class="{'fa-check-circle-o text-success': ctrl.noQuestionsSelected(), 'fa-circle-o': !ctrl.noQuestionsSelected()}"></i> None</span></div>
+              </div>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="question in (ctrl.currentlyEditing.questions_with_responses | radioAndYesNo) track by question.id">
+          <td class="vertical-align">
+            <div ng-bind-html="question.question_text"></div>
+          </td>
+          <td class="vertical-align">
+            <div class="form-inline">
+              <div ng-repeat="question_response in question.question_responses" class="checkbox half-space-right">
+                <label class="no-user-select">
+                  <input class="clickable" type="checkbox" ng-model="question_response.selected" /> {{question_response.question_response_value}}
+                </label>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</script>
+
+<div class="text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-refresh fa-spin"></i>
+</div>
+<div ng-if="!ctrl.loading">
+  <div class="pull-right" ng-show="!ctrl.isNewOption">
+    <button ng-click="ctrl.deleteOption()" class="btn btn-danger">Delete Option</button>
+  </div>
+  <h2>{{ctrl.title}}</h2>
+  <div sd-error-scroll sa-errors="ctrl.errors"></div>
+  <form class="space-bottom space-top" ng-submit="ctrl.saveOption()">
+    <div id="option_edit_wrapper">
+      <div class="form-group">
+        <label for="option_title">Title</label>
+        <sd-information>The title of your option.</sd-information>
+        <input class="form-control" id="option_title" placeholder="Title" ng-model="ctrl.option.title" />
+      </div>
+      <div class="form-group">
+        <label for="option_title">Generic name</label>
+        <sd-information>The generic name of your option.</sd-information>
+        <input class="form-control" id="option_generic_name" placeholder="Generic Name" ng-model="ctrl.option.generic_name" />
+      </div>
+      <div class="form-group" ng-show="ctrl.subDecisions">
+        <label>Sub Decision</label>
+        <select class="form-control" ng-model="ctrl.option.sub_decision_id" ng-options="sd.id as sd.sub_decision_order for sd in ctrl.subDecisions"> 
+        </select>
+      </div>
+      <div>
+        <label for="option_has_sub_options">Has Sub-Options? <i class="fa fa-lg fa-question-circle dcida-info-icon" uib-tooltip="There may be various versions of the same option, depending on how the user responds to the demographic questions. For example, a version for users older than 50 and a version for users younger than 50. You can define multiple sub-options in cases like this." tooltip-placement="right" tooltip-append-to-body></i></label>
+        <div>
+          <div>
+            <label class="clickable">
+              <input ng-disabled="!ctrl.option.title || !ctrl.option.sub_decision_id" class="clickable" type="radio" ng-change="ctrl.hasSubOptionsChanged()" ng-model="ctrl.option.has_sub_options" ng-value="true" /> Yes
+            </label>
+          </div>
+          <div>
+            <label class="clickable">
+              <input ng-disabled="!ctrl.option.title || !ctrl.option.sub_decision_id" class="clickable" type="radio" ng-change="ctrl.hasSubOptionsChanged()" ng-model="ctrl.option.has_sub_options" ng-value="false" /> No
+            </label>
+          </div>
+        </div>
+      </div>
+      <div ng-switch="ctrl.option.has_sub_options">
+        <div ng-switch-when="true">
+          <div class="clearfix half-space-bottom">
+            <div class="pull-right">
+              <button ng-click="ctrl.optionQuestionComparitor()" class="btn btn-warning" type="button"><i class="fa fa-cog"></i> Sub Option Response Editor</button>
+              <button ng-click="ctrl.addSubOption()" class="btn btn-info" type="button"><i class="fa fa-plus"></i> Add Sub-Option</button>
+            </div>
+          </div>
+          <div>
+            <div class="space-bottom">
+              <label>Select a sub-option</label>
+              <sd-information>As you create sub-options, they will be <strong>added to this list</strong>. If you want to edit a different sub-option to the one you are currently editing, use this dropdown.</sd-information>
+              <ui-select ng-model="ctrl.currentlyEditing">
+                <ui-select-match>
+                  <span ng-bind="$select.selected.label"></span>
+                </ui-select-match>    
+                <ui-select-choices repeat="so in (ctrl.option.sub_options | filter: $select.search)">
+                  <span ng-bind="so.label"></span>
+                </ui-select-choices>
+              </ui-select>
+            </div>
+          </div>
+          <div ng-include="'option_edit_node'"></div>
+        </div>
+        <div ng-switch-when="false">
+          <div ng-include="'option_edit_node'"></div>
+        </div>
+      </div>
+      <input type="submit" value="Save" class="btn btn-primary" />
+    </div>
+  </form>
+</div>

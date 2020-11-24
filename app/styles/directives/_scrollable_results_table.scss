@@ -1,0 +1,218 @@
+.scrollable-results-table-wrapper {
+  margin-bottom: 15px;
+  background-color: white;
+
+  .selected-best-option {
+    background-color: #e9ffe9;
+  }
+
+  .force-no-border {
+    border: none !important;
+  }
+
+  .row-headers {
+    float: left;
+    border: 1px solid lightgrey;
+    transition: height ease-in-out 0.5s;
+
+    .row-headers-content {
+      padding: 10px;
+    }
+  }
+
+  .outer-table-elements {
+    height: 100%;
+  }
+
+  .result-table-property-title {
+    text-align: left;
+    word-break: break-word;
+    word-wrap: break-word;
+  }
+
+  .scrollable-results-table-row.fixed-to-top {
+    position: fixed;
+    top: 0;
+    z-index: 5;
+    background-color: white;
+    margin-left: -15px;
+
+    @media (max-width: 767px) {
+      width: 100%;
+    }
+
+    .results-option-image {
+      display: none;
+    }
+  }
+
+  .scrollable-results-table {
+    overflow: hidden;
+    position: relative;
+    padding-left: 50px;
+    padding-right: 50px;
+    transition: height ease-in-out 0.5s;
+
+    .left-arrow {
+      position: absolute;
+      top: 25px;
+      left: 0;
+      width: 50px;
+      text-align: center;
+      color: #48c9b0;
+
+      .disabled {
+        color: lightgrey;
+      }
+    }
+
+    .right-arrow {
+      position: absolute;
+      top: 25px;
+      right: 0;
+      width: 50px;
+      text-align: center;
+      color: #48c9b0;
+
+      .disabled {
+        color: lightgrey;
+      }
+    }
+
+    .table-element {
+      top: 0;
+      position: absolute;
+      transition: left ease-in-out 0.5s, background-color ease-in-out 0.5s;
+      border: 1px solid lightgrey;
+      height: inherit;
+      z-index: 2;
+
+      .option-property-short-label {
+        word-break: break-word;
+        word-wrap: break-word;
+      }
+
+      .inner-table-element {
+        padding: 10px;
+
+        h4.option-title {
+          text-align: center;
+          font-size: 1.5em;
+        }
+
+        h5.match-percentage {
+          text-align: center;
+          font-size: 1em;
+          color: grey;
+        }
+
+        .significant-match {
+          /** border-radius: 5px; **/
+          /** font-size: 0.8em; **/
+          /** padding: 8px; **/
+          color: white;
+          width: 100%;
+          margin-bottom: 4px;
+
+          .label {
+            display: inline-block;
+            display: inline-block;
+            line-height: initial;
+            word-wrap: break-word;
+            word-break: break-word;
+            white-space: normal;
+          }
+
+          .label-doctor-match {
+            background-color: #48c9b0;
+          }
+
+          .label-best-match {
+            background-color: #1B9BFF;
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 767px){
+    $columnWidth: 100%;
+    $headersWidth: 35%;
+    $oneHundred: 100%;
+    $restWidth: $oneHundred - $headersWidth;
+
+    .row-headers {
+      width: $headersWidth;
+    }
+
+    .scrollable-results-table {
+      width: $restWidth;
+    }
+
+    .table-element {
+      width: $columnWidth;
+    }
+
+    @for $i from -50 through 50 {
+      $columnLeft: $columnWidth * $i;
+
+      .table-element-#{$i} {
+        left: $columnLeft;
+      }
+    }
+  }
+
+  @media (max-width: 991px) and (min-width: 768px) {
+    $columnWidth: 50%;
+    $headersWidth: 25%;
+    $oneHundred: 100%;
+    $restWidth: $oneHundred - $headersWidth;
+
+    .row-headers {
+      width: $headersWidth;
+    }
+
+    .scrollable-results-table {
+      width: $restWidth;
+    }
+
+    .table-element {
+      width: $columnWidth;
+    }
+
+    @for $i from -50 through 50 {
+      $columnLeft: $columnWidth * $i;
+
+      .table-element-#{$i} {
+        left: $columnLeft;
+      }
+    }
+  }
+
+  @media(min-width: 992px) {
+    $columnWidth: 50%;
+    $headersWidth: 25%;
+    $oneHundred: 100%;
+    $restWidth: $oneHundred - $headersWidth;
+
+    .row-headers {
+      width: $headersWidth;
+    }
+
+    .scrollable-results-table {
+      width: $restWidth;
+    }
+
+    .table-element {
+      width: $columnWidth;
+    }
+
+    @for $i from -50 through 50 {
+      $columnLeft: $columnWidth * $i;
+
+      .table-element-#{$i} {
+        left: $columnLeft;
+      }
+    }
+  }
+}

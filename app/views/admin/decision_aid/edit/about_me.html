@@ -1,0 +1,152 @@
+<div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-spin fa-refresh"></i>
+</div>
+<div ng-show="!ctrl.loading">
+  <div class="space-bottom clearfix">
+    <div class="pull-right">
+      <span class="text-success flashing-success" ng-if="ctrl.saveSuccess">Saved! <i class="fa fa-lg fa-check-circle"></i></span>
+      <button class="btn btn-info" ng-disabled="!decisionAidEditForm.$dirty" ng-click="ctrl.save()">Save</button>
+      <button class="btn btn-success" ng-click="ctrl.saveAndPreview()">Preview</button>
+    </div>
+    <h2>About Me</h2>
+  </div>
+  <sd-extra-info>
+    <p>The <strong>About Me</strong> page allows you to collect demographic information about your user. You can add text, radio, and grid style questions that users will need to complete. Based on their responses to these questions, you can filter out options that aren't relevant to the user.</p>
+    <p>You can also have hidden questions, which are called "data sources". The responses for these questions typically come from external sources (e.g. REDCap), or are based off of responses to visible questions. Data sources are quite powerful, and allow for dynamic data injection into your tool.</p>
+    <p>You can add new pages using the <strong>Add Question Page</strong> button. You can reorder your questions by clicking and dragging the arrows on the right hand side of each question.</p>
+  </sd-extra-info>
+  <form name="decisionAidEditForm" ng-show="ctrl.decisionAid">
+    <div sd-error-scroll sa-errors="ctrl.errors"></div>
+    <div class="form-group">
+      <label for="about_me_page_name" input-required>Page Name</label>
+      <sd-information>This title shows up in the sub-header of the page.</sd-information>
+      <input id="about_me_page_name" class="form-control" ng-model="ctrl.decisionAidEdit.about_me_page_label" />
+    </div>
+<!--     <div class="form-group">
+      <label for="decision_aid_about_information">About Information</label>
+      <sd-information>This information shows before your demographic questions.</sd-information>
+      <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAid.id}}">
+        <textarea class="form-control" id="decision_aid_about_information" placeholder="About Information" ng-model="ctrl.decisionAidEdit.about_information" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'video', 'questionSelector']}"></textarea>
+      </sd-redactor-wrapper>
+    </div> -->
+  </form>
+  <hr />
+  <div class="auto-overflow-y">
+    <div class="btn-group pull-right">
+      <button class="btn btn-primary small-button" ng-click="ctrl.addNewQuestionPage()"><i class="fa fa-fw fa-plus"></i> Add Question Page</button>
+    </div>
+    <h4>Demographic Questions</h4>
+    <div class="question-pages-outer" sv-root="demo_questions" sv-on-sort="ctrl.onSort($item, $partFrom, $partTo, $indexFrom, $indexTo)">
+      <div ng-repeat="page in ctrl.questionPages">
+        <div class="question-page-wrapper">
+          <div class="pull-right">
+            <a class="btn small-button" ui-sref="questionNew (::{decisionAidId: ctrl.decisionAid.id, questionPageId: page.id, questionType: 'demographic'})"><i class="fa fa-fw fa-plus"></i> Add Question</a>
+          </div>
+          <div class="space-bottom">
+            <h5><i class="fa fa-lg fa-trash text-danger clickable" ng-click="ctrl.deleteQuestionPage(page)"></i>&nbsp;<strong>Question page {{page.question_page_order}}</strong>&nbsp;<i class="fa fa-arrow-down fa-lg text-info clickable reorder-arrow" ng-hide="$index === ctrl.questionPages.length-1" ng-click="ctrl.moveQuestionPageDown(page)">&nbsp;</i><i class="fa fa-arrow-up fa-lg text-info clickable reorder-arrow" ng-hide="$index === 0" ng-click="ctrl.moveQuestionPageUp(page)"></i></h5>
+          </div>
+          <div class="skip-logic-info">
+            <button class="btn btn-info btn-sm" ng-click="ctrl.openSkipLogicEditor(page)">Skip Logic</button>
+            <span><em>Skip targets defined: <span ng-class="{'bold-text': page.skip_logic_target_count > 0}">{{page.skip_logic_target_count}}</span></em></span>
+          </div>
+          <div class="row headers">
+            <div class="col-xs-2">
+
+            </div>
+            <div class="col-xs-5">
+              <strong>Question</strong>
+            </div>
+            <div class="col-xs-2 text-center">
+              <strong>Response Type</strong>
+            </div>
+            <div class="col-xs-2">
+
+            </div>
+          </div>
+          <div sv-part="page.page_questions">
+            <div class="row content" sv-element ng-repeat="question in page.page_questions track by question.id">
+              <div class="col-xs-2">
+                <div class="inline-block" uib-dropdown dropdown-append-to-body>
+                  <a type="button" id="dropdownMenu1" uib-dropdown-toggle aria-haspopup="true" aria-expanded="true">
+                    <div class="clickable" class="inline-block"><i class="fa fa-gear"></i><span class="caret"></span></div>
+                  </a>
+                  <ul uib-dropdown-menu aria-labelledby="dropdownMenu1">
+                    <!-- <li><a class="clickable" ng-click="ctrl.cloneQuestion(question)"><i class="fa fa-clone fa-fw"></i> Clone to Quiz</a></li> -->
+                    <li><a ui-sref="questionEdit(::{ decisionAidId: question.decision_aid_id, questionPageId: page.id, id: question.id })"><i class="fa fa-edit fa-fw"></i> Edit</a></li>
+                    <li><a class="clickable" ng-click="ctrl.deleteQuestion(question, page)"><i class="fa fa-trash fa-fw"></i> Delete</a></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-xs-5">
+                <span compile="::question.question_text"></span>
+              </div>
+              <div class="col-xs-2 text-center">
+                <span>{{::question.question_response_type | underscoreless | capitalize}}</span>
+              </div>
+              <div class="col-xs-2">
+                <div sv-handle class="question-response-drag-icon"><i class="fa fa-lg fa-arrows drag-arrows movable"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center" ng-show="ctrl.questionPages.length === 0">
+      <span class="text-warning">There are no demographic questions yet.</span> 
+    </div>
+    <div class="pull-right">
+      <a class="btn btn-primary small-button" ui-sref="questionNewHidden (::{decisionAidId: ctrl.decisionAid.id, questionType: 'demographic'})"><i class="fa fa-fw fa-plus"></i> Add Data Source</a>
+    </div>
+    <h4>Hidden Data Sources</h4>
+    <div ng-hide="ctrl.hiddenQuestions.length === 0" class="question-pages-outer" sv-root="hidden_questions" sv-on-sort="ctrl.onSort($item, $partFrom, $partTo, $indexFrom, $indexTo)">
+      <div>
+        <div class="question-page-wrapper">
+          <div class="row headers">
+            <div class="col-xs-2">
+
+            </div>
+            <div class="col-xs-5">
+              <strong>Info</strong>
+            </div>
+            <div class="col-xs-2 text-center">
+              <strong>Data Type</strong>
+            </div>
+            <div class="col-xs-2">
+
+            </div>
+          </div>
+          <div sv-part="ctrl.hiddenQuestions">
+            <div class="row content" sv-element ng-repeat="question in ctrl.hiddenQuestions track by question.id">
+              <div class="col-xs-2">
+                <div class="inline-block" uib-dropdown dropdown-append-to-body>
+                  <a type="button" id="dropdownMenu1" uib-dropdown-toggle aria-haspopup="true" aria-expanded="true">
+                    <div class="clickable" class="inline-block"><i class="fa fa-gear"></i><span class="caret"></span></div>
+                  </a>
+                  <ul uib-dropdown-menu aria-labelledby="dropdownMenu1">
+                    <li><a class="clickable" ng-click="ctrl.cloneQuestion(question)"><i class="fa fa-clone fa-fw"></i> Clone to Quiz</a></li>
+                    <li><a ui-sref="questionEditHidden(::{ decisionAidId: question.decision_aid_id, id: question.id })"><i class="fa fa-edit fa-fw"></i> Edit</a></li>
+                    <li><a class="clickable" ng-click="ctrl.deleteQuestion(question)"><i class="fa fa-trash fa-fw"></i> Delete</a></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-xs-5">
+                <span compile="::question.question_text"></span>
+              </div>
+              <div class="col-xs-2 text-center">
+                <span>{{::question.question_response_type | underscoreless | capitalize}}</span>
+              </div>
+              <div class="col-xs-2">
+                <div sv-handle class="question-response-drag-icon"><i class="fa fa-lg fa-arrows drag-arrows movable"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center" ng-show="ctrl.hiddenQuestions.length === 0">
+      <span class="text-warning">There are no hidden demographic datasources yet.</span> 
+    </div>
+  </div>
+</div>

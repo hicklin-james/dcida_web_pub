@@ -1,0 +1,43 @@
+'use strict'
+
+describe 'Controller: DecisionAidNewCtrl', ->
+
+  beforeEach angular.mock.module 'dcida20App'
+
+  DecisionAidNewCtrl = {}
+  scope = {}
+  DecisionAid = {}
+  mockDecisionAidId = 1234
+
+  decisionAidSaved = false
+
+  DecisionAid = () ->
+    this.id = mockDecisionAidId
+
+  DecisionAid.prototype.$save = (fn) ->
+    decisionAidSaved = true
+    fn(this)
+
+  # Initialize the controller and a mock scope
+  beforeEach inject ($controller, $rootScope) ->
+    
+    decisionAidSaved = false
+
+    scope = $rootScope.$new()
+    scope.decisionAidEditForm = {}
+    scope.decisionAidEditForm.$valid = true
+
+    DecisionAidNewCtrl = $controller 'DecisionAidNewCtrl', {
+      $scope: scope
+      DecisionAid: DecisionAid
+    }
+
+  describe "saveDecisionAid", () ->
+    it "should save the decision aid if form is valid", () ->
+      DecisionAidNewCtrl.saveDecisionAid()
+      expect(decisionAidSaved).toBe true
+
+    it "should not save the decision aid if the form is invalid", () ->
+      DecisionAidNewCtrl.$scope.decisionAidEditForm.$valid = false
+      expect(decisionAidSaved).toBe false
+

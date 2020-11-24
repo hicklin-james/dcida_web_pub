@@ -1,0 +1,117 @@
+<div class="modal-header clearfix">
+  <div class="pull-right">
+    <button class="btn btn-default" ng-click="ctrl.close()">Close</button>
+  </div>
+  <h3>DCE Preview</h3>
+  <p>
+    <i class="fa fa-lg dcida-info-icon fa-info-circle"></i> <span class="dcida-info-text text-warning">The dynamic features of the DCE (e.g. the opt-out features and option selections) <strong>will not</strong> work in preview mode. Check your live DCE decision aid to ensure that the DCE is functioning properly.</span>
+  </p>
+</div>
+<div class="modal-body">
+  <div id="decision_aid_dce">
+    <div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+      <i class="fa fa-2x fa-spin fa-refresh"></i>
+    </div>
+    <div ng-if="ctrl.decisionAid && !ctrl.loading" class="space-bottom">
+      <div ng-if="!ctrl.currentQuestionSet">
+        <div compile="::ctrl.decisionAid.dce_information_published"></div>
+      </div>
+      <div ng-if="ctrl.currentQuestionSet">
+        <div ng-if="ctrl.optOutOption">
+          <div class="clearfix">
+            <div class="space-bottom pull-left">
+              <h4>Question Set {{ctrl.currentQuestionSet}}</h4>
+            </div>
+          </div>
+          <div ng-if="!ctrl.firstDecisionCompleted" compile="::ctrl.decisionAid.dce_specific_information_published"></div>
+          <div ng-if="ctrl.firstDecisionCompleted" compile="::ctrl.decisionAid.opt_out_information_published"></div>
+          <div class="space-top space-bottom">
+            <table class="table text-center">
+              <tr>
+                <th class="text-center table-edge-border" ng-style="::{width: {{100 / (ctrl.theseDcrs.length + 2)}} + '%'}"></th>
+                <th ng-cloak ng-style="::{width: {{100 / (ctrl.theseDcrs.length + 2)}} + '%'}" class="text-center table-edge-border dce-hypothetical-option-title dce-no-animation-select-enabled" ng-repeat="qsr in ctrl.theseDcrs track by qsr.id">
+                  <span>Option {{ctrl.letters[$index]}}</span>
+                </th>
+                <th ng-style="::{width: {{100 / (ctrl.theseDcrs.length + 2)}} + '%'}" class="text-center table-edge-border dce-hypothetical-option-title dce-no-animation-select-disabled">
+                  <span>{{ctrl.decisionAid.opt_out_label}}</span>
+                </th>
+              </tr>
+              <tr ng-repeat="prop in ctrl.properties">
+                <td class="table-edge-border dce-property-title">
+                  <div class="display-table full-width">
+                    <div class="display-table-cell dce-property-title-box">
+                      {{::prop.title}}
+                    </div>
+                    <div class="display-table-cell dce-property-more-info-box middle-align">
+                      <i class="clickable text-info fa fa-2x fa-fw fa-info-circle middle-align" ng-show="prop.long_about"></i>
+                    </div>
+                  </div>
+                </td>
+                <td ng-cloak class="table-edge-border hypothetical-dce-property-{{$index}} dce-no-animation-select-enabled" ng-repeat="qsr in ctrl.theseDcrs track by qsr.id">
+                  <div compile="::prop.property_level_hash[qsr.property_level_hash[prop.id.toString()]].information_published"></div>
+                </td>
+                <td class="table-edge-border hypothetical-dce-property-{{ctrl.theseDcrs.length}} dce-no-animation-select-disabled">
+                  <div compile="::prop.property_level_hash[ctrl.optOutOption.property_level_hash[prop.id.toString()]].information_published"></div>
+                </td>
+              </tr>
+              <tr>
+                <td></td>
+                <td ng-cloak class="table-edge-border table-bottom-border dce-no-animation-select-enabled" ng-repeat="qsr in ctrl.theseDcrs track by qsr.id">
+                  <i class="fa fa-2x fa-square-o clickable"></i>
+                </td>
+                <td class="table-edge-border table-bottom-border dce-no-animation-select-disabled">
+                  <i class="fa fa-2x fa-square-o" ></i>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div ng-if="!ctrl.optOutOption">
+          <div compile="::ctrl.decisionAid.dce_specific_information_published"></div>
+          <div class="space-top space-bottom">
+            <div class="space-bottom">
+              <h4>Question Set {{ctrl.currentQuestionSet}}</h4>
+            </div>
+            <table class="table text-center">
+              <tr>
+                <th class="text-center table-edge-border" ng-style="::{width: {{100 / (ctrl.dceQuestionSetResponses[ctrl.currentQuestionSet].length + 1)}} + '%'}"></th>
+                <th ng-style="::{width: {{100 / (ctrl.dceQuestionSetResponses[ctrl.currentQuestionSet].length + 1)}} + '%'}" class="text-center table-edge-border" ng-repeat="qsr in ctrl.dceQuestionSetResponses[ctrl.currentQuestionSet]">
+                  <span>Option {{ctrl.letters[$index]}}</span>
+                </th>
+              </tr>
+              <tr ng-repeat="prop in ctrl.properties">
+                <td class="table-edge-border">
+                  <div class="display-table full-width">
+                    <div class="display-table-cell dce-property-title-box">
+                      {{::prop.title}}
+                    </div>
+                    <div class="display-table-cell dce-property-more-info-box middle-align">
+                      <i class="clickable text-info fa fa-2x fa-fw fa-info-circle middle-align" ng-show="prop.long_about"></i>
+                    </div>
+                  </div>
+                </td>
+                <td class="table-edge-border" ng-repeat="qsr in ctrl.dceQuestionSetResponses[ctrl.currentQuestionSet]">
+                  <div compile="::prop.property_level_hash[qsr.property_level_hash[prop.id.toString()]].information_published"></div>
+                </td>
+              </tr>
+              <tr>
+                <td></td>
+                <td class="table-edge-border table-bottom-border" ng-repeat="qsr in ctrl.dceQuestionSetResponses[ctrl.currentQuestionSet]">
+                  <i class="clickable fa fa-2x" ng-class="{'fa-square-o': ctrl.userSetResponse.dce_question_set_response_id !== qsr.id, 'fa-check-square-o text-success': ctrl.userSetResponse.dce_question_set_response_id === qsr.id}" ng-click="ctrl.selectQsr(qsr)"></i>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer clearfix">
+  <div class="pull-left">
+    <button class="btn btn-primary" ng-click="ctrl.prev()" ng-disabled="!ctrl.currentQuestionSet">Prev</button>
+  </div>
+  <div class="pull-right">
+    <button class="btn btn-primary" ng-click="ctrl.next()" ng-disabled="ctrl.allDceQuestionSetResponses.length === 0 || (ctrl.currentQuestionSet && !ctrl.dceQuestionSetResponses[ctrl.currentQuestionSet + 1])">Next</button>
+  </div>
+</div>

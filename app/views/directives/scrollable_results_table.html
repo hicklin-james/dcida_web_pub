@@ -1,0 +1,83 @@
+<div class="overflow-hidden scrollable-results-table-wrapper">
+  <div sd-new-table-header-fixer>
+    <div class="scrollable-results-table-row titles-row">
+      <div class="row-headers force-no-border" ng-style="{height: ctrl.maxRowHeights[0] + 'px'}">
+        <div class="row-headers-content"></div>
+      </div>
+      <div class="scrollable-results-table" ng-style="{height: ctrl.maxRowHeights[0] + 'px'}">
+        <div class="left-arrow" ng-hide="ctrl.options.length <= ctrl.maxOnScreen">
+          <i class="fa fa-lg fa-arrow-circle-left fa-2x clickable" ng-click="ctrl.goLeft()" ng-class="{'disabled': ctrl.globalIndex <= 0}"></i>
+        </div>
+        <div class="relative-position overflow-hidden outer-table-elements" ng-swipe-right="ctrl.goLeft()" ng-swipe-left="ctrl.goRight()">
+          <div ng-repeat="option in ctrl.options" class="table-element table-element-{{option.currIndex}}" ng-class="{'selected-best-option': ctrl.selectedOptionId === option.id}">
+            <div class="inner-table-element">
+              <h4 class="option-title">{{option.title}}</h4>
+              <div ng-show="ctrl.percentagesEnabled">
+                <h5 class="match-percentage">Match: {{ctrl.optionHeights[option.id] | number:0}}%</h5>
+              </div>
+              <div>
+                <i class="fa fa-2x clickable" ng-class="{'fa-square-o': ctrl.selectedOptionId !== option.id, 'fa-check-square-o text-success': ctrl.selectedOptionId === option.id}" ng-click="ctrl.selectOption(option.id)"></i>
+              </div>
+              <div ng-show="ctrl.bestMatchEnabled && ctrl.bestTreatment && ctrl.bestTreatment.id == option.id">
+                <div class="best-match-outer significant-match">
+                  <div class="label label-best-match">Best match</div>
+                </div>
+              </div>
+              <div class="doctor-match-outer significant-match" ng-show="option.ct_order === 1">
+                <div class="label label-doctor-match">
+                  Doctor Recommended
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="right-arrow" ng-hide="ctrl.options.length <= ctrl.maxOnScreen">
+          <i class="fa fa-lg fa-arrow-circle-right fa-2x clickable" ng-click="ctrl.goRight()" ng-class="{'disabled': ctrl.globalIndex >= ctrl.options.length-ctrl.maxOnScreen}"></i>
+        </div>
+      </div>
+    </div>
+    <div class="option-property-rows">
+      <div class="scrollable-results-table-row" ng-if="ctrl.hasImages">
+        <div class="row-headers force-no-border" ng-style="{height: ctrl.maxRowHeights[1] + 'px'}">
+          <div class="row-headers-content"></div>
+        </div>
+        <div class="scrollable-results-table" ng-style="{height: ctrl.maxRowHeights[1] + 'px'}">
+          <div class="relative-position overflow-hidden outer-table-elements" ng-swipe-right="ctrl.goLeft()" ng-swipe-left="ctrl.goRight()">
+            <div ng-repeat="option in ctrl.options" class="table-element table-element-{{option.currIndex}}">
+              <div class="inner-table-element">
+                <img class="img-responsive results-option-image margin-auto" ng-src="{{::option.original_image_url}}" sd-image-loaded />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div ng-repeat="property in ctrl.properties" class="scrollable-results-table-row">
+        <div class="row-headers" ng-style="{height: ctrl.maxRowHeights[$index+(ctrl.hasImages ? 2 : 1)] + 'px'}">
+          <div class="row-headers-content result-table-property-title">
+            <div class="fixed-table-layout">
+              <div class="table-row">
+                <div class="table-cell middle-align half-pad-right" ng-show="property.show_more_info">
+                  <i class="fa fa-lg fa-info-circle text-info clickable" ng-click="ctrl.moreInfo(property)"></i>
+                </div>
+                <div class="table-cell">
+                  <span>{{property.title}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="scrollable-results-table" ng-style="{height: ctrl.maxRowHeights[$index+(ctrl.hasImages ? 2 : 1)] + 'px'}">
+          <div class="relative-position overflow-hidden outer-table-elements" ng-swipe-right="ctrl.goLeft()" ng-swipe-left="ctrl.goRight()">
+            <div ng-repeat="option in ctrl.options" class="table-element table-element-{{option.currIndex}}" ng-class="{'selected-option-property': (!ctrl.selectedOptionId && ctrl.bestTreatment.id == option.id) || option.id == ctrl.selectedOptionId}">
+              <div class="inner-table-element">
+                <div class="option-property-short-label">
+                  <div compile="ctrl.optionProperties[property.id][option.id].short_label"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

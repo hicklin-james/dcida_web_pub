@@ -1,0 +1,130 @@
+<div class="modal-header">
+  <h3 class="text-center half-space-bottom">User Data Export Wizard</h3>
+  <div>
+    <ul class="nav nav-pills">
+      <li ng-repeat="section in ctrl.sections" ng-click="ctrl.goToSection(section)" ng-class="{'active': section === ctrl.currSection}" class="clickable"><a>{{section.title}}</a></li>
+    </ul>
+  </div>
+</div>
+<div class="modal-body">
+  <div ng-show="ctrl.loading">
+    <div class="text-center space-top space-bottom">
+      <i class="fa fa-2x fa-refresh fa-spin"></i>
+    </div>
+  </div>
+  <div ng-show="!ctrl.loading">
+    <div ng-switch="ctrl.currSection.val">
+      <div ng-switch-when="global_attrs">
+        <h4>Global attributes</h4>
+        <div class="form">
+          <div class="form-group">
+            <div ng-repeat="selec in ctrl.selections">
+              <div>
+                <sd-fa-checkbox ng-model="selec.val"></sd-fa-checkbox>
+                <label class="half-space-right">{{selec.label}}</label>
+                <sd-information class="inline-block">{{selec.information}}</sd-information>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4>Preset selections</h4>
+        <div class="form">
+          <div class="form-group">
+            <button class="btn btn-default" ng-click="ctrl.selectAllVisibleQuestions()" ng-class="{'btn-success': ctrl.allVisibleQuestionsSet()}">All visible questions</button>
+            <button class="btn btn-default" ng-click="ctrl.selectAllHiddenQuestions()" ng-class="{'btn-success': ctrl.allHiddenQuestionsSet()}">All hidden questions</button>
+          </div>
+        </div>
+      </div>
+      <div ng-switch-when="demo_questions">
+        <h4>Demographic Questions</h4>
+        <div class="form">
+          <sd-user-export-question-selector sa-questions="ctrl.demographicQuestions"></sd-user-export-question-selector>
+        </div>
+      </div>
+      <div ng-switch-when="demo_data_sources">
+        <h4>Demographic Data Sources</h4>
+        <div class="form">
+          <sd-user-export-question-selector sa-questions="ctrl.hiddenDemographicQuestions"></sd-user-export-question-selector>
+        </div>
+      </div>
+      <div ng-switch-when="quiz_questions">
+        <h4>Quiz Questions</h4>
+        <div class="form">
+          <sd-user-export-question-selector sa-questions="ctrl.quizQuestions"></sd-user-export-question-selector>
+        </div>
+      </div>
+      <div ng-switch-when="quiz_data_sources">
+        <h4>Quiz Data Sources</h4>
+        <div class="form">
+          <sd-user-export-question-selector sa-questions="ctrl.hiddenQuizQuestions"></sd-user-export-question-selector>
+        </div>
+      </div>
+      <div ng-switch-when="summary">
+        <uib-accordion close-others="false">
+          <div uib-accordion-group is-open="true" heading="Global Attributes">
+            <ul>
+              <li ng-repeat="selec in ctrl.selections | filter:{val:true}">
+                {{selec.label}}
+              </li>
+            </ul>
+          </div>
+          <div uib-accordion-group is-open="true" heading="Demographic Questions">
+            <ul>
+              <li ng-repeat="q in filteredDemoQs = (ctrl.demographicQuestions | filter:{checked:true})">
+                <div compile="q.question_text"></div>
+              </li>
+            </ul>
+            <div class="text-center text-warning" ng-show="filteredDemoQs.length === 0">
+              <span>No demographic questions were selected</span>
+            </div>
+          </div>
+          <div uib-accordion-group is-open="true" heading="Demographic Data Sources">
+            <ul>
+              <li ng-repeat="q in filteredHDemoQs = (ctrl.hiddenDemographicQuestions | filter:{checked:true})">
+                <div compile="q.question_text"></div>
+              </li>
+            </ul>
+            <div class="text-center text-warning" ng-show="filteredHDemoQs.length === 0">
+              <span>No demographic data sources were selected</span>
+            </div>
+          </div>
+          <div uib-accordion-group is-open="true" heading="Quiz Questions">
+            <ul>
+              <li ng-repeat="q in filteredQuizQs = (ctrl.quizQuestions | filter:{checked:true})">
+                <div compile="q.question_text"></div>
+              </li>
+            </ul>
+            <div class="text-center text-warning" ng-show="filteredQuizQs.length === 0">
+              <span>No quiz questions were selected</span>
+            </div>
+          </div>
+          <div uib-accordion-group is-open="true" heading="Quiz Data Sources">
+            <ul>
+              <li ng-repeat="q in filteredHQuizQs = (ctrl.hiddenQuizQuestions | filter:{checked:true})">
+                <div compile="q.question_text"></div>
+              </li>
+            </ul>
+            <div class="text-center text-warning" ng-show="filteredHQuizQs.length === 0">
+              <span>No quiz data sources were selected</span>
+            </div>
+          </div>
+        </uib-accordion>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <div class="clearfix">
+    <div>
+      <div class="pull-left">
+        <button ng-disabled="ctrl.currSection === ctrl.sections[0]" class="btn btn-info" ng-click="ctrl.prevSection()"><i class="fa fa-arrow-left"></i> Back</button>
+      </div>
+      <div class="pull-right">
+        <button ng-disabled="ctrl.currSection === ctrl.sections[ctrl.sections.length-1]" class="btn btn-info" ng-click="ctrl.nextSection()">Next <i class="fa fa-arrow-right"></i></button>
+      </div>
+      <div class="text-center space-top space-bottom">
+        <button ng-click="ctrl.export()" class="btn btn-primary"><i class="fa" ng-class="{'fa-download': !ctrl.DownloadManager.downloadInProgress, 'fa-refresh fa-spin': ctrl.DownloadManager.downloadInProgress}"></i> Export to CSV</button>
+      </div>
+    </div>
+  </div>
+</div>

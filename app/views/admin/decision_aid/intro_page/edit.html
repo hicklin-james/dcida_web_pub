@@ -1,0 +1,16 @@
+<div class="text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-refresh fa-spin"></i>
+</div>
+<div ng-show="!ctrl.loading">
+  <div class="pull-right" ng-show="!ctrl.isNewIntroPage">
+    <button ng-click="ctrl.deleteIntroPage()" class="btn btn-danger">Delete Introduction Page</button>
+  </div>
+  <h2>{{ctrl.title}}</h2>
+  <div sd-error-scroll sa-errors="ctrl.errors"></div>
+  <form class="space-bottom space-top" name="summaryPanelEditForm" ng-submit="ctrl.saveIntroPage()" novalidate>
+    <label>Page Description</label>
+    <sd-information>The text for this introduction page.</sd-information>
+    <sd-redactor-wrapper sa-include-question-selector sa-question-types="quiz,demographic" sa-decision-aid-id="{{ctrl.decisionAidId}}"><textarea required name="intro_page_description" class="form-control" id="intro_page_description" placeholder="Page Description" ng-model="ctrl.introPage.description" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'questionSelector', 'video']}"></textarea></sd-redactor-wrapper>
+    <input type="submit" value="Save" class="btn btn-primary" />
+  </form>
+</dib>

@@ -1,0 +1,67 @@
+<div>
+  <div class="equation-editor-wrapper">
+    <div class="equation-editor-panel">
+      <a href class="half-space-right" ng-click="ctrl.openQuestionSelection()">
+        <i class="fa fa-question"></i>
+      </a>
+      <span uib-dropdown class="half-space-right">
+        <a href uib-dropdown-toggle>
+          <i class="fa fa-plus"></i>
+        </a>
+        <ul uib-dropdown-menu>
+          <li>
+            <a href ng-click="ctrl.addOperator('+')"><strong>+</strong>&nbsp; Plus</a>
+            <a href ng-click="ctrl.addOperator('-')"><strong>-</strong>&nbsp; Minus</a>
+            <a href ng-click="ctrl.addOperator('*')"><strong>&#8727;</strong>&nbsp; Multiply</a>
+            <a href ng-click="ctrl.addOperator('/')"><strong>&#47;</strong>&nbsp; Divide</a>
+            <a href ng-click="ctrl.addOperator('**')"><strong>&#8727;&#8727;</strong>&nbsp; Exponentiate</a>
+          </li>
+        </ul>
+      </span>
+      <a href class="half-space-right" ng-click="ctrl.addOperator('(')">
+        <strong>(</strong>
+      </a>
+      <a href class="half-space-right" ng-click="ctrl.addOperator(')')">
+        <strong>)</strong>
+      </a>
+      <a href class="half-space-right" ng-click="ctrl.addOperator('ceil')">
+        <strong>Ceil</strong>
+      </a>
+      <a href class="half-space-right" ng-click="ctrl.addOperator('floor')">
+        <strong>Floor</strong>
+      </a>
+      <a href class="half-space-right" ng-click="ctrl.addOperator('max')">
+        <strong>Max</strong>
+      </a>
+      <a href class="half-space-right" ng-click="ctrl.addOperator('min')">
+        <strong>Min</strong>
+      </a>
+      <a href class="half-space-right" ng-click="ctrl.addOperator(',')">
+        <strong>,</strong>
+      </a>
+      <a href class="half-space-right" ng-click="ctrl.openNumberPicker()">
+        <strong>#</strong>
+      </a>
+    </div>
+    <div class="equation-editor-box space-left space-right space-top space-bottom">
+      <ul sv-root sv-part="ctrl.tokenizedModel" class="list-inline">
+        <li sv-element ng-repeat="token in ctrl.tokenizedModel track by $index">
+          <div class="token-wrapper">
+            <div class="draggable text-center movable" sv-handle>
+              <span class="fa fa-arrows"></span>
+            </div>
+            <div class="inner-token-wrapper">
+              {{token}}
+            </div>
+            <div class="text-center clickable trashable" ng-click="ctrl.removeToken($index)">
+              <span class="fa fa-trash"></span>
+            </div>
+            <!--<div class="delete-token" ng-click="ctrl.removeToken($index)">
+              <a href>x</a>-->
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

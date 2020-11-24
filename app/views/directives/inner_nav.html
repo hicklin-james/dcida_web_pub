@@ -1,0 +1,16 @@
+<div class='space-bottom inner-nav'>
+  <div class='clearfix percentage-box-wrapper'>
+    <div class='background-percentage' ng-style="{'width': percentCompleted() + '%'}"></div>
+    <div class='percentage-label'>
+      <span>{{percentCompleted()}}%</span>
+    </div>
+  </div>
+  <ul class='text-center unstyled-list'>
+    <li class='inline-block half-space-right' ng-repeat='item in items track by $index'>
+      <a class='navbar-circle inner-nav-item' ng-click="itemClick({item: item})" ng-class="{'clickable': item.available, 'disabled': !item.available}">
+        <i class='fa fa-2x' ng-class="{'text-success': item.complete, 'fa-arrow-circle-o-right': item.question_id !== currentItem.id, 'fa-dot-circle-o': item.question_id === currentItem.id}"></i>
+
+      </a>
+    </li>
+  </ul>
+</div>

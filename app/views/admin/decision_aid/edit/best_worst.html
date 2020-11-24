@@ -1,0 +1,96 @@
+<div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-spin fa-refresh"></i>
+</div>
+<div ng-show="!ctrl.loading">
+  <div class="space-bottom clearfix">
+    <div class="pull-right">
+      <span class="text-success flashing-success" ng-if="ctrl.saveSuccess">Saved! <i class="fa fa-lg fa-check-circle"></i></span>
+      <button class="btn btn-info" ng-disabled="!decisionAidEditForm.$dirty" ng-click="ctrl.save()">Save</button>
+      <button class="btn btn-success" ng-click="ctrl.saveAndPreview()">Preview</button>
+    </div>
+    <h3>Best-Worst</h3>
+  </div>
+  <sd-extra-info>
+    <p>The <strong>Best-Worst</strong> page is where the user goes through the best-worst activity that you have uploaded. There is an introductory page, which will display the <strong>Best-Worst Information</strong> entered below. You can also add a block of text that will appear above question set in your Best-Worst activity, which is the <strong>Best-Worst Specific Information</strong> box below..</p>
+    <p>You will also create your Best-Worst activity on this page. Download the templates using the <strong>Setup Best-Worst Activity</strong> button below. Once you have completed filling out the templates, upload them using the <strong>Upload Best-Worst Templates</strong> button.</p>
+  </sd-extra-info>
+  <form name="decisionAidEditForm" ng-show="ctrl.decisionAid">
+    <div sd-error-scroll sa-errors="ctrl.errors"></div>
+    <div id="decision_aid_edit_wrapper">
+      <div class="form-group">
+        <label for="best-worst-page-name" input-required>Page name</label>
+        <sd-information>This title shows up in the header of the page.</sd-information>
+        <input id="best-worst-page-name" class="form-control" ng-model="ctrl.decisionAidEdit.best_worst_page_label" />
+      </div>
+      <div class="form-group">
+        <label for="decision_aid_best_worst_information">Best-Worst Information</label>
+        <sd-information>This information shows up before the best/worst scaling activity.</sd-information>
+        <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAid.id}}"><textarea class="form-control" id="decision_aid_best_worst_information" placeholder="Best-Worst Information" ng-model="ctrl.decisionAidEdit.best_worst_information" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'questionSelector', 'video']}"></textarea></sd-redactor-wrapper>
+      </div>
+      <div class="form-group">
+        <label for="decision_aid_best_worst_specific_information">Best-Worst Specific Information</label>
+        <sd-information>This information shows above each question set in the best/worst scaling activity.</sd-information>
+        <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAid.id}}"><textarea class="form-control" id="decision_aid_best_worst_specific_information" placeholder="Best-Worst Specific Information" ng-model="ctrl.decisionAidEdit.best_worst_specific_information" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'questionSelector', 'video']}"></textarea></sd-redactor-wrapper>
+      </div>
+      <div class="form-group">
+        <label for="decision_aid_best_wording">Best case wording</label>
+        <sd-information>This label shows above the <span class="text-warning"><strong>best</strong></span> side of the best/worst question set.</sd-information>
+        <input class="form-control" id="decision_aid_best_wording" placeholder="Best Wording" ng-model="ctrl.decisionAidEdit.best_wording" />
+      </div>
+      <div class="form-group">
+        <label for="decision_aid_worst_wording">Worst case wording</label>
+        <sd-information>This label shows above the <span class="text-warning"><strong>worst</strong></span> side of the best/worst question set.</sd-information>
+        <input class="form-control" id="decision_aid_worst_wording" placeholder="Worst Wording" ng-model="ctrl.decisionAidEdit.worst_wording" />
+      </div>
+      <div class="form-group">
+        <label for="decision_aid_use_latent_class_analysis">Use latent class analysis</label>
+        <sd-information>Use this setting to enable latent class analysis. </sd-information>
+        <label class="clickable half-space-right" name="decision-aid-use-latent-class-analysis-yes">Yes <input class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.use_latent_class_analysis" ng-value="true"></label>
+        <label class="clickable" name="decision-aid-use-latent-class-analysis-no">No <input class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.use_latent_class_analysis" ng-value="false"></label>
+        <div>
+          <button ng-click="ctrl.openLatentClassEditor()" ng-show="ctrl.decisionAidEdit.use_latent_class_analysis" class="btn btn-primary">Open latent class editor</button>
+        </div>
+      </div>
+      <hr />
+      <h4>Best-Worst File Setup</h4>
+      <div>
+        <div class="form-group">
+          <div>
+            <label>Setup your Best-Worst activity</label>
+          </div>
+          <sd-information>
+            Use this button to download template design and results files for your Best-Worst activity. Based on your options and properties, it will design csv sheets that you can fill in to complete your Best-Worst activity. <span class="text-danger">Remember that changing your <strong>options</strong>, <strong>properties</strong> and <strong>demographic questions</strong> will result in <strong>different</strong> template files being generated, and therefore your results files need to be <strong>reuploaded</strong>.</span>
+          </sd-information>
+          <button class="btn btn-default" ng-click="ctrl.setupBw()">Setup Best-Worst Activity</button>
+        </div>
+        <div class="form-group">
+          <div>
+            <label>Upload your Best-Worst Templates</label>
+          </div>
+          <sd-information>
+            Use this button to upload your completed csv files. Some basic validation will be performed on your files to ensure that all the necessary components are completed. DecidApp will let you know if something is amiss.
+          </sd-information>
+          <button class="btn btn-default" ng-click="ctrl.uploadBwTemplates()">Upload Best-Worst Templates</button>
+          <div class="half-space-top half-space-left half-space-right half-space-bottom">
+            <div class="half-space-bottom">
+              <div>
+                <span><strong>Design File: </strong> 
+                  <a ng-show="ctrl.decisionAid.bw_design_fileinfo" ng-href="{{ctrl.API_PUBLIC + ctrl.decisionAid.bw_design_fileinfo.filepath}}">
+                    <em>{{ctrl.decisionAid.bw_design_fileinfo.filename}}</em>
+                  </a>
+                  <span ng-show="!ctrl.decisionAid.bw_design_fileinfo">
+                    <em>No File Uploaded</em>
+                  </span>
+                </span>
+              </div>
+              <div>
+                <span ng-show="ctrl.decisionAid.bw_design_fileinfo && ctrl.decisionAid.bw_design_success" class="text-success">Valid file uploaded!</span>
+                <span ng-show="ctrl.decisionAid.bw_design_fileinfo && !ctrl.decisionAid.bw_design_success" class="text-danger">Invalid file uploaded!</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,38 @@
+.cp-dropdown {
+  max-width: 300px;
+}
+
+.cp-dropdown-icon {
+  width: 30%;
+  display: inline-block;
+}
+
+.cp-color-choice {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.color-picker-toggle {
+  width:100%;
+}
+
+.cp-color-choice:hover {
+  cursor: pointer;
+}
+
+.cp-color-row {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.white-color {
+  color: white;
+}
+
+.custom-color-picker:hover {
+  color: #2388b0;
+}
+
+.cp-dropdown-menu {
+  max-width: 250px;
+}

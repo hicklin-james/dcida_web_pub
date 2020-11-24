@@ -1,0 +1,11 @@
+<div class="space-top">
+  <hr />
+  <div class="space-bottom clearfix">
+    <div ng-class="{'text-center': centerNav, 'pull-right': !centerNav}" ng-hide="shouldHideNext">
+      <button class="btn btn-primary next-nav-button" ng-class="{'btn-hg begin-button': centerNav}" ng-disabled="!enableNext" ng-show="showNext" ng-click="nextSubmit()">{{showNext}}</button>
+    </div>
+    <div class="pull-left" ng-hide="shouldHidePrev">
+      <button class="btn btn-default prev-nav-button" ng-show="showPrev" ng-click="prevLink()">{{showPrev}}</button>
+    </div>
+  </div>
+</div>

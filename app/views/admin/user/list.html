@@ -1,0 +1,35 @@
+<div class="pull-right">
+  <a class="btn btn-primary" ng-if="ctrl.user.is_superadmin" ui-sref="userNew"><i class="fa fa-fw fa-plus"></i> New User</a>
+</div>
+<h1>Users</h1>
+<table class="table">
+  <thead>
+    <tr>
+      <th class="col-md-4">Name</th>
+      <th class="col-md-3">Email</th>
+      <th class="col-md-3">Last Logged In</th>
+      <th class="col-md-2">Superadmin</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="u in ctrl.users | orderBy:'email'">
+      <td>
+        <a uib-tooltip="Edit" ui-sref="userEdit({ userId: u.id })"><i class="fa fa-pencil fa-fw"></i></a>
+        <a ng-show="ctrl.user.is_superadmin" uib-tooltip="Delete" class="half-space-right text-danger clickable" ng-click="ctrl.deleteUser(u)"><i class="fa fa-trash fa-fw"></i></a>
+        <span>{{u.first_name}} {{u.last_name}}</span>
+      </td>
+      <td>
+        {{u.email}}
+      </td>
+      <td>
+        {{u.last_logged_in | amDateFormat:'ddd, MMM Do YYYY, hh:mm a'}}
+      </td>
+      <td>
+        {{u.is_superadmin ? 'Yes' : 'No'}}
+      </td>
+    </tr>
+  </tbody>
+</table>
+<div class="text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-refresh fa-spin"></i>
+</div>

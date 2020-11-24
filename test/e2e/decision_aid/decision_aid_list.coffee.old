@@ -1,0 +1,77 @@
+Seed = require('../seed')
+# mock = require('protractor-http-mock')
+SigninPage = require('../signin/signin_page')
+DecisionAidListPage = require('./decision_aid_list_page')
+DecisionAidNewPage = require('./decision_aid_new_page')
+DecisionAidShowPage = require('./decision_aid_show_page')
+
+describe 'decisionAidList', () ->
+
+  beforeEach () ->
+    seed = new Seed()
+    seed.prepare({"decision_aid_to_load": "standard_decision_aid"})
+
+    sipage = new SigninPage()
+    sipage.loginToDcida()
+    browser.waitForAngular()
+
+  it 'should go to the decisionAidNew page when we push the New Decision Aid button', () ->
+
+    page = new DecisionAidListPage()
+    page.goToNewDecisionAidButton.click()
+    
+    browser.waitForAngular()
+
+    decisionAidNewPage = new DecisionAidNewPage()
+    expect(decisionAidNewPage.header.isDisplayed()).toBe(true)
+
+  it 'should go to the decisionAidShow page when we push the edit button next to a decision aid', () ->
+
+    page = new DecisionAidListPage()
+    page.getDecisionAidItems().first().element(By.css(".fa.fa-pencil.fa-fw")).element(By.xpath('..')).click()
+
+    browser.waitForAngular()
+
+    decisionAidShowPage = new DecisionAidShowPage()
+    expect(decisionAidShowPage.header.isDisplayed()).toBe(true)
+    expect(decisionAidShowPage.header.getText()).toEqual("Standard Decision Aid")
+
+  it "should only show the decision aids in the search", () ->
+
+    page = new DecisionAidListPage()
+    expect(page.getDecisionAidItems().count()).toEqual(4)
+    page.enterSearchText("standard")
+
+    browser.waitForAngular()
+
+    expect(page.getDecisionAidItems().count()).toEqual(1)
+
+  it "should not delete a decision aid when delete is cancelled", () ->
+    page = new DecisionAidListPage()
+    prevCount = page.getDecisionAidItems().count()
+    page.getDecisionAidItems().first().element(By.css(".fa.fa-trash.fa-fw")).element(By.xpath('..')).click()
+
+    browser.waitForAngular()
+
+    element(By.buttonText("Cancel")).click()
+
+    browser.waitForAngular()
+    prevCount.then (oc) ->
+      page.getDecisionAidItems().count().then (nc) ->
+        expect(oc).toEqual(nc)
+
+  it "should delete a decision aid when delete is not cancelled", () ->
+    page = new DecisionAidListPage()
+    prevCount = page.getDecisionAidItems().count()
+    # get first decision aid, has id of 1
+    page.getDecisionAidItems().first().element(By.css(".fa.fa-trash.fa-fw")).element(By.xpath('..')).click()
+
+    browser.waitForAngular()
+
+    element(By.buttonText("Yes")).click()
+
+    browser.waitForAngular()
+
+    prevCount.then (oc) ->
+      page.getDecisionAidItems().count().then (nc) ->
+        expect(nc).toEqual(oc - 1)

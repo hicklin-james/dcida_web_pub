@@ -1,0 +1,70 @@
+<div class="text-center x-scrollable full-height" id="main-results-table-wrapper">
+  <table class="table table-bordered results-table full-height">
+    <thead class="full-height">
+      <tr class="best-match-row">
+        <th class="results-option-image-cell col-xs-{{ctrl.rc.visibleOptions.length === 3 ? '3' : '2'}}"></th>
+        <th ng-if="ctrl.rc.options.length > 3" class="no-border"></th>
+        <th ng-repeat="option in ctrl.rc.visibleOptions track by option.id" class="results-option-image-cell top-align col-xs-{{ctrl.rc.visibleOptions.length === 3 ? '3' : (10 / ctrl.rc.visibleOptions.length)}}">
+          <div class="results-option-image-cell-div">
+            <div>
+              <div class="best-match-div" ng-if="ctrl.rc.maxKey == option.id && ctrl.decisionAid.best_match_enabled">
+                <div class="inner-best-match-div">
+                  Best Match
+                </div>
+              </div>
+              <!-- <div class="doctor-match-div" ng-if="option.ct_order === 1">
+                <div class="inner-doctor-match-div">
+                  Doctor Recommended
+                </div>
+              </div> -->
+              <div ng-if="ctrl.rc.optionMatches[option.id] && ctrl.decisionAid.percentages_enabled" style="background-color: #df2d68;" ng-style="::{'height': (ctrl.rc.optionMatches[option.id] * 100) + 'px'}" class="table transformable no-space-bottom">
+                <div class="table-cell middle-align text-white">{{::(ctrl.rc.optionMatches[option.id] * 100) | number : 0}}%</div>
+              </div>  
+            </div>
+          </div>
+        </th>
+        <th ng-if="ctrl.rc.options.length > 3" class="no-border"></th>
+      </tr>
+      <tr sd-table-header-fixer sa-options="ctrl.rc.visibleOptions" sa-select-option-func="ctrl.selectOption(option)" sa-currently-selected="ctrl.subDecisionChoice.option_id" sa-best-match="{id: ctrl.rc.maxKey}"  sa-best-match-enabled="ctrl.decisionAid.best_match_enabled" class="full-height">
+        <th class="results-option-image-cell full-height" style="vertical-align: middle;">
+        </th>
+        <th ng-if="ctrl.rc.options.length > 3" class="middle-align no-border">
+          <i class="fa fa-arrow-left fa-2x arrow-inactive text-info" ng-class="{'arrow-active clickable': ctrl.optionStartIndex > 0}" ng-click="ctrl.shiftVisibleOptionsLeft()"></i>
+        </th>
+        <th ng-repeat="option in ctrl.rc.visibleOptions track by option.id" class="results-option-image-cell top-align">
+          <div class="results-option-image-cell-div">
+            <img class="img-responsive results-option-image" ng-src="{{::option.original_image_url}}" />
+            <div class="opt-title-wrapper clearfix">
+              <div class="opt-title">
+                <h4><span>{{::option.title}}</span></h4>
+                <span class="clickable result-checkbox" ng-click="ctrl.selectOption(option)"><i class="fa fa-2x" ng-class="{'fa-check-square-o text-success': option.id === ctrl.subDecisionChoice.option_id, 'fa-square-o': option.id !== ctrl.subDecisionChoice.option_id }"></i></span>
+              </div>
+            </div>
+          </div>
+        </th>
+        <th ng-if="ctrl.rc.options.length > 3" class="middle-align no-border">
+          <i class="fa fa-arrow-right fa-2x arrow-inactive text-info" ng-class="{'arrow-active clickable': ctrl.optionStartIndex + 3 < ctrl.rc.options.length}" ng-click="ctrl.shiftVisibleOptionsRight()"></i>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="property in ctrl.rc.properties track by property.id" id="results-row-{{$index}}">
+        <th class="property-header">
+          <div class="property-label" id="prop-row-info-{{$index}}"><a class="text-info clickable"><i class="fa fa-lg fa-fw fa-info-circle middle-align" ng-click="ctrl.moreInfo(property)"></i></a> {{::property.title}}</div>
+        </th>
+        <td ng-if="ctrl.rc.options.length > 3" class="no-border"></td>
+        <td ng-repeat="option in ctrl.rc.visibleOptions track by option.id" class="text-center" ng-class="{'selected': option.id === ctrl.subDecisionChoice.option_id}">
+          <!-- ng-style="{'height': ctrl.rc.setPropertyRowHeight($parent.$index) + 'px'}" -->
+          <div class="option-property-info" id="prop-opt-{{$parent.$index}}-{{$index}}">
+            <div>
+              <div>
+
+                <div compile="ctrl.optionPropertyHash[property.id][option.id].short_label"></div>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

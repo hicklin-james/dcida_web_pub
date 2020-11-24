@@ -1,0 +1,50 @@
+<div class="modal-header">
+  <h2 class="text-center">
+    Graphic Editor
+  </h2>
+</div>
+<div class="modal-body">
+  <form ng-submit="ctrl.insertGraphic()">
+    <div class="form-group">
+      <label>Graphic Type</label>
+      <select ng-options="graphic.value as graphic.name for graphic in ctrl.graphicTypes" ng-model="ctrl.graphic.graphic_type" class="form-control full-width" ng-change="ctrl.graphicChanged()"></select>
+    </div>
+
+    <div class="form-group">
+      <label>Value</label>
+      <input ng-model="ctrl.graphic.value" class="form-control" type="number" min="0" />
+    </div>
+
+    <div class="form-group">
+      <label>Max</label>
+      <input ng-model="ctrl.graphic.max" class="form-control" type="number" min="0" />
+    </div>
+
+    <div class="form-group">
+      <label>Selected Color</label>
+      <div class="input-group">
+        <input colorpicker="hex" class="form-control" type="text" ng-model="ctrl.graphic.selected_color" />
+        <span class="input-group-addon quarter-width" ng-style="{'background-color': ctrl.graphic.selected_color}">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Unselected Color</label>
+      <div class="input-group">
+        <input colorpicker="hex" class="form-control" type="text" ng-model="ctrl.graphic.unselected_color" />
+        <span class="input-group-addon quarter-width" ng-style="{'background-color': ctrl.graphic.unselected_color}">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      </div>
+    </div>
+
+    <div class="well">
+      <h4>Preview</h4>
+      <div ng-if="ctrl.graphic.graphic_type === 'man_chart' && ctrl.graphic.value >= 0 && ctrl.graphic.max">
+        <div sd-man-chart sa-chartid="preview" sa-num-selected="ctrl.graphic.value" sa-num-max="ctrl.graphic.max" sa-click-fn="ctrl.selectValue(v)" sa-selected-color="ctrl.graphic.selected_color" sa-unselected-color="ctrl.graphic.unselected_color"></div>
+      </div>
+      <div ng-if="ctrl.graphic.graphic_type === 'circle_chart' && ctrl.graphic.value >= 0 && ctrl.graphic.max" style="background-color: white;">
+        <div sd-circle-chart sa-chartid="preview" sa-num-selected="ctrl.graphic.value" sa-num-max="ctrl.graphic.max" sa-selected-color="ctrl.graphic.selected_color" sa-unselected-color="ctrl.graphic.unselected_color"></div>
+      </div>
+    </div>
+    <input type="submit" class="btn btn-primary" value="Insert" />
+  </form>
+</div>

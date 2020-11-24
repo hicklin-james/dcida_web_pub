@@ -1,0 +1,205 @@
+'use strict'
+
+describe 'Controller: QuestionEditCtrl', ->
+
+  beforeEach angular.mock.module 'dcida20App'
+
+  QuestionEditCtrl = {}
+  scope = {}
+  _ = {}
+  stateParams = {}
+
+  getQuestionCalled = false
+  saveQuestionCalled = false
+  updateQuestionCalled = false
+
+  mockQuestionId = 1234
+  Question = () ->
+    this.id = mockQuestionId
+    this
+  Question.get = (params, fn) ->
+    getQuestionCalled = true
+    q = new Question
+    q.grid_questions = []
+    fn(q)
+
+  Question.prototype.addDestroyedQuestionResponses = (dqs) ->
+    null
+  Question.prototype.addDestroyedGridQuestions = (dgqs) ->
+    null
+  Question.prototype.$save = (params, successFn, errorFn) ->
+    saveQuestionCalled = true
+    successFn(this)
+  Question.prototype.$update = (params, successFn, errorFn) ->
+    updateQuestionCalled = true
+    successFn(this)
+  
+  beforeEach inject ($controller, $rootScope, ___) ->
+    getQuestionCalled = false
+    saveQuestionCalled = false
+    updateQuestionCalled = false
+
+    scope = $rootScope.$new()
+    _ = ___
+    QuestionEditCtrl = $controller 'QuestionEditCtrl', {
+      $scope: scope
+      Question: Question
+      _: ___
+    }
+
+  describe "loading", () ->
+    it "should correctly set the loading variable", () ->
+      expect(QuestionEditCtrl.loading).toBeFalsy()
+
+    it "should set the isNewQuestion if there is no id in the stateParams", () ->
+      expect(QuestionEditCtrl.isNewQuestion).toBeTruthy()
+
+    it "should not call Question.get", () ->
+      expect(getQuestionCalled).toBeFalsy()
+
+    describe "id in stateParams", () ->
+      beforeEach inject ($controller, $rootScope, ___) ->
+        getQuestionCalled = false
+        saveQuestionCalled = false
+        updateQuestionCalled = false
+
+        scope = $rootScope.$new()
+        _ = ___
+        stateParams = {id: 123}
+
+        QuestionEditCtrl = $controller 'QuestionEditCtrl', {
+          $scope: scope
+          Question: Question
+          $stateParams: stateParams
+          _: ___
+        }
+
+      it "should not set the isNewQuestion", () ->
+        expect(QuestionEditCtrl.isNewQuestion).toBeFalsy()
+
+      it "should call Question.get", () ->
+        expect(getQuestionCalled).toBeTruthy()
+
+  describe "addNewQuestionResponse", () ->
+    it "should add a new question response to the question", () ->
+      expect(QuestionEditCtrl.question.question_responses.length).toEqual 0
+      QuestionEditCtrl.addNewQuestionResponse()
+      expect(QuestionEditCtrl.question.question_responses.length).toBe > 0
+
+  describe "questionResponseTypeChanged", () ->
+    it "should reset hidden and response_value_calculation variables when question_response_type isnt radio or number", () ->
+      QuestionEditCtrl.question.hidden = true
+      QuestionEditCtrl.question.response_value_calculation = "1 + 2"
+      QuestionEditCtrl.question.question_response_type = "grid"
+      QuestionEditCtrl.questionResponseTypeChanged()
+      expect(QuestionEditCtrl.question.hidden).toBeFalsy()
+      expect(QuestionEditCtrl.question.response_value_calculation).toEqual ""
+
+    it "should not reset hidden and response_value_calculation when question_response_type is radio", () ->
+      QuestionEditCtrl.question.hidden = true
+      QuestionEditCtrl.question.response_value_calculation = "1 + 2"
+      QuestionEditCtrl.question.question_response_type = "radio"
+      QuestionEditCtrl.questionResponseTypeChanged()
+      expect(QuestionEditCtrl.question.hidden).toBeTruthy()
+      expect(QuestionEditCtrl.question.response_value_calculation).toEqual "1 + 2"
+
+    it "should not reset hidden and response_value_calculation when question_response_type is radio", () ->
+      QuestionEditCtrl.question.hidden = true
+      QuestionEditCtrl.question.response_value_calculation = "1 + 2"
+      QuestionEditCtrl.question.question_response_type = "number"
+      QuestionEditCtrl.questionResponseTypeChanged()
+      expect(QuestionEditCtrl.question.hidden).toBeTruthy()
+      expect(QuestionEditCtrl.question.response_value_calculation).toEqual "1 + 2"
+
+  describe "addNewGridQuestions", () ->
+    it "should add a new grid_question to the question", () ->
+      expect(QuestionEditCtrl.question.grid_questions.length).toEqual 0
+      QuestionEditCtrl.addNewGridQuestion()
+      expect(QuestionEditCtrl.question.grid_questions.length).toBeGreaterThan 0
+
+    it "should add the grid responses to the new question", () ->
+      expect(QuestionEditCtrl.gridResponses.length).toEqual 0
+      QuestionEditCtrl.addNewGridResponse()
+      QuestionEditCtrl.addNewGridResponse()
+      QuestionEditCtrl.addNewGridQuestion()
+      expect(QuestionEditCtrl.gridResponses.length).toBeGreaterThan 0
+      expect(QuestionEditCtrl.question.grid_questions.length).toBeGreaterThan 0
+      _.each QuestionEditCtrl.question.grid_questions, (q) ->
+        expect(q.question_responses.length).toBe > 0
+
+  describe "addNewGridResponse", () ->
+    it "should add a new response to the gridResponses", () ->
+      expect(QuestionEditCtrl.gridResponses.length).toEqual 0
+      QuestionEditCtrl.addNewGridResponse()
+      expect(QuestionEditCtrl.gridResponses.length).toBeGreaterThan 0
+
+    it "should add the new response to every grid question", () ->
+      expect(QuestionEditCtrl.question.grid_questions.length).toEqual 0
+      QuestionEditCtrl.addNewGridQuestion()
+      QuestionEditCtrl.addNewGridQuestion()
+      expect(QuestionEditCtrl.question.grid_questions.length).toBe > 0
+      QuestionEditCtrl.addNewGridResponse()
+      _.each QuestionEditCtrl.question.grid_questions, (q) ->
+        expect(q.question_responses.length).toBeGreaterThan 0
+
+  describe "gridResponseSort", () ->
+    it "should sort all the grid responses", () ->
+      QuestionEditCtrl.addNewGridQuestion()
+      QuestionEditCtrl.addNewGridQuestion()
+      responsesLength = 4
+      for i in [0..responsesLength-1]
+        QuestionEditCtrl.addNewGridResponse()
+      expect(QuestionEditCtrl.question.grid_questions.length).toBeGreaterThan 0
+      _.each QuestionEditCtrl.question.grid_questions, (q, i) ->
+        _.each q.question_responses, (qr, ii) ->
+          qr.id = ii
+          expect(qr.question_response_order).toEqual (ii + 1)
+      responses = QuestionEditCtrl.gridResponses
+      sortedResponse = QuestionEditCtrl.gridResponses[responsesLength-1]
+      QuestionEditCtrl.gridResponseSort(sortedResponse, null, null, responsesLength-1, 0)
+      _.each QuestionEditCtrl.question.grid_questions, (q, i) ->
+        _.each q.question_responses, (qr, ii) ->
+          if ii is 0
+            expect(qr.id).toEqual (responsesLength-1)
+
+  describe "markQuestionResponseForDestruction", () ->
+    it "should remove the question response from the list of responses", () ->
+      QuestionEditCtrl.addNewQuestionResponse()
+      expect(QuestionEditCtrl.question.question_responses.length).toEqual 1
+      QuestionEditCtrl.markQuestionResponseForDestruction(QuestionEditCtrl.question.question_responses[0])
+      expect(QuestionEditCtrl.question.question_responses.length).toEqual 0
+
+    it "should add the question_response to the destroyedQuestionResponses array if the question_response has an id", () ->
+      QuestionEditCtrl.addNewQuestionResponse()
+      QuestionEditCtrl.question.question_responses[0].id = 4321
+      expect(QuestionEditCtrl.question.question_responses.length).toEqual 1
+      expect(QuestionEditCtrl.destroyedQuestionResponses.length).toEqual 0
+      QuestionEditCtrl.markQuestionResponseForDestruction(QuestionEditCtrl.question.question_responses[0])
+      expect(QuestionEditCtrl.question.question_responses.length).toEqual 0
+      expect(QuestionEditCtrl.destroyedQuestionResponses.length).toEqual 1
+
+  describe "saveQuestion", () ->
+    it "should save question without an id", () ->
+      QuestionEditCtrl.saveQuestion()
+      expect(saveQuestionCalled).toBeTruthy()
+
+    describe "id in stateParams", () ->
+      beforeEach inject ($controller, $rootScope, ___) ->
+        getQuestionCalled = false
+        saveQuestionCalled = false
+        updateQuestionCalled = false
+
+        scope = $rootScope.$new()
+        _ = ___
+        stateParams = {id: 123}
+
+        QuestionEditCtrl = $controller 'QuestionEditCtrl', {
+          $scope: scope
+          Question: Question
+          $stateParams: stateParams
+          _: ___
+        }
+    
+      it "should update question with an id", () ->
+        QuestionEditCtrl.saveQuestion()
+        expect(updateQuestionCalled).toBeTruthy()

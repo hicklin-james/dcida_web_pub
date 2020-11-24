@@ -1,0 +1,61 @@
+<div class="text-center x-scrollable full-height" id="main-results-table-wrapper">
+  <table class="table table-bordered results-table full-height">
+    <thead class="full-height">
+      <tr sd-table-header-fixer sa-options="ctrl.rc.visibleOptions" sa-select-option-func="ctrl.selectOption(option)" sa-currently-selected="ctrl.subDecisionChoice.option_id" sa-best-match="ctrl.rc.bestTreatment"  sa-best-match-enabled="ctrl.decisionAid.best_match_enabled" class="full-height">
+        <th class="results-option-image-cell full-height" style="vertical-align: middle;">
+          <a ng-if="ctrl.rc.decisionAid.ratings_enabled" class="clickable text-info" ng-click="ctrl.rc.getHelp()"><i uib-tooltip="Click here to get some additional help if you are unsure as to which option you prefer." class="fa fa-4x fa-question-circle"></i></a>
+        </th>
+        <th ng-if="ctrl.rc.options.length > 3" class="middle-align no-border">
+          <i class="fa fa-arrow-left fa-2x arrow-inactive text-info" ng-class="{'arrow-active clickable': ctrl.optionStartIndex > 0}" ng-click="ctrl.shiftVisibleOptionsLeft()"></i>
+        </th>
+        <th ng-repeat="option in ctrl.rc.visibleOptions track by option.id" class="results-option-image-cell top-align">
+          <div class="results-option-image-cell-div">
+            <img class="img-responsive results-option-image" ng-src="{{::option.original_image_url}}" />
+            <div class="opt-title-wrapper clearfix">
+              <div class="opt-title">
+                <h4><span>{{::option.title}}</span></h4>
+                <span class="clickable result-checkbox" ng-click="ctrl.selectOption(option)"><i class="fa fa-2x" ng-class="{'fa-check-square-o text-success': option.id === ctrl.subDecisionChoice.option_id, 'fa-square-o': option.id !== ctrl.subDecisionChoice.option_id }"></i></span>
+              </div>
+            </div>
+          </div>
+        </th>
+        <th ng-if="ctrl.rc.options.length > 3" class="middle-align no-border">
+          <i class="fa fa-arrow-right fa-2x arrow-inactive text-info" ng-class="{'arrow-active clickable': ctrl.optionStartIndex + 3 < ctrl.rc.options.length}" ng-click="ctrl.shiftVisibleOptionsRight()"></i>
+        </th>
+      </tr>
+    </thead>
+    <tbody ng-if="ctrl.rc.sortedProperties">
+      <tr ng-repeat="property in ctrl.rc.sortedProperties track by property.id" id="results-row-{{$index}}">
+        <!--
+        <td style="background-color: {{ctrl.rc.rainbowColors[ctrl.rc.userPropsHash[property.id].traditional_value-1]}}; border-bottom: none; border-top: none;">
+          <span ng-show="$index === 0" style="font-size: 0.7em;"><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></span>-->
+          <!-- <span ng-show="$index === ctrl.rc.sortedProperties.length-1" style="font-size: 0.7em;"><strong>Less Important</strong></span> -->
+          <!-- <span ng-show="$index !== 0 && $index !== ctrl.rc.sortedProperties.length - 1"><i class="fa fa-arrows-v"></i></span> -->
+        <!--</td>-->
+        <th class="property-header">
+          <div class="property-label" id="prop-row-info-{{$index}}"><a class="text-info clickable"><i class="fa fa-lg fa-fw fa-info-circle middle-align" ng-click="ctrl.rc.openTraditionalUserPropsWindow(property)"></i></a> {{::property.short_label | capitalize}}</div>
+        </th>
+        <td ng-repeat="option in ctrl.rc.visibleOptions track by option.id" class="text-center">
+          <div class="option-property-info" id="prop-opt-{{$parent.$index}}-{{$index}}">
+            <div>
+              <div>
+                <div compile="ctrl.optionPropertyHash[property.id][option.id].short_label"></div>
+              </div>
+            </div>
+          </div>
+        </td>
+        <td ng-if="$index === 0 && ctrl.rc.userPropsHash[property.id].traditional_option_id === 0" class="bootstro">
+           <div ng-show="ctrl.rc.userPropsHash[property.id].traditional_option_id === 0">
+            <span ng-repeat="rank in ctrl.getNumber(ctrl.rc.userPropsHash[property.id].traditional_value) track by $index" class="fa fa-lg fa-circle option-0-color tiny-space-right">
+            </span>
+          </div>
+        </td>
+        <td ng-if="!($index === 0 && ctrl.rc.userPropsHash[property.id].traditional_option_id === 0)">
+          <div ng-show="ctrl.rc.userPropsHash[property.id].traditional_option_id === 0">
+            <span ng-repeat="rank in ctrl.getNumber(ctrl.rc.userPropsHash[property.id].traditional_value) track by $index" class="fa fa-lg fa-circle option-0-color tiny-space-right">
+            </span>
+          </div>
+        </td>
+      </tr>
+    </table>
+</div>

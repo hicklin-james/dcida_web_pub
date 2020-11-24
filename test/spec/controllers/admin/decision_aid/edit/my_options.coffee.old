@@ -1,0 +1,187 @@
+'use strict'
+
+describe 'Controller: DecisionAidEditMyOptionsCtrl', ->
+
+  beforeEach angular.mock.module 'dcida20App'
+
+  DecisionAidEditMyOptionsCtrl = {}
+  scope = {}
+  DecisionAid = {}
+  AdminTabHelper = {}
+  modal = {}
+
+  mockNumberOfOptions = 4
+  mockNumberOfProperties = 10
+  
+  Option = (id) ->
+    this.id = id
+
+  Option.query = (params, fn) ->
+    options = []
+    for i in [0..mockNumberOfOptions - 1]
+      options.push new Option(i)
+    fn(options)
+
+  Option.prototype.clone = () ->
+    then: (fn) =>
+      fn(this)
+
+  Option.prototype.$delete = (params, fn) ->
+    fn()
+
+  Property = (id, optionId, propertyId) ->
+    this.id = id
+    this.option_id = optionId
+    this.property_id = propertyId
+
+  Property.query = (params, fn) ->
+    properties = []
+    for i in [0..mockNumberOfProperties - 1]
+      properties.push new Property(i)
+    fn(properties)
+
+  Property.prototype.clone = () ->
+    then: (fn) =>
+      fn(this)
+
+  Property.prototype.$delete = (params, fn) ->
+    fn()
+
+  OptionProperty = (id) ->
+    this.id = id
+
+  OptionProperty.query = (params, fn) ->
+    optionProperties = []
+    for i in [0..mockNumberOfOptions-1]
+      for ii in [0..mockNumberOfProperties-1]
+        optionProperties.push new OptionProperty(i * ii, i, ii)
+
+  saveCalled = false
+  AdminTabHelper.saveDecisionAid = (scope, da) ->
+    saveCalled = true
+    then: (fn) ->
+      fn()
+
+  q = {}
+  q.all = (promises) ->
+    then: (fn) ->
+      fn()
+
+  confirmAlertOpened = false
+  confirmShowOpened = false
+  Confirm = {}
+  Confirm.alert = (params) ->
+    confirmAlertOpened = true
+  Confirm.show = (params) ->
+    confirmShowOpened = true
+    result: 
+      then: (fn) ->
+        fn()
+
+  modalOpened = false
+  modal.open = (params) ->
+    modalOpened = true
+
+  # Initialize the controller and a mock scope
+  beforeEach inject ($controller, $rootScope) ->
+
+    confirmAlertOpened = false
+    confirmShowOpened = false
+    modalOpened = false
+    saveCalled = false
+
+    scope = $rootScope.$new()
+    DecisionAidEditMyOptionsCtrl = $controller 'DecisionAidEditMyOptionsCtrl', {
+      $scope: scope
+      DecisionAid: DecisionAid
+      $q: q
+      Option: Option
+      Property: Property
+      OptionProperty: OptionProperty
+      Confirm: Confirm
+      AdminTabHelper: AdminTabHelper
+      $uibModal: modal
+    }
+
+  describe "loading", () ->
+    it "should set the loading variable correctly", () ->
+      expect(DecisionAidEditMyOptionsCtrl.loading).toBe false
+
+  describe "cloneOption", () ->
+    it "should open the confirm modal when an option is successfully cloned", () ->
+      if DecisionAidEditMyOptionsCtrl.options.length > 0
+        o = DecisionAidEditMyOptionsCtrl.options[0]
+        DecisionAidEditMyOptionsCtrl.cloneOption(o)
+        expect(confirmAlertOpened).toBe true
+
+    it "should increase the length of the options array", () ->
+      l = DecisionAidEditMyOptionsCtrl.options.length
+      if l > 0
+        o = DecisionAidEditMyOptionsCtrl.options[0]
+        DecisionAidEditMyOptionsCtrl.cloneOption(o)
+        expect(DecisionAidEditMyOptionsCtrl.options.length).toEqual l + 1
+
+  describe "cloneProperty", () ->
+    it "should open the confirm modal when a property is successfully cloned", () ->
+      if DecisionAidEditMyOptionsCtrl.properties.length > 0
+        p = DecisionAidEditMyOptionsCtrl.properties[0]
+        DecisionAidEditMyOptionsCtrl.cloneProperty(p)
+        expect(confirmAlertOpened).toBe true
+
+    it "should increase the length of the properties array", () ->
+      l = DecisionAidEditMyOptionsCtrl.properties.length
+      if l > 0
+        p = DecisionAidEditMyOptionsCtrl.properties[0]
+        DecisionAidEditMyOptionsCtrl.cloneProperty(p)
+        expect(DecisionAidEditMyOptionsCtrl.properties.length).toEqual l + 1
+
+  describe "deleteOption", () ->
+    it "should open the confirm window", () ->
+      if DecisionAidEditMyOptionsCtrl.options.length > 0
+        o = DecisionAidEditMyOptionsCtrl.options[0]
+        DecisionAidEditMyOptionsCtrl.deleteOption(o)
+        expect(confirmShowOpened).toBe true
+
+    it "should decrease the length of the options array on success", () ->
+      l = DecisionAidEditMyOptionsCtrl.options.length
+      if l > 0
+        o = DecisionAidEditMyOptionsCtrl.options[0]
+        DecisionAidEditMyOptionsCtrl.deleteOption(o)
+        expect(DecisionAidEditMyOptionsCtrl.options.length).toEqual l - 1
+
+  describe "deleteProperty", () ->
+    it "should open the confirm window", () ->
+      if DecisionAidEditMyOptionsCtrl.properties.length > 0
+        p = DecisionAidEditMyOptionsCtrl.properties[0]
+        DecisionAidEditMyOptionsCtrl.deleteProperty(p)
+        expect(confirmShowOpened).toBe true
+
+    it "should decrease the length of the properties array on success", () ->
+      l = DecisionAidEditMyOptionsCtrl.properties.length
+      if l > 0
+        p = DecisionAidEditMyOptionsCtrl.properties[0]
+        DecisionAidEditMyOptionsCtrl.deleteProperty(p)
+        expect(DecisionAidEditMyOptionsCtrl.properties.length).toEqual l - 1
+
+  describe "saveAndPreview", () ->
+    it "should save the decision aid if the form is dirty and saveAndPreview is called", () ->
+      scope.decisionAidEditForm = {}
+      scope.decisionAidEditForm.$dirty = true
+      expect(saveCalled).toBe false
+      DecisionAidEditMyOptionsCtrl.saveAndPreview()
+      expect(saveCalled).toBe true
+      expect(modalOpened).toBe true
+
+    it "should not save the decision aid if the form is not dirty and saveAndPreview is called", () ->
+      scope.decisionAidEditForm = {}
+      scope.decisionAidEditForm.$dirty = false
+      DecisionAidEditMyOptionsCtrl.saveAndPreview()
+      expect(saveCalled).toBe false
+      expect(modalOpened).toBe true
+
+  describe "save", () ->
+    it "should save the decision aid when save is called", () ->
+      DecisionAidEditMyOptionsCtrl.save()
+      expect(saveCalled).toBe true
+
+

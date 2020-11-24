@@ -1,0 +1,69 @@
+<div class="modal-header clearfix">
+  <div class="pull-right">
+    <button class="btn btn-default" ng-click="ctrl.close()">Close</button>
+  </div>
+  <h3>My Options Preview</h3>
+  <i class="fa fa-lg dcida-info-icon fa-info-circle"></i> <span class="dcida-info-text">The options listed here are defined under the "My Options" tab in the Option Property Matrix.</span>
+</div>
+<div class="modal-body">
+  <div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+    <i class="fa fa-2x fa-spin fa-refresh"></i>
+  </div>
+  <div ng-if="!ctrl.loading">
+    <div class="space-bottom" compile="ctrl.decisionAid.options_information_published"></div>
+
+<!-- my attempt -->
+  <div ng-controller = "OptionsController">
+  <div ng-init = "option = ctrl.subDecisions[{{crtl.value}}] ">
+    <h3> {{option.title}} </h3>
+
+    <div class="clearfix">
+      <div class="clearfix">
+        <div class="half-space-right half-space-bottom pull-left option-image-wrapper">
+          <img class="img-responsive" ng-src="{{option.results_image_url}}" />
+        </div>
+        <h3> {{option.title}} </h3>
+      </div>
+      <div compile="option.description_published"></div>
+    </div>
+  </div>
+
+  <!--<div ng-repeat="subDecision in ctrl.subDecisions">
+    <h2> ??? {{ctrl.value}} </h2>
+    <div ng-repeat="option in ctrl.options" class="space-bottom space-left space-right">
+      <div class="clearfix">
+        <div class="clearfix">
+          <div class="half-space-right half-space-bottom pull-left option-image-wrapper">
+            <img class="img-responsive" ng-src="{{option.results_image_url}}" />
+          </div>
+          <h3>{{option.title}}</h3>
+        </div>
+        <div compile="option.description_published"></div>
+      </div>
+    </div>
+  </div>-->
+<!-- my attempt END  -->
+
+
+<!-- start of ctrl.options  -->
+    <!--<div ng-repeat="option in ctrl.options" class="space-bottom space-left space-right">
+      <div class="clearfix">
+        <div class="clearfix">
+          <div class="half-space-right half-space-bottom pull-left option-image-wrapper">
+            <img class="img-responsive" ng-src="{{option.results_image_url}}" />
+          </div>
+          <h3>{{option.title}}</h3>
+        </div>
+        <div compile="option.description_published"></div>
+      </div>
+      <hr/>
+    </div>-->
+<!-- end of ctrl.options  -->
+
+  </div>
+</div>
+<div class="modal-footer clearfix">
+  <div class="pull-right">
+    <button class="btn btn-default" ng-click="ctrl.close()">Close</button>
+  </div>
+</div>

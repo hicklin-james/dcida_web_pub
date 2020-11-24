@@ -1,0 +1,66 @@
+<div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-spin fa-refresh"></i>
+</div>
+<div ng-show="!ctrl.loading">
+  <div class="space-bottom clearfix">
+    <div class="pull-right">
+      <span class="text-success flashing-success" ng-if="ctrl.saveSuccess">Saved! <i class="fa fa-lg fa-check-circle"></i></span>
+      <button class="btn btn-info" ng-disabled="!decisionAidEditForm.$dirty" ng-click="ctrl.save()">Save</button>
+    </div>
+    <h2>Introduction</h2>
+  </div>
+  <sd-extra-info>
+    <p>The <strong>static</strong> pages are simple pages that don't show any dynamic data. You can use these for contact pages, general about pages, etc.</p>
+  </sd-extra-info>
+  <form on-submit="ctrl.save()" name="decisionAidEditForm" ng-show="ctrl.decisionAid">
+    <div sd-error-scroll sa-errors="ctrl.errors"></div>
+  </form>
+
+  <div style="overflow: hidden;">
+    <div class="clearfix pull-right">
+      <a ui-sref="staticPageNew(::{decisionAidId: ctrl.decisionAid.id})" class="btn btn-primary"><i class="fa fa-plus"></i> Add Static Page</a>
+    </div>
+    <h4>Static Pages</h4>
+    <table class="table fixed-table-layout">
+      <thead>
+        <tr class="">
+          <th class="col-xs-1"></th>
+          <th class="col-xs-3">
+            Title
+          </th>
+          <th class="col-xs-7">
+            URL
+          </th>
+          <th class="col-xs-1"></th>
+        </tr>
+      </thead>
+      <tbody sv-root sv-part="ctrl.staticPages" sv-on-sort="ctrl.onSort($item, $partFrom, $partTo, $indexFrom, $indexTo)" class="sortable-table">
+        <tr sv-element ng-repeat="page in ctrl.staticPages track by page.id" >
+          <td class="col-xs-1">
+            <div class="inline-block" uib-dropdown dropdown-append-to-body>
+              <a type="button" id="dropdownMenu1" uib-dropdown-toggle aria-haspopup="true" aria-expanded="true">
+                <div class="clickable" class="inline-block"><i class="fa fa-gear"></i><span class="caret"></span></div>
+              </a>
+              <ul uib-dropdown-menu aria-labelledby="dropdownMenu1">
+                <li><a ui-sref="staticPageEdit(::{ decisionAidId: page.decision_aid_id, id: page.id })"><i class="fa fa-edit fa-fw"></i> Edit</a></li>
+                <li><a class="clickable" ng-click="ctrl.deleteStaticPage(page)"><i class="fa fa-trash fa-fw"></i> Delete</a></li>
+              </ul>
+            </div>
+          </td>
+          <td class="col-xs-3">
+            <strong>{{page.page_title}}</strong>
+          </td>
+          <td class="col-xs-7">
+            <strong>{{ctrl.$window.location.origin + "/#/decision_aid/" + ctrl.decisionAid.slug + "/static_page?static_page_slug=" + page.page_slug}}</strong>
+          </td>
+          <td class="col-xs-1">
+            <div sv-handle class="question-response-drag-icon"><i class="fa fa-lg fa-arrows drag-arrows movable"></i></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="text-center text-warning space-top space-bottom" ng-show="ctrl.staticPages.length === 0">
+      <span>There are no static pages yet. Add some using the button above!</span>
+    </div>
+  </div>
+</div>

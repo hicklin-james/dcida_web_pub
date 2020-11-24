@@ -1,0 +1,11 @@
+node_modules
+dist
+.docs
+docs
+.tmp
+.sass-cache
+bower_components
+net_connect
+control_test.sh
+app/scripts/config.coffee
+app/scripts/app.templates.js

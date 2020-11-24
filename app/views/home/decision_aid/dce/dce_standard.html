@@ -1,0 +1,67 @@
+<div>
+  <div compile="::ctrl.decisionAid.injected_dce_specific_information_published"></div>
+  <div class="space-top space-bottom">
+    <div class="space-bottom">
+      <h4 id="dce_question_set_{{ctrl.currentQuestionSet}}">{{ctrl.decisionAid.dce_question_set_title}}</h4>
+    </div>
+    <table class="table text-center">
+      <tr>
+        <th class="text-center table-edge-border" ng-style="::{width: {{100 / (ctrl.dceController.dceQuestionSetResponses.length + 1 + (ctrl.optOutOption ? 1 : 0))}} + '%'}"></th>
+        <th ng-style="::{width: {{100 / (ctrl.dceController.dceQuestionSetResponses.length + 1 + (ctrl.optOutOption ? 1 : 0))}} + '%'}" class="text-center table-edge-border dce-hypothetical-option-title" ng-repeat="qsr in ctrl.dceController.dceQuestionSetResponses">
+          <span>{{ctrl.decisionAid.dce_option_prefix}} {{::ctrl.letters[$index]}}</span>
+        </th>
+        <th ng-if="ctrl.optOutOption" ng-style="::{width: {{100 / (ctrl.dceController.dceQuestionSetResponses.length + 1 + (ctrl.optOutOption ? 1 : 0))}} + '%'}" class="text-center table-edge-border dce-hypothetical-option-title">
+          <span>{{ctrl.decisionAid.opt_out_label}}</span>
+        </th>
+      </tr>
+      <tr ng-repeat="prop in ctrl.dceController.properties" ng-show="ctrl.areAllAttributesSetForProperty(prop)">
+        <td class="table-edge-border dce-property-title hypothetical-dce-property--1">
+          <div class="display-table full-width">
+            <div class="display-table-cell dce-property-title-box">
+              {{::prop.title}}
+            </div>
+            <div class="display-table-cell dce-property-more-info-box middle-align">
+              <i class="clickable text-info fa fa-2x fa-fw fa-info-circle middle-align" ng-click="ctrl.moreInfo(prop)" ng-show="prop.injected_long_about_published"></i>
+            </div>
+          </div>
+        </td>
+        <td class="table-edge-border hypothetical-dce-property-{{$index}}" ng-repeat="qsr in ctrl.dceController.dceQuestionSetResponses" ng-style="prop.property_level_hash[qsr.property_level_hash[prop.id.toString()]].color">
+          <div compile="::prop.property_level_hash[qsr.property_level_hash[prop.id.toString()]].injected_information_published"></div>
+        </td>
+        <td ng-if="ctrl.optOutOption" class="table-edge-border hypothetical-dce-property-{{ctrl.dceController.dceQuestionSetResponses.length}}" ng-class="{'background-white': ctrl.decisionAid.color_rows_based_on_attribute_levels}" ng-style="prop.property_level_hash[ctrl.optOutOption.property_level_hash[prop.id.toString()]].color">
+          <div compile="::prop.property_level_hash[ctrl.optOutOption.property_level_hash[prop.id.toString()]].injected_information_published"></div>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td colspan="{{ctrl.dceController.dceQuestionSetResponses.length + (ctrl.optOutOption ? 1 : 0)}}"><label>{{ctrl.decisionAid.dce_selection_label}}</label></td>
+      </tr>
+      <tr>
+        <td style="border-top: none;"></td>
+        <td class="table-edge-border table-bottom-border" ng-repeat="qsr in ctrl.dceController.dceQuestionSetResponses">
+          <i class="clickable fa fa-2x" ng-class="{'fa-square-o': ctrl.dceController.userSetResponse.dce_question_set_response_id !== qsr.id, 'fa-check-square-o text-success': ctrl.dceController.userSetResponse.dce_question_set_response_id === qsr.id}" ng-click="ctrl.selectQsr(qsr)"></i>
+        </td>
+        <td ng-if="ctrl.optOutOption" class="table-edge-border table-bottom-border">
+          <i class="clickable fa fa-2x" ng-class="{'fa-square-o': ctrl.dceController.userSetResponse.dce_question_set_response_id !== -1, 'fa-check-square-o text-success': ctrl.dceController.userSetResponse.dce_question_set_response_id === -1}" ng-click="ctrl.selectQsr({id: -1})"></i>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="clearfix" ng-if="ctrl.decisionAid.include_dce_confirmation_question">
+    <div class="half-space-bottom" ng-class="{'fields-disabled': !ctrl.dceController.tasks[0]}">
+      <div class="space-bottom" compile="ctrl.decisionAid.injected_dce_confirmation_question_published"></div>
+      <div class="form-group">
+        <div class="half-space-bottom">
+          <div class="inline-block" ng-class="{'clickable': ctrl.dceController.tasks[0]}" ng-click="ctrl.setOptionConfirmed(true)">
+            <i class="fa fa-fw fa-lg" ng-class="{'fa-check-circle-o text-success': ctrl.dceController.userSetResponse.option_confirmed, 'fa-circle-o': !ctrl.dceController.userSetResponse.option_confirmed}"></i> {{'DCE-CONFIRM-YES-TEXT' | translate}}
+          </div>
+        </div>
+        <div>
+          <div class="inline-block" ng-class="{'clickable': ctrl.dceController.tasks[0]}" ng-click="ctrl.setOptionConfirmed(false)">
+            <i class="fa fa-fw fa-lg" ng-class="{'fa-check-circle-o text-success': ctrl.dceController.userSetResponse.option_confirmed === false, 'fa-circle-o': ctrl.dceController.userSetResponse.option_confirmed !== false}"></i> {{'DCE-CONFIRM-NO-TEXT' | translate}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

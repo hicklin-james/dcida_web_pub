@@ -1,0 +1,74 @@
+<div id="decision_aid_properties">
+  <!-- <div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+    <i class="fa fa-2x fa-spin fa-refresh"></i>
+  </div> -->
+  <div ng-show="ctrl.noDecisionAidFound">
+    <div class="alert alert-danger">No Decision was found with the url: {{ctrl.decisionAidSlug}}</div>
+  </div>
+  <div ng-if="!ctrl.loading && ctrl.decisionAid">
+    <div ng-show="ctrl.decisionAid">
+      <div class="space-bottom" compile="::ctrl.decisionAid.injected_properties_information_published"></div>
+    </div>
+    <div>
+      <div class="space-bottom space-top clearfix">
+        <div>
+          <div>
+            <div class="decide-property-table-wrapper" sd-scroll-to-property>
+              <div class="mobile-indicator"></div>
+              <table class="table decide-property-table" sd-fixed-header sa-hide-at-width="700">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th class="text-center selection-fixed-width">
+                      <span class="decide-v-important"><span>{{ ctrl.decisionAid.id === 158 ? 'Not at all (1)' : 'Very important'}}</span></span>
+                    </th>
+                    <th class="text-center selection-fixed-width">
+                      <span class="decide-important"><span>{{ ctrl.decisionAid.id === 158 ? '2' : 'Important'}}</span></span>
+                    </th>
+                    <th class="text-center selection-fixed-width">
+                      <span class="decide-s-important"><span>{{ ctrl.decisionAid.id === 158 ? '3' : 'Slightly important'}}</span></span>
+                    </th>
+                    <th class="text-center selection-fixed-width">
+                      <span class="decide-n-important"><span>{{ ctrl.decisionAid.id === 158 ? '4' : 'Not important'}}</span></span>
+                    </th>
+                    <th class="text-center selection-fixed-width">
+                      <span class="decide-unsure"><span>{{ ctrl.decisionAid.id === 158 ? 'A great deal (5)' : 'Unsure'}}</span></span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="property in ctrl.properties" id="decide-prop-{{$index}}">
+                    <td class="decide-property-title relative-position">
+                      <div class="half-space-bottom">
+                        <strong>{{::property.title}}</strong>
+                      </div>
+                      <div compile="property.injected_selection_about_published"></div>
+                      <div class="mobile-expand clickable" ng-class="{'invisible': ctrl.propertiesHash[property.id].weight == undefined}" ng-click="ctrl.propertiesHash[property.id].hidden = !ctrl.propertiesHash[property.id].hidden">
+                        <span ng-class="{'ninja': !ctrl.propertiesHash[property.id].hidden}">{{ctrl.nameValueMap[ctrl.propertiesHash[property.id].weight]}}</span>
+                        <i ng-show="ctrl.propertiesHash[property.id].hidden" class="fa fa-lg fa-arrow-circle-down"></i>
+                        <i ng-show="!ctrl.propertiesHash[property.id].hidden" class="fa fa-lg fa-arrow-circle-up"></i>
+                      </div>
+                    </td>
+                    <td class="text-center response-button-td clickable middle-align" data-title="{{ ctrl.decisionAid.id === 158 ? 'Not at all (1)' : 'Very important'}}" ng-click="ctrl.dirSetUserProperty(property, 4, $index)" ng-class="{'prop-hidden-mobile': ctrl.propertiesHash[property.id].hidden}"><i class="fa fa-fw fa-lg" ng-class="{'fa-check-circle-o text-success': ctrl.propertiesHash[property.id].weight === 4, 'fa-circle-o': ctrl.propertiesHash[property.id].weight !== 4}"></i></td>
+                    <td class="text-center response-button-td clickable middle-align" data-title="{{ ctrl.decisionAid.id === 158 ? '2' : 'Important'}}" ng-click="ctrl.dirSetUserProperty(property, 3, $index)" ng-class="{'prop-hidden-mobile': ctrl.propertiesHash[property.id].hidden}"><i class="fa fa-fw fa-lg" ng-class="{'fa-check-circle-o text-success': ctrl.propertiesHash[property.id].weight === 3, 'fa-circle-o': ctrl.propertiesHash[property.id].weight !== 3}"></i></td>
+                    <td class="text-center response-button-td clickable middle-align" data-title="{{ ctrl.decisionAid.id === 158 ? '3' : 'Slightly important'}}" ng-click="ctrl.dirSetUserProperty(property, 2, $index)" ng-class="{'prop-hidden-mobile': ctrl.propertiesHash[property.id].hidden}"><i class="fa fa-fw fa-lg" ng-class="{'fa-check-circle-o text-success': ctrl.propertiesHash[property.id].weight === 2, 'fa-circle-o': ctrl.propertiesHash[property.id].weight !== 2}"></i></td>
+                    <td class="text-center response-button-td clickable middle-align" data-title="{{ ctrl.decisionAid.id === 158 ? '4' : 'Not important'}}" ng-click="ctrl.dirSetUserProperty(property, 1, $index)" ng-class="{'prop-hidden-mobile': ctrl.propertiesHash[property.id].hidden}"><i class="fa fa-fw fa-lg" ng-class="{'fa-check-circle-o text-success': ctrl.propertiesHash[property.id].weight === 1, 'fa-circle-o': ctrl.propertiesHash[property.id].weight !== 1}"></i></td>
+                    <td class="text-center response-button-td clickable middle-align" data-title="{{ ctrl.decisionAid.id === 158 ? 'A great deal (5)' : 'Unsure'}}" ng-click="ctrl.dirSetUserProperty(property, 0, $index)" ng-class="{'prop-hidden-mobile': ctrl.propertiesHash[property.id].hidden}"><i class="fa fa-fw fa-lg" ng-class="{'fa-check-circle-o text-success': ctrl.propertiesHash[property.id].weight === 0, 'fa-circle-o': ctrl.propertiesHash[property.id].weight !== 0}"></i></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <hr />
+            <div class="space-bottom">
+              <p>Feel free to write any other issues that are important to you in the box below.</p>
+              <textarea ng-model="ctrl.decisionAidUser.other_properties" rows="5" class="full-width"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <sd-bottom-nav sa-show-next="{{'NEXT-BUTTON' | translate}}" sa-next-submit="ctrl.submitNext()" sa-show-prev="{{'BACK-BUTTON' | translate}}" sa-prev-link="ctrl.prevLink()"></sd-bottom-nav>
+    </div>
+  </div>
+</div>

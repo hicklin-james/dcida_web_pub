@@ -1,0 +1,193 @@
+<div ng-init="currPage = 'intro'">
+  <ul class="nav nav-tabs space-bottom">
+    <li role="presentation" ng-class="{'active': currPage === 'intro'}" ng-click="currPage = 'intro';"><a href="">Introduction</a></li>
+    <li role="presentation" ng-class="{'active': currPage === 'kinds'}" ng-click="currPage = 'kinds';"><a href="">Types</a></li>
+    <!-- <li role="presentation" ng-class="{'active': currPage === 'ex1'}" ng-click="currPage = 'ex1';"><a href="">Example 1: Hidden radio question</a></li>
+    <li role="presentation" ng-class="{'active': currPage === 'ex2'}" ng-click="currPage = 'ex2';"><a href="">Example 2: Clinical prediction model</a></li> -->
+  </ul>
+  <div class="space-bottom">
+    <div ng-switch="currPage">
+      <div ng-switch-when="intro">
+        <p>Hidden questions, called <strong>data sources</strong> can be used to individualize your tool for each user. You can use them to hook up your tool to remote databases (e.g. REDCap or MySQL), inject dynamic data based on previous question responses (e.g. lookup tables), or perform calculations.</p> 
+      </div>
+      <div ng-switch-when="kinds">
+        <p>There are a variety of different question response types that can be "hidden". When a question is hidden, the value for that question's response each time a user accesses your tool must come from elsewhere. Depending on the question response type, this can be from one or more places. The way in which this value is determined for each question response type is outlined below.</p>
+        <table class="table">
+          <tr>
+            <td class="col-md-2">
+              <label>Radio Questions, Yes/No Questions, and Numeric Questions</label>
+            </td>
+            <td class="col-md-10">
+              <h4>Using calculations</h4>
+              <p>All radio questions have a <strong>Numeric Value</strong> that can be associated with a response. Numeric values from multiple questions can be combined using the <strong>Question Response Value Calculation</strong> field that appears when you activate the <strong>Hide Question</strong> checkbox for a radio, yes/no, or numeric question.</p>
+              <p><em>Example 1: Three-item stroke scale</em></p>
+              <p>Assume that you are developing a risk calculator to determine an incoming patient's stroke severity. You want to use the 3-item stroke scale (<a href="http://stroke.ahajournals.org/content/strokeaha/36/4/773.full.pdf" target="_blank">original paper</a>).</p>
+              <p>You would start by defining the three questions corresponding to the 3 items. See the table below. Note the "Question ID" for each question as those are important when creating the calculations.</p>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th class="col-xs-12">Question</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Disturbance of consciousness in the patient? (Question ID = 1)</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <table class="table table-condensed table-bordered">
+                        <thead>
+                          <tr>
+                            <th class="col-xs-10">Response value</th>
+                            <th class="col-xs-2">Numeric value</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>No</td>
+                            <td>0</td>
+                          </tr>
+                          <tr>
+                            <td>Mild</td>
+                            <td>1</td>
+                          </tr>
+                          <tr>
+                            <td>Severe</td>
+                            <td>2</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Gaze and head deviation? (Question ID = 2)</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <table class="table table-condensed table-bordered">
+                        <thead>
+                          <tr>
+                            <th class="col-xs-10">Response value</th>
+                            <th class="col-xs-2">Numeric value</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Absent</td>
+                            <td>0</td>
+                          </tr>
+                          <tr>
+                            <td>Incomplete gaze/head deviation</td>
+                            <td>1</td>
+                          </tr>
+                          <tr>
+                            <td>Forced gaze/head deviation</td>
+                            <td>2</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Hemiparesis? (Question ID = 3)</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <table class="table table-condensed table-bordered">
+                        <thead>
+                          <tr>
+                            <th class="col-xs-10">Response value</th>
+                            <th class="col-xs-2">Numeric value</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Absent</td>
+                            <td>0</td>
+                          </tr>
+                          <tr>
+                            <td>Moderate</td>
+                            <td>1</td>
+                          </tr>
+                          <tr>
+                            <td>Severe</td>
+                            <td>2</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <p>With these three questions defined, you could now create a fourth radio question, but tick the <strong>Hide Question</strong> checkbox. Ticking that checkbox will cause a new field to appear, called the <strong>Question Response Value Calculation</strong>. You are now ready to input an equation here.</p>
+              <p>Using the <i class="fa fa-question"></i> button, you could select each question, and join them using the <i class="fa fa-plus"></i> operator. Given the IDs above, your calculation would be displayed like this:</p>
+              <p>[question_1] + [question_2] + [question_3]</p>
+              <p>The <strong>Question Content</strong> field could be something like: "3-item stroke score".</p>
+              <p>Finally, you would need to add responses for each possible outcome of the 3-item stroke scale. Since the total score is a number from 0-6, you would have 7 different responses defined here. The key is that the calculations use the <strong>Numeric Value</strong> of each question response, and also look up the resulting response based on the <strong>Numeric Value</strong> field of the hidden question. The responses of the hidden question could look like the table below:</p>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th class="col-xs-12">Question</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>3-item stroke score</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <table class="table table-condensed table-bordered">
+                        <thead>
+                          <tr>
+                            <th class="col-xs-10">Response value</th>
+                            <th class="col-xs-2">Numeric value</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Stroke score of 0</td>
+                            <td>0</td>
+                          </tr>
+                          <tr>
+                            <td>Stroke score of 1</td>
+                            <td>1</td>
+                          </tr>
+                          <tr>
+                            <td>Stroke score of 2</td>
+                            <td>2</td>
+                          </tr>
+                          <tr>
+                            <td>Stroke score of 3</td>
+                            <td>3</td>
+                          </tr>
+                          <tr>
+                            <td>Stroke score of 4</td>
+                            <td>4</td>
+                          </tr>
+                          <tr>
+                            <td>Stroke score of 5</td>
+                            <td>5</td>
+                          </tr>
+                          <tr>
+                            <td>Stroke score of 6</td>
+                            <td>6</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <p>You now have a hidden question that gets it's response value from the responses to other questions. You could export this value using the data export features, or inject it at at a later point in your decision aid. You could also filter options based on the result of this hidden question. You could even use this result as an input into other hidden questions. Hidden questions can be extremely powerful - it just takes some creativity to imagine how they can connect various pieces of your tool together!</p>
+            </td>
+          </tr>
+        </div> 
+      </div>
+      <div ng-switch-when="ex1">
+        EX1
+      </div>
+      <div ng-switch-when="ex2">
+        EX2
+      </div>
+  </div>
+</div>

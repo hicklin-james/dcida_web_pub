@@ -1,0 +1,94 @@
+<div ng-intro-options="ctrl.introJsOptions" ng-intro-method="ctrl.rc.startIntroJs" class="space-top text-center x-scrollable full-height" id="main-results-table-wrapper">
+  <table class="table table-striped results-table full-height standard-enhanced desktop-only">
+    <thead class="full-height">
+      <!-- <tr class="best-match-row">
+        <th class="results-option-image-cell"></th>
+        <th ng-if="ctrl.rc.options.length > 3" class="no-border"></th>
+        <th ng-repeat="option in ctrl.rc.visibleOptions track by option.id" class="results-option-image-cell top-align">
+          <div class="results-option-image-cell-div">
+            <div ng-if="ctrl.rc.decisionAid.ratings_enabled && (ctrl.rc.decisionAid.percentages_enabled || ctrl.rc.decisionAid.best_match_enabled)" ng-slide-down="(ctrl.rc.optionHeights[option.id] && ctrl.rc.optionHeights[option.id] !== 0) || (ctrl.rc.bestTreatment && ctrl.rc.bestTreatment.id === option.id)" lazy-render duration="0.4">
+              <div class="best-match-div" ng-if="ctrl.rc.decisionAid.best_match_enabled && (ctrl.rc.bestTreatment && ctrl.rc.bestTreatment.id === option.id)">
+                <div class="inner-best-match-div">
+                  Best Match
+                </div>
+              </div>
+              <div class="doctor-match-div" ng-if="option.ct_order === 1">
+                <div class="inner-doctor-match-div">
+                  Doctor Recommended
+                </div>
+              </div>
+              <div ng-if="ctrl.rc.decisionAid.percentages_enabled && (ctrl.rc.optionHeights[option.id] && ctrl.rc.optionHeights[option.id] !== 0)" style="background-color: #df2d68;" ng-style="{'height': ctrl.rc.optionHeights[option.id] + 'px'}" class="table transformable no-space-bottom"><div class="table-cell middle-align text-white">{{ctrl.rc.optionHeights[option.id] | number : 0}}%</div></div>
+            </div>
+          </div>
+        </th>
+        <th ng-if="ctrl.rc.options.length > 3" class="no-border"></th>
+      </tr> -->
+      <tr class="full-height">
+        <th class="results-option-image-cell full-height" style="vertical-align: middle;">
+          <!-- <a ng-if="ctrl.rc.decisionAid.ratings_enabled" class="clickable text-info" ng-click="ctrl.rc.getHelp()"><i uib-tooltip="Click here to get some additional help if you are unsure as to which option you prefer." class="fa fa-4x fa-question-circle"></i></a> -->
+        </th>
+        <th ng-if="ctrl.rc.options.length > 3" class="middle-align no-border" style="width: 50px;">
+          <i class="fa fa-arrow-left fa-2x arrow-inactive text-info" ng-class="{'arrow-active clickable': ctrl.optionStartIndex > 0}" ng-click="ctrl.shiftVisibleOptionsLeft()"></i>
+        </th>
+        <th ng-repeat="option in ctrl.rc.visibleOptions track by option.id" class="actual-option-title results-option-image-cell middle-align">
+          <div class="results-option-image-cell-div">
+            <img class="img-responsive results-option-image" ng-show="option.original_image_url" ng-src="{{::option.original_image_url}}" />
+            <div class="opt-title-wrapper clearfix">
+              <div class="opt-title">
+                <p class="matched-rank-text">{{::option.stringifiedRank}}</p>
+                <p class="matched-rank-text" ng-show="option.doctorRec">Doctor's Recommendation:</p>
+                <div>
+                  <span class="option-title-text" compile="option.label"></span><br />
+                </div>
+                <!-- <span class="clickable result-checkbox" ng-click="ctrl.selectOption(option)"><i class="fa fa-2x" ng-class="{'fa-check-square-o text-success': option.id === ctrl.subDecisionChoice.option_id, 'fa-square-o': option.id !== ctrl.subDecisionChoice.option_id }"></i></span> -->
+              </div>
+            </div>
+          </div>
+        </th>
+        <th ng-if="ctrl.rc.options.length > 3" class="middle-align no-border" style="width: 50px;">
+          <i class="fa fa-arrow-right fa-2x arrow-inactive text-info" ng-class="{'arrow-active clickable': ctrl.optionStartIndex + 3 < ctrl.rc.options.length}" ng-click="ctrl.shiftVisibleOptionsRight()"></i>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="property in ctrl.rc.displayedPropertiesWithGroupings track by property.id" id="results-row-{{$index}}" ng-class="{'prop-group-header': property.property_id < 0}">
+        <th class="property-header" colspan="{{property.property_id < 0 ? ctrl.rc.visibleOptions.length + 1 + ( ctrl.rc.options.length > 3 ? 1 : 0 ) : 1}}">
+          <div class="property-label" id="prop-row-info-{{$index}}"><!-- <a class="text-info clickable"><i class="fa fa-lg fa-fw fa-info-circle middle-align" ng-click="ctrl.moreInfo(property)"></i></a> --> 
+            <div compile="property.short_label"></div>
+          </div>
+        </th>
+        <td ng-if="property.id >= 0 && ctrl.rc.options.length > 3"></td>
+        <td ng-if="property.id >= 0" ng-repeat="option in ctrl.rc.visibleOptions track by option.id" class="text-center">
+          <!-- ng-style="{'height': ctrl.rc.setPropertyRowHeight($parent.$index) + 'px'}" -->
+          <div compile="ctrl.optionPropertyHash[property.id][option.id].short_label"></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-right"><strong>Your choice?</strong></td>
+        <td ng-if="ctrl.rc.options.length > 3" class="no-border"></td>
+        <td ng-repeat="option in ctrl.rc.visibleOptions track by option.id" class="text-center">
+          <span class="clickable result-checkbox" ng-click="ctrl.selectOption(option)"><i class="fa fa-2x" ng-class="{'fa-check-square-o text-success': option.id === ctrl.subDecisionChoice.option_id, 'fa-square-o': option.id !== ctrl.subDecisionChoice.option_id }"></i></span>
+        </td>
+        <td ng-if="ctrl.rc.options.length > 3" class="no-border"></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="mobile-only collapsed-mobile-table">
+    <div id="carouselA" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <ol class="carousel-indicators">
+        <li ng-repeat="prop in ctrl.rc.properties" data-target="#carouselA" data-slide-to="{{$index}}" target="_blank" ng-class="{'active': $index === 0}"></li>
+      </ol>
+      <!-- Wrapper for slides -->
+      <div class="carousel-inner">
+        <div class="item" ng-repeat="prop in ctrl.rc.properties" ng-class="{'active': $index === 0}">
+          <strong>{{prop.short_label}}</strong>
+          <div ng-repeat="opt in ctrl.rc.options">
+            <div class="table-header th-{{$index+1}}">{{opt.label}}</div>
+            <div class="mb-content" compile="ctrl.optionPropertyHash[prop.id][opt.id].short_label"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

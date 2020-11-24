@@ -1,0 +1,54 @@
+<div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-spin fa-refresh"></i>
+</div>
+<div ng-show="!ctrl.loading">
+  <div class="space-bottom clearfix">
+    <div class="pull-right">
+      <span class="text-success flashing-success" ng-if="ctrl.saveSuccess">Saved! <i class="fa fa-lg fa-check-circle"></i></span>
+      <button class="btn btn-info" ng-disabled="!decisionAidEditForm.$dirty" ng-click="ctrl.save()">Save</button>
+      <button class="btn btn-success" ng-click="ctrl.saveAndPreview()">Preview</button>
+    </div>
+    <h2>My Choice</h2>
+  </div>
+  <sd-extra-info>
+    <p>The <strong>My Choice</strong> page is where the actual decision takes place.</p>
+    <p>You introduce the page using the <strong>Results Information</strong> text box.</p>
+    <p>The amount of user interaction that you would like is fully configurable. You can have no interaction, or show percentages and/or the best calculated match. See samples of each option as you toggle the checkboxes below.</p>
+  </sd-extra-info>
+  <form name="decisionAidEditForm" ng-show="ctrl.decisionAid">
+    <div sd-error-scroll sa-errors="ctrl.errors"></div>
+    <!-- <div class="form-group">
+      <label for="decision_aid_results_information">Results Information</label>
+      <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAid.id}}"><textarea class="form-control" id="decision_aid_results_information" placeholder="My Results Information" ng-model="ctrl.decisionAidEdit.results_information" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'questionSelector', 'video']}"></textarea></sd-redactor-wrapper>
+    </div>
+    <div> -->
+      <div class="form-group">
+        <label for="result-page-label" input-required>Page Name</label>
+        <sd-information>This title shows up in the sub-header of the page.</sd-information>
+        <input id="results-page-label" class="form-control" ng-model="ctrl.decisionAidEdit.results_page_label" />
+      </div>
+      <div class="form-group form-inline">
+        <label>Visual options for summary table</label>
+        <sd-information>These options modify the visuals shown on the summary table.</sd-information>
+        <label ng-if="ctrl.decisionAid.decision_aid_type === 'standard'" class="half-space-right clickable">Enable Rating Process
+          <input type="checkbox" ng-model="ctrl.decisionAidEdit.ratings_enabled" ng-change="ctrl.checkRatingCheckboxes()"/>
+        </label>
+        <label class="half-space-right clickable" ng-class="{'disabled': !ctrl.decisionAidEdit.ratings_enabled && ctrl.decisionAid.decision_aid_type === 'standard'}">Show Percentages
+          <input type="checkbox" ng-disabled="!ctrl.decisionAidEdit.ratings_enabled && ctrl.decisionAid.decision_aid_type === 'standard'" ng-model="ctrl.decisionAidEdit.percentages_enabled"/>
+        </label>
+        <label class="half-space-right clickable" ng-class="{'disabled': !ctrl.decisionAidEdit.ratings_enabled && ctrl.decisionAid.decision_aid_type === 'standard'}">Show Best Match
+          <input type="checkbox" ng-disabled="!ctrl.decisionAidEdit.ratings_enabled && ctrl.decisionAid.decision_aid_type === 'standard'" ng-model="ctrl.decisionAidEdit.best_match_enabled"/>
+        </label>
+      </div>
+      <!-- <div ng-if="ctrl.decisionAid">
+        <div class="half-space-top half-space-bottom">
+          <i class="fa fa-lg fa-info-circle dcida-info-icon"></i>
+          <span class="warning-text">The image below is a sample of what this option combination looks like on the results page.</span>
+        </div>
+        <div>
+          <img class="img-responsive" ng-src="{{ctrl.ratingImage()}}" />
+        </div>
+      </div> -->
+    </div>
+  </form>
+</div>

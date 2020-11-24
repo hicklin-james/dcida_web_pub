@@ -1,0 +1,489 @@
+.question-wrapper {
+  /** border: 2px solid #E4E4E4;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 10px; **/
+  margin-bottom: 10px;
+
+  .number-question-type .table {
+    width: auto;
+  }
+
+  .number-question-type {
+    .measurement-instructions-text {
+      vertical-align: top;
+      display: inline-block;
+      margin-top: 6px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+
+    .unit-select {
+      overflow-y: hidden;
+      border: 1px solid lightgrey;
+      display: inline-block;
+      vertical-align: top;
+      
+      &:focus {
+        outline: none;
+      }
+
+      option {
+        padding: 5px 10px;
+
+        &:checked {
+          background: green;
+        }
+      }
+    }
+  }
+
+  .number-input {
+    max-width: 450px;
+    /** width: 300px; **/
+    vertical-align: top;
+  }
+
+  .question-text-wrapper {
+    /** border-bottom: 2px solid #e4e4e4; **/
+  }
+
+  .post-question-text-wrapper {
+    border-top: 2px solid #e4e4e4;
+    padding-top: 15px;
+  }
+
+  .response-button {
+    white-space: normal;
+  }
+
+  .ui-slider {
+    background: white;
+  }
+
+  .ui-slider-handle {
+    background: #0079c7;
+    cursor: pointer;
+  }
+
+  .vertical-slider {
+  	height: 200px;
+    margin-left: 9px;
+  }
+
+  .vertical-low-label {
+    bottom: 0;
+    left: 30px;
+  }
+
+  .vertical-middle-label {
+    top: 45%;
+    left: 30px;
+  }
+
+  .vertical-high-label {
+    top: 0;
+    left: 30px;
+  }
+
+  .vertical-label {
+    position: absolute;
+  }
+
+  .vertical-property-tick-label {
+    font-weight: bold;
+  }
+
+  .no-bottom-border {
+    border-bottom: none;
+  }
+
+  .no-top-border {
+    border-top: none;
+  }
+
+  table.top-row-no-border tr:first-child td, table.top-row-no-border tr:first-child th {
+    border-top: none;
+  }
+}
+
+.current-treatment-main {
+  
+}
+
+.current-treatment-sub {
+  font-size: 0.9em;
+  color: grey;
+}
+
+.grid-question-table {
+  @media (max-width: 767px) {
+
+    table, tr, td {
+      display: block;
+    }
+
+    thead {
+      display: none;
+    }
+
+    tr td:last-child {
+      border-top: none;
+    }
+
+    .response-button-td {
+      text-align: left;
+      border-bottom: none;
+      border-top: none;
+      
+      &:after {
+        content: attr(data-title);
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.rank-option-wrapper {
+  margin: 10px 0 0;
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+
+  &.disabled {
+    cursor: not-allowed;
+    background-color: #efefef;
+  }
+
+  .qr-rank-option-table {
+    border: none;
+    width: 100%;
+    tr, td {
+      border: none;
+    }
+
+    .rank-value {
+      width: 40px;
+      text-align: center;
+      vertical-align: middle;
+      font-weight: bold;
+      padding: 2px 0;
+
+      &.rank-right {
+        border-left: 1px solid lightgrey;
+      }
+
+      &.rank-left {
+        border-right: 1px solid lightgrey;
+      }
+    }
+
+    .drag-icon {
+      border-left: 1px solid lightgrey;
+      width: 30px;
+      text-align: center;
+
+      &.disabled {
+        background-color: #efefef;
+      }
+    }
+
+    .rank-qr-text {
+      padding: 2px 7px;
+    }
+  }
+}
+
+.question-slider {
+  .ui-slider {
+    background-color: #48c9b0;
+    border: none;
+  }
+
+  .ui-slider.unanswered {
+    opacity: 0.5;
+  }
+
+  .ui-slider-handle {
+    background-color: #1B9BFF;
+    border: none;
+  }
+
+  .ui-slider-handle:hover, .ui-slider-handle:active, .ui-slider-handle:focus {
+    background-color: #008FFF;
+  }
+
+  .ui-slider-segment {
+    position: absolute;
+  }
+}
+
+.question-slider .vertical-slider.ui-slider .ui-slider-handle {
+  margin-left: 2px;
+}
+
+.question-slider .horizontal-slider.ui-slider .ui-slider-handle {
+  margin-top: 1px;
+}
+
+.question-slider .vertical-slider.ui-slider .ui-slider-segment {
+  margin-top: -2px;
+}
+
+.question-slider .vertical-slider.ui-slider .ui-slider-segment .inner-segment-text {
+  line-height: 1;
+  margin-left: -25px;
+  margin-top: -5px;
+}
+
+/**
+.question-slider .ui-slider {
+  background-color: white;
+  height: 22px;
+  margin-top: 60px;
+  cursor: pointer;
+}
+
+.question-slider .ui-slider .inner-div {
+  position: absolute;
+  height: 2px;
+  width: 100%;
+  background-color: black;
+  top: 11px;
+  display: block;
+}
+
+.question-slider .ui-slider .ui-slider-segment {
+  display: block;
+  position: absolute;
+  width: 2px;
+  height: 22px;
+  background-color: black;
+}
+
+.question-slider .ui-slider.horizontal-slider .ui-slider-segment .inner-segment-text {
+  width: 40px;
+  position: absolute;
+  top: 25px;
+  left: -20px;
+  text-align: center;
+}
+
+.question-slider .vertical-slider.ui-slider .ui-slider-handle {
+  margin-left: 0 !important;
+}
+
+.question-slider .ui-slider.vertical-slider .ui-slider-segment .inner-segment-text {
+  width: 40px;
+  position: absolute;
+  left: -20px;
+  text-align: center;
+  line-height: 1;
+}
+
+.question-slider .ui-slider-handle {
+  background-color: white;
+  border: 2px solid black;
+  top: 0;
+  width: 22px;
+  height: 22px;
+  margin-left: -11px;
+}
+
+.question-slider .property-tick-label {
+  margin-top: -75px;
+}
+
+.question-slider .slider-input-value {
+  margin-top: 50px;
+}
+**/
+
+.input-text-hidden {
+  color: transparent;
+}
+
+.sum-to-n-question-type {
+
+  .table.fixed-table-layout .table-row {
+    &:nth-of-type(even) {
+      background-color: rgba(0,0,0,.05);
+    }
+
+    .table-cell {
+      padding: 5px;
+    }
+  }
+
+  .tiny-input {
+    width: 60px;
+  }
+
+  .small {
+    font-size: 70%;
+  }
+
+  .stack-identifier {
+    width: 20%;
+  }
+
+  .remaining-allocatable-wrapper {
+    margin-top: 40px;
+
+    .remaining-allocatable {
+      background-color: white !important;
+      color: black !important;
+
+      &.too-much {
+        border: 2px solid #ff6f76;
+      }
+
+      &.valid {
+        border: 2px solid #48c9b0;
+      }
+
+      &.too-little {
+        border: 2px solid #d0a049;
+      }
+    }
+  }
+
+  .constant-sum-btns {
+    width: 40px;
+    max-width: 40px;
+
+    .btn.btn-primary {
+      padding: 5px 8px;
+    }
+  }
+
+  .stack-header {
+    text-align: center;
+    height: 65px;
+  }
+
+  .stack-wrapper {
+    height: 72px;
+    padding-left: 20px;
+  }
+
+  .stack-header {
+    display: inline-block;
+    margin-right: 10px;
+  }
+
+  .stack-item-wrapper {
+    display: inline-block;
+  }
+
+  .stack-item {
+    width: 15px;
+    height: 50px;
+    margin: 4px;
+    border-radius: 3px;
+    display: inline-block;
+    vertical-align: middle;
+
+    &.source-item {
+      background-color: #f1c40f;
+    }
+
+    &.target-item {
+      background-color: #1b9bff;
+    }
+  }
+}
+
+hr {
+ height: 1px;
+}
+
+.question-validation-alert {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 2px solid #ff9f9f;
+}
+
+.response-popup-modal {
+  height: calc(100vh - 260px);
+  overflow-y: auto;
+}
+
+
+.vertical-radio-wrap {
+  .radio-text-response {
+    width: 200px;
+    height: 36px;
+    overflow: hidden;
+    display: inline-block;
+    transition: width ease 0.5s;
+
+    input {
+      height: 36px;
+    }
+  }
+
+  .radio-text-response.ng-hide {
+    width: 0;
+  }
+}
+
+.horizontal-radio-wrap {
+  .radio-text-response {
+    height: 42px;
+    margin-top: 10px;
+    overflow: hidden;
+    display: block;
+    transition: height ease 0.5s, margin-top ease 0.5s;
+  }
+
+  .radio-text-response.ng-hide {
+    height: 0;
+    margin-top: 0;
+  }
+}
+
+.vertical-radio-wrap {
+  .input-group-btn:first-child > .btn {
+    margin-right: -3px;
+    margin-left: -3px;
+    border-right-width: 0;
+  }
+
+  .radio-dropdown {
+    width: 160px;
+  }
+
+  .input-group-btn  {
+    .btn-primary {
+      background-color: #1abc9c;
+      border-color: #1abc9c;
+      color: white;
+      border-radius: 4px !important;
+    }
+
+    &.open {
+      .btn-primary {
+        border-color: #16a085;
+        background-color: #16a085;
+      }
+    }
+  }
+
+  .radio-text-response {
+    width: 200px;
+    height: 42px;
+    overflow: hidden;
+    display: inline-block;
+    transition: width ease 0.5s;
+    vertical-align: middle;
+
+    input {
+      height: 42px;
+      border-radius: 4px !important;
+    }
+  }
+
+  .radio-text-response.ng-hide {
+    width: 0;
+  }
+}

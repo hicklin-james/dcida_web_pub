@@ -1,0 +1,235 @@
+'use strict'
+
+describe 'Controller: PropertyEditCtrl', ->
+
+  beforeEach angular.mock.module 'dcida20App'
+
+  PropertyEditCtrl = {}
+  scope = {}
+  _ = {}
+  stateParams = {}
+  decisionAidType = "standard"
+  state = {}
+  state.go = (params) ->
+    null
+
+  decisionAidGetCalled = false
+  propertyDeleteCalled = false
+  propertyGetCalled = false
+  propertySaveCalled = false
+  propertyUpdateCalled = false
+  
+  Confirm = {}
+  Confirm.show = (params) ->
+    result:
+      then: (fn) ->
+        fn()
+
+  q = {}
+  q.all = (promises) ->
+    then: (fn) ->
+      fn()
+
+  DecisionAid = () ->
+    this.id = 123
+  DecisionAid.get = (params, successFn) ->
+    decisionAidGetCalled = true
+    da = new DecisionAid
+    da.decision_aid_type = decisionAidType
+    successFn(da)
+
+  mockPropertyId = 1234
+  
+  Property = () ->
+    this.id = mockPropertyId
+    this.property_levels = []
+    this
+
+  Property.prototype.preparePropertyLevelsForUpload = (params) ->
+    null
+  
+  Property.get = (params, fn) ->
+    propertyGetCalled = true
+    p = new Property
+    fn(p)
+  
+  Property.prototype.$delete = (params, successFn, errorFn) ->
+    propertyDeleteCalled = true
+    successFn()
+
+  Property.prototype.$save = (params, successFn) ->
+    propertySaveCalled = true
+    successFn()
+
+  Property.prototype.$update = (params, successFn) ->
+    propertyUpdateCalled = true
+    successFn
+
+  # Initialize the controller and a mock scope
+  beforeEach inject ($controller, $rootScope, ___) ->
+
+    decisionAidType = "standard"
+    decisionAidGetCalled = false
+    propertyDeleteCalled = false
+    propertyGetCalled = false
+    propertySaveCalled = false
+    propertyUpdateCalled = false
+
+    stateParams = {decisionAidId: 123}
+    scope = $rootScope.$new()
+    _ = ___
+    PropertyEditCtrl = $controller 'PropertyEditCtrl', {
+      $scope: scope
+      Property: Property
+      $stateParams: stateParams
+      $q: q
+      DecisionAid: DecisionAid
+      Confirm: Confirm
+      $state: state
+    }
+
+  describe "loading", () ->
+    it "should correctly set the loading variable", () ->
+      expect(PropertyEditCtrl.loading).toBeFalsy()
+
+    it "should not make a server request if there is no id in the stateparams", () ->
+      expect(propertyGetCalled).toBeFalsy()
+
+    it "should set the isNewProperty var to true", () ->
+      expect(PropertyEditCtrl.isNewProperty).toBeTruthy()
+
+    it "should set levelsActive to false if decision aid is standard", () ->
+      expect(decisionAidGetCalled).toBeTruthy()
+      expect(PropertyEditCtrl.levelsActive).toBeFalsy()
+
+    describe "id in stateparams", () ->
+      beforeEach inject ($controller, $rootScope, ___) ->
+        decisionAidType = "best_worst"
+        stateParams = {id: 543}
+        scope = $rootScope.$new()
+        _ = ___
+        PropertyEditCtrl = $controller 'PropertyEditCtrl', {
+          $scope: scope
+          Property: Property
+          $stateParams: stateParams
+          $q: q
+          DecisionAid: DecisionAid
+        }
+
+      it "should correctly set the loading variable", () ->
+        expect(PropertyEditCtrl.loading).toBeFalsy()
+
+      it "should make a server request", () ->
+        expect(propertyGetCalled).toBeTruthy()
+
+      it "should set the isNewProperty var to false", () ->
+        expect(PropertyEditCtrl.isNewProperty).toBeFalsy()
+
+    describe "dce decision aid", () ->
+      beforeEach inject ($controller, $rootScope, ___) ->
+        decisionAidType = "dce"
+        stateParams = {decisionAidId: 123}
+        scope = $rootScope.$new()
+        _ = ___
+        PropertyEditCtrl = $controller 'PropertyEditCtrl', {
+          $scope: scope
+          Property: Property
+          $stateParams: stateParams
+          $q: q
+          DecisionAid: DecisionAid
+        }
+
+      it "should set levelsActive to true", () ->
+        expect(decisionAidGetCalled).toBeTruthy()
+        expect(PropertyEditCtrl.levelsActive).toBeTruthy()
+
+    describe "best_worst decision aid", () ->
+      beforeEach inject ($controller, $rootScope, ___) ->
+        decisionAidType = "best_worst"
+        stateParams = {decisionAidId: 123}
+        scope = $rootScope.$new()
+        _ = ___
+        PropertyEditCtrl = $controller 'PropertyEditCtrl', {
+          $scope: scope
+          Property: Property
+          $stateParams: stateParams
+          $q: q
+          DecisionAid: DecisionAid
+        }
+
+      it "should set levelsActive to true if decision aid is best_worst", () ->
+        expect(decisionAidGetCalled).toBeTruthy()
+        expect(PropertyEditCtrl.levelsActive).toBeTruthy()
+
+  describe "addPropertyLevel", () ->
+    it "should add a new level to the property_levels", () ->
+      expect(PropertyEditCtrl.property.property_levels.length).toEqual 0
+      PropertyEditCtrl.addPropertyLevel()
+      expect(PropertyEditCtrl.property.property_levels.length).toEqual 1
+
+    it "it should set the level_id to the length of the property_levels + 1", () ->
+      PropertyEditCtrl.addPropertyLevel()
+      pl = PropertyEditCtrl.property.property_levels[0]
+      expect(pl.level_id).toEqual 1
+      PropertyEditCtrl.addPropertyLevel()
+      pl = PropertyEditCtrl.property.property_levels[1]
+      expect(pl.level_id).toEqual 2
+
+  describe "deletePropertyLevel", () ->
+    it "should remove a propertyLevel from the property_levels array", () ->
+      PropertyEditCtrl.addPropertyLevel()
+      PropertyEditCtrl.addPropertyLevel()
+      expect(PropertyEditCtrl.property.property_levels.length).toEqual 2
+      plToDelete = PropertyEditCtrl.property.property_levels[0]
+      PropertyEditCtrl.deletePropertyLevel(plToDelete)
+      expect(PropertyEditCtrl.property.property_levels.length).toEqual 1
+
+    it "should add to the deletedPropertyLevels array if the property_level has an id", () ->
+      PropertyEditCtrl.addPropertyLevel()
+      plToDelete = PropertyEditCtrl.property.property_levels[0]
+      plToDelete.id = 555
+      expect(PropertyEditCtrl.deletedPropertyLevels.length).toEqual 0
+      PropertyEditCtrl.deletePropertyLevel(plToDelete)
+      expect(PropertyEditCtrl.deletedPropertyLevels.length).toEqual 1
+
+    it "should update the level_id to reflect the deleted property_level", () ->
+      PropertyEditCtrl.addPropertyLevel()
+      PropertyEditCtrl.addPropertyLevel()
+      expect(PropertyEditCtrl.property.property_levels.length).toEqual 2
+      plToDelete = PropertyEditCtrl.property.property_levels[0]
+      expect(plToDelete.level_id).toEqual 1
+      PropertyEditCtrl.deletePropertyLevel(plToDelete)
+      expect(PropertyEditCtrl.property.property_levels.length).toEqual 1
+      plLeft = PropertyEditCtrl.property.property_levels[0]
+      expect(plLeft.level_id).toEqual 1
+
+  describe "deleteProperty", () ->
+    it "should delete the property", () ->
+      PropertyEditCtrl.deleteProperty()
+      expect(propertyDeleteCalled).toBeTruthy()
+
+  describe "saveProperty", () ->
+
+    it "should call save if there is no id in the stateParams", () ->
+      expect(propertySaveCalled).toBeFalsy()
+      PropertyEditCtrl.saveProperty()
+      expect(propertySaveCalled).toBeTruthy()
+
+    describe "id in stateparams", () ->
+      beforeEach inject ($controller, $rootScope, ___) ->
+        decisionAidType = "best_worst"
+        stateParams = {id: 543}
+        scope = $rootScope.$new()
+        _ = ___
+        PropertyEditCtrl = $controller 'PropertyEditCtrl', {
+          $scope: scope
+          Property: Property
+          $stateParams: stateParams
+          $q: q
+          DecisionAid: DecisionAid
+        }
+
+      it "should call update", () ->
+        expect(propertyUpdateCalled).toBeFalsy()
+        PropertyEditCtrl.saveProperty()
+        expect(propertyUpdateCalled).toBeTruthy()

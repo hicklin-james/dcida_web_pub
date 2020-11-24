@@ -1,0 +1,147 @@
+'use strict'
+
+describe 'Controller: OptionEditCtrl', ->
+
+  beforeEach angular.mock.module 'dcida20App'
+
+  OptionEditCtrl = {}
+  scope = {}
+  _ = {}
+  stateParams = {}
+
+  mockOptionId = 1234
+  mockSubDecisionId = 5555
+  Option = () ->
+    this.id = mockOptionId
+    this.sub_decision_id = mockSubDecisionId
+    this
+  Option.get = (params, fn) ->
+    o = new Option
+    fn(o)
+  Option.prototype.initialize = () ->
+    @sub_options = []
+    @has_sub_options = false
+  Option.prototype.setupQuestionResponses = (qs) ->
+    allQuestions = []
+    _.each qs, (q) ->
+      allQuestions.push q
+      if q.question_response_type is "grid"
+        _.each q.grid_questions, (gq) =>
+          allQuestions.push gq
+    allQuestions
+  Option.prototype.copyAttributes = (option) ->
+    @title = angular.copy option.title
+    @label = angular.copy option.label
+    @question_response_array = angular.copy option.question_response_array
+    @decision_aid_id = angular.copy option.decision_aid_id
+    @summary_text = angular.copy option.summary_text
+    @description = angular.copy option.description
+    @image = angular.copy option.image
+    @image_thumb = angular.copy option.image_thumb
+    @media_file_id = angular.copy option.media_file_id
+
+  mockNumberOfQuestions = 10
+  mockNumberOfQuestionResponses = 5
+  
+  Question = (id) ->
+    this.id = id
+    this.question_response_array = [1]
+    this.question_responses = []
+    for i in [0..mockNumberOfQuestionResponses - 1]
+      qr = {id: i, question_id: id, question_response_value: "test"}
+      this.question_responses.push qr
+
+  Question.query = (params, fn) ->
+    questions = []
+    for i in [0..mockNumberOfQuestions - 1]
+      questions.push new Question(i)
+    fn(questions)
+
+  Question.flattenQuestions = (questions) ->
+    questions
+
+  # Initialize the controller and a mock scope
+  beforeEach inject ($controller, $rootScope, ___) ->
+    
+    scope = $rootScope.$new()
+    _ = ___
+    OptionEditCtrl = $controller 'OptionEditCtrl', {
+      $scope: scope
+      Option: Option
+      Question: Question
+    }
+
+  describe "loading", () ->
+    it "should correctly set the loading variable", () ->
+      expect(OptionEditCtrl.loading).toBeFalsy()
+
+    it "should set the isNewOption if there is no id in the stateParams", () ->
+      expect(OptionEditCtrl.isNewOption).toBeTruthy()
+
+    describe "id in stateParams", () ->
+      beforeEach inject ($controller, $rootScope, ___) ->
+        scope = $rootScope.$new()
+        _ = ___
+        stateParams = {id: 1234}
+        OptionEditCtrl = $controller 'OptionEditCtrl', {
+          $scope: scope
+          Option: Option
+          Question: Question
+          $stateParams: stateParams
+        }
+
+      it "should not set the isNewOption", () ->
+        expect(OptionEditCtrl.isNewOption).toBeFalsy()
+
+  describe "addSubOption", () ->
+    it "should add a new subOption to the option", () ->
+      expect(OptionEditCtrl.option.sub_options).toBeEmpty
+      OptionEditCtrl.addSubOption()
+      expect(OptionEditCtrl.option.sub_options).not.toBeEmpty
+
+    it "should set the new subOption as currentlyEditing", () ->
+      subOption = OptionEditCtrl.addSubOption()
+      expect(OptionEditCtrl.currentlyEditing).toEqual subOption
+
+  describe "selectAllQuestionResponses", () ->
+    it "should set the currentlyEditing question responses to selected", () ->
+      OptionEditCtrl.selectAllQuestionResponses()
+      expect(OptionEditCtrl.currentlyEditing).toBeDefined()
+      expect(OptionEditCtrl.currentlyEditing.questions_with_responses).not.toBeEmpty
+      _.each OptionEditCtrl.currentlyEditing.questions_with_responses, (q) ->
+        expect(q.question_responses).not.toBeEmpty
+        _.each q.question_resposnes, (qr) ->
+          expect(qr.selected).toBeTruthy()
+
+  describe "selectNoQuestionResponses", () ->
+    it "should set the currentlyEditing questions responses to not selected", () ->
+      OptionEditCtrl.selectAllQuestionResponses()
+      expect(OptionEditCtrl.currentlyEditing).toBeDefined()
+      expect(OptionEditCtrl.currentlyEditing.questions_with_responses).not.toBeEmpty
+      _.each OptionEditCtrl.currentlyEditing.questions_with_responses, (q) ->
+        expect(q.question_responses).not.toBeEmpty
+        _.each q.question_resposnes, (qr) ->
+          expect(qr.selected).toBeFalsy()
+
+  describe "hasSubOptionsChanged", () ->
+    it "should set the currentlyEditing to the main option if has_sub_options is false", () ->
+      OptionEditCtrl.option.has_sub_options = true
+      subOption = OptionEditCtrl.addSubOption()
+      expect(OptionEditCtrl.currentlyEditing).toEqual subOption
+      OptionEditCtrl.option.has_sub_options = false
+      OptionEditCtrl.hasSubOptionsChanged()
+      expect(OptionEditCtrl.currentlyEditing).toEqual OptionEditCtrl.option
+
+    it "should add a new subOption if has_sub_options is true and the option has no sub_options", () ->
+      OptionEditCtrl.option.has_sub_options = true
+      OptionEditCtrl.hasSubOptionsChanged()
+      expect(OptionEditCtrl.option.has_sub_options.length).toBe > 0
+
+    it "should not add a new subOption if has_sub_options is true and there is already a sub_option", () ->
+      OptionEditCtrl.addSubOption()
+      OptionEditCtrl.option.has_sub_options = false
+      subOptionsLength = OptionEditCtrl.option.sub_options.length
+      OptionEditCtrl.hasSubOptionsChanged()
+      OptionEditCtrl.option.has_sub_options = true
+      expect(OptionEditCtrl.option.sub_options.length).toBe subOptionsLength
+

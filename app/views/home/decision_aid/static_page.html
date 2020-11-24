@@ -1,0 +1,23 @@
+<div id="decision_aid_intro">
+  <!-- <div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+    <i class="fa fa-2x fa-spin fa-refresh"></i>
+  </div> -->
+  <div ng-show="ctrl.noDecisionAidFound || ctrl.noStaticPageFound">
+    <div class="alert alert-danger">
+      <table>
+        <tr>
+          <td>
+            <i class="fa fa-info-circle fa-fw fa-3x middle-align inline-block"></i>
+          </td>
+          <td>
+            <span ng-show="ctrl.noDecisionAidFound" translate="DECISION-AID-LOAD-ERROR" translate-values="{ slug: ctrl.decisionAidSlug }"></span>
+            <span ng-show="ctrl.noStaticPageFound" translate="DECISION-AID-STATIC-PAGE-ERROR" translate-values="{ slug: ctrl.staticPageSlug }"></span>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div ng-if="ctrl.decisionAid && ctrl.staticPage && !ctrl.loading" id='static-page-wrapper'>
+    <div compile="ctrl.staticPage.injected_page_text_published"></div>
+  </div>
+</div>

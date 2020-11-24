@@ -1,0 +1,21 @@
+.human-body svg g ellipse.body-part:hover {
+  cursor: pointer;
+}
+
+ellipse.body-part {
+  fill: #e6e6e6;
+  stroke: black;
+}
+
+ellipse.body-part.selected {
+  fill: #ffbcbc;
+}
+
+@media (min-width: 768px) {
+  .human-text-right {
+    text-align: right;
+  }
+  .human-text-center {
+    text-align: center;
+  }
+}

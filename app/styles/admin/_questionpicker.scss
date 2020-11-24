@@ -1,0 +1,31 @@
+.question-add:hover {
+  background-color: #dff0d8;
+}
+
+.question-filter-box {
+  padding: 10px;
+  border: 1px solid lightgrey;
+  border-radius: 3px;
+}
+
+.question-row {
+  padding: 10px;
+  border: 1px solid lightgrey;
+}
+
+.inner-question-row {
+  padding: 10px 0px 10px 10px;
+  border: 1px solid lightgrey;
+}
+
+.clickable.question-row:hover, .clickable.inner-question-row:hover {
+  background-color: #ececec
+}
+
+.question-headers {
+  padding: 0px 10px;
+}
+
+.border-right {
+  border-right: 1px solid lightgrey;
+}

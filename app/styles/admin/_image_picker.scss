@@ -1,0 +1,72 @@
+.image-picker-img-wrapper {
+
+	 max-width: 75px;
+	 margin: 9px;
+
+	.selectable-image {
+		border: 2px solid white;
+
+		&:hover, &.selected {
+			border: 2px solid darkblue;
+		}
+	}
+
+	.delete-icon {
+		right: 0;
+	}
+}
+
+.image-picker-all-images {
+  min-height: 372px;
+}
+
+.drop-box {
+	border: 10px dotted lightgrey;
+	height: 100px;
+	width: 100%;
+	vertical-align: middle;
+	display: table-cell;
+
+	.media-drop-text {
+		font-style: italic;
+		opacity: 0.5;
+	}
+
+	@keyframes border-pulsate {
+	    0%   { border-color: lightgrey; }
+	    50% { border-color: black; }
+	    100%   { border-color: lightgrey; }
+	}
+
+	&.dragover {
+	    animation: border-pulsate 2s infinite;
+	}
+}
+
+.icons-container {
+	width: 100%;
+	min-height: 75px;
+	border: 5px dotted lightgrey;
+
+	@keyframes border-pulsate {
+	    0%   { border-color: lightgrey; }
+	    50% { border-color: black; }
+	    100%   { border-color: lightgrey; }
+	}
+
+	&.dragover {
+	    animation: border-pulsate 1s infinite;
+	}
+}
+
+.new-image {
+	width: 73px;
+	height: 73px;
+	margin: 10px;
+	border: 1px dotted grey;
+	display: inline-block;
+}
+
+.logo-editor-wrapper {
+	max-width: 75px;
+}

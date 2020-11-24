@@ -1,0 +1,18 @@
+{
+  "name": "redactor",
+  "main": ["redactor.js", "redactor-plugins/imagemanager.js", "redactor-plugins/video.js", "redactor.css"],
+  "version": "0.0.1",
+  "homepage": "https://imperavi.com/redactor/",
+  "description": "Redactor text editor",
+  "keywords": [
+    "redactor"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

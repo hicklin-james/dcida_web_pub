@@ -1,0 +1,51 @@
+<div>
+  <div ng-if="ctrl.optOutOption">
+    <div class="clearfix">
+      <div class="space-bottom pull-left">
+        <h4 id="dce_question_set_{{ctrl.currentQuestionSet}}">{{ctrl.decisionAid.dce_question_set_title}}</h4>
+      </div>
+    </div>
+    <div ng-if="!ctrl.dceController.tasks[0]" compile="::ctrl.decisionAid.injected_dce_specific_information_published"></div>
+    <div ng-if="ctrl.dceController.tasks[0]" compile="::ctrl.decisionAid.injected_opt_out_information_published"></div>
+    <div class="space-top space-bottom">
+      <table class="table text-center">
+        <tr>
+          <th class="text-center table-edge-border" ng-style="::{width: {{100 / (ctrl.dceController.dceQuestionSetResponses.length + 2)}} + '%'}"></th>
+          <th ng-style="::{width: {{100 / (ctrl.dceController.dceQuestionSetResponses.length + 2)}} + '%'}" class="text-center table-edge-border dce-hypothetical-option-title dce-select-enabled" ng-repeat="qsr in ctrl.dceController.dceQuestionSetResponses" ng-class="{'dce-select-disabled': ctrl.dceController.tasks[0] && ((ctrl.userSetResponse.dce_question_set_response_id !== qsr.id && ctrl.decisionAid.compare_opt_out_to_last_selected) || (ctrl.userSetResponse.dce_question_set_response_id === qsr.id && !ctrl.decisionAid.compare_opt_out_to_last_selected))}">
+            <span>{{ctrl.decisionAid.dce_option_prefix}} {{::ctrl.letters[$index]}}</span>
+          </th>
+          <th ng-style="::{width: {{100 / (ctrl.dceController.dceQuestionSetResponses.length + 2)}} + '%'}" class="text-center table-edge-border dce-hypothetical-option-title dce-select-enabled" ng-class="{'dce-select-disabled': !ctrl.dceController.tasks[0]}">
+            <span>{{ctrl.decisionAid.opt_out_label}}</span>
+          </th>
+        </tr>
+        <tr ng-repeat="prop in ctrl.properties" ng-if="ctrl.areAllAttributesSetForProperty(prop)">
+          <td class="table-edge-border dce-property-title hypothetical-dce-property--1">
+            <div class="display-table full-width">
+              <div class="display-table-cell dce-property-title-box">
+                {{::prop.title}}
+              </div>
+              <div class="display-table-cell dce-property-more-info-box middle-align">
+                <i class="clickable text-info fa fa-2x fa-fw fa-info-circle middle-align" ng-click="ctrl.moreInfo(prop)" ng-show="prop.injected_long_about_published"></i>
+              </div>
+            </div>
+          </td>
+          <td class="table-edge-border hypothetical-dce-property-{{$index}} dce-select-enabled" ng-repeat="qsr in ctrl.dceController.dceQuestionSetResponses" ng-class="{'dce-select-disabled': ctrl.dceController.tasks[0] && ((ctrl.userSetResponse.dce_question_set_response_id !== qsr.id && ctrl.decisionAid.compare_opt_out_to_last_selected) || (ctrl.userSetResponse.dce_question_set_response_id === qsr.id && !ctrl.decisionAid.compare_opt_out_to_last_selected)), 'force-background-white': ctrl.dceController.tasks[0]}" ng-style="prop.property_level_hash[qsr.property_level_hash[prop.id.toString()]].color">
+            <div compile="::prop.property_level_hash[qsr.property_level_hash[prop.id.toString()]].injected_information_published"></div>
+          </td>
+          <td ng-class="{'dce-select-disabled': !ctrl.dceController.tasks[0], 'background-white': ctrl.decisionAid.color_rows_based_on_attribute_levels}" class="table-edge-border hypothetical-dce-property-{{ctrl.dceController.dceQuestionSetResponses.length}} dce-select-enabled" ng-style="prop.property_level_hash[ctrl.optOutOption.property_level_hash[prop.id.toString()]].color">
+            <div compile="::prop.property_level_hash[ctrl.optOutOption.property_level_hash[prop.id.toString()]].injected_information_published"></div>
+          </td>
+        </tr>
+        <tr>
+          <td class="middle-align text-right"><label>{{ctrl.decisionAid.dce_selection_label}}</label></td>
+          <td class="table-edge-border table-bottom-border dce-select-enabled" ng-repeat="qsr in ctrl.dceController.dceQuestionSetResponses" ng-class="{'dce-select-disabled': ctrl.dceController.tasks[0] && ((ctrl.userSetResponse.dce_question_set_response_id !== qsr.id && ctrl.decisionAid.compare_opt_out_to_last_selected) || (ctrl.userSetResponse.dce_question_set_response_id === qsr.id && !ctrl.decisionAid.compare_opt_out_to_last_selected))}">
+            <i class="fa fa-2x" ng-class="{'fa-square-o': !((!ctrl.dceController.tasks[0] && ctrl.userSetResponse.dce_question_set_response_id === qsr.id) || (ctrl.dceController.tasks[0] && ctrl.userSetResponse.fallback_question_set_id === qsr.id) || (ctrl.dceController.tasks[0] && ctrl.userSetResponse.dce_question_set_response_id === qsr.id && !ctrl.decisionAid.compare_opt_out_to_last_selected)), 'fa-check-square-o text-success': (!ctrl.dceController.tasks[0] && ctrl.userSetResponse.dce_question_set_response_id === qsr.id) || (ctrl.dceController.tasks[0] && ctrl.userSetResponse.fallback_question_set_id === qsr.id) || (ctrl.dceController.tasks[0] && ctrl.userSetResponse.dce_question_set_response_id === qsr.id && !ctrl.decisionAid.compare_opt_out_to_last_selected), 'clickable': !ctrl.dceController.tasks[0] || (ctrl.userSetResponse.dce_question_set_response_id === qsr.id && ctrl.decisionAid.compare_opt_out_to_last_selected) || (ctrl.userSetResponse.dce_question_set_response_id !== qsr.id && !ctrl.decisionAid.compare_opt_out_to_last_selected)}" ng-click="ctrl.selectQsr(qsr)"></i>
+          </td>
+          <td class="table-edge-border table-bottom-border dce-select-enabled" ng-class="{'dce-select-disabled': !ctrl.dceController.tasks[0]}">
+            <i class="fa fa-2x" ng-class="{'fa-square-o': ctrl.userSetResponse.fallback_question_set_id !== -1, 'fa-check-square-o text-success': ctrl.userSetResponse.fallback_question_set_id === -1, 'clickable': ctrl.dceController.tasks[0]}" ng-click="ctrl.selectQsr({id: -1})" ></i>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,22 @@
+<div class="modal-header clearfix">
+  <div class="pull-right">
+    <button class="btn btn-default" ng-click="ctrl.close()">Close</button>
+  </div>
+  <h3>Introduction Preview</h3>
+</div>
+<div class="modal-body">
+  <div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+    <i class="fa fa-2x fa-spin fa-refresh"></i>
+  </div>
+  <div ng-if="!ctrl.loading">
+    <div compile="ctrl.currentIntroPage.description_published"></div>
+  </div>
+</div>
+<div class="modal-footer clearfix">
+  <div class="pull-left">
+    <button ng-disabled="ctrl.currentIntroPage.intro_page_order === 1" class="btn btn-primary" ng-click="ctrl.prev()">Prev</button>
+  </div>
+  <div class="pull-right">
+    <button ng-disabled="ctrl.currentIntroPage.intro_page_order === ctrl.introPages.length" class="btn btn-primary" ng-click="ctrl.next()">Next</button>
+  </div>
+</div>

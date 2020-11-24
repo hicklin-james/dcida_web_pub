@@ -1,0 +1,43 @@
+.summary-question-wrapper {
+  padding: 10px;
+  border: 2px solid lightgrey;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}
+
+.summary-panel-outer {
+  border: 2px solid lightgrey;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.summary-email-input {
+  width: 150px;
+  display: inline-block;
+}
+
+#offscreen-content .labels, #offscreen-content .you, #offscreen-content .tick {
+  font-size: 0.8em;
+}
+
+#offscreen-content {
+  h1, h2, h3, h4, h5 {
+    font-size: 10px;
+    margin-top: 0;
+    margin-bottom: 5px;
+  }
+  p, ul, li {
+    font-size: 10px;
+  }
+
+  .summary-panel-outer {
+    margin-bottom: 5px;
+    padding: 5px;
+  }
+}
+
+.summary-star-rating {
+  height: 20px;
+}

@@ -1,0 +1,42 @@
+<div class="modal-header">
+  <div class="pull-right">
+    <button class="btn btn-default" ng-click="ctrl.cancelImagePicker()">Cancel</button>
+  </div>
+  <ul class="nav nav-pills">
+    <li class="clickable" role="presentation" ng-click="ctrl.setCurrentTab('select')" ng-class="{active: ctrl.currentTab === 'select'}"><a>Select Image</a></li>
+    <li class="clickable" role="presentation" ng-click="ctrl.setCurrentTab('upload')" ng-class="{active: ctrl.currentTab === 'upload'}"><a>Upload Image</a></li>
+  </ul>
+</div>
+<div class="modal-body">
+  <div ng-show="ctrl.currentTab === 'upload'">
+    <div class="text-center">
+      <div class="btn btn-default button" ngf-select="ctrl.uploadImage()" ng-model="ctrl.selectedFile" name="file" ngf-pattern="'image/*" accept="image/*">Upload File</div>
+      <div class="full-width text-center space-top">
+        <div class="half-width inline-block">
+          <div class="table">
+            <div ngf-drop="ctrl.uploadImage()" ng-model="ctrl.selectedFile" class="drop-box" ngf-drag-over-class="dragover" ngf-multiple="true" ngf-pattern="'image/*,application/pdf'">
+              <span ng-show="!ctrl.inProgress" class="media-drop-text">Drop image here</span>
+              <div ng-show="ctrl.inProgress" class="half-space-top"><i class="fa fa-lg fa-refresh fa-spin"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div ng-show="ctrl.currentTab === 'select'">
+    <div class="image-picker-all-images">
+      <div class="relative-position image-picker-img-wrapper inline-block" ng-repeat="img in ctrl.images">
+        <img class="selectable-image full-width clickable" ng-class="{selected: ctrl.selectedFileId === img.id}" ng-src="{{img.icon}}" ng-click="ctrl.selectImage(img)" />
+      </div>
+    </div>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li class="page-item" ng-class="{'disabled': !ctrl.meta.prev_page}" ng-click="ctrl.updatePage(ctrl.currPage-1)"><span class="page-link">Previous</span></li>
+        <li ng-repeat="page in ctrl.pages" class="page-item" ng-class="{'active': page === ctrl.currPage}" ng-click="ctrl.updatePage(page)">
+          <span class="page-link">{{page}}</span>
+        </li>
+        <li class="page-item" ng-class="{'disabled': !ctrl.meta.next_page}" ng-click="ctrl.updatePage(ctrl.currPage+1)"><span class="page-link">Next</span></li>
+      </ul>
+    </nav>
+  </div>
+</div>

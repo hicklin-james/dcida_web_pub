@@ -1,0 +1,52 @@
+<div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-spin fa-refresh"></i>
+</div>
+<div ng-show="!ctrl.loading">
+  <div class="space-bottom clearfix">
+    <div class="pull-right">
+      <span class="text-success flashing-success" ng-if="ctrl.saveSuccess">Saved! <i class="fa fa-lg fa-check-circle"></i></span>
+      <button class="btn btn-info" ng-disabled="!decisionAidEditForm.$dirty" ng-click="ctrl.save()">Save</button>
+      <!-- <button class="btn btn-success" ng-click="ctrl.saveAndPreview()">Preview</button>  -->
+    </div>
+    <h2>Properties</h2>
+  </div>
+  <sd-extra-info>
+    <p>Here is where you can define your properties. Use the <strong>Add Property</strong> button below to add new properties</p>
+    <p>You can reorder your properties using the list at the bottom of the page.</p>
+  </sd-extra-info>
+  <form name="decisionAidEditForm" ng-show="ctrl.decisionAid">
+    <div sd-error-scroll sa-errors="ctrl.errors"></div>
+    <div class="form-group">
+      <label input-required for="properties_page_name">Page Name</label>
+      <sd-information>This title shows up in the sub-header of the page.</sd-information>
+      <input id="properties_page_name" class="form-control" ng-model="ctrl.decisionAidEdit.properties_page_label" />
+    </div>
+
+    <hr />
+
+    <div class="space-right space-left">
+      <div>
+        <div class="space-bottom">
+          <div class="clearfix pull-right">
+            <a class="btn btn-primary small-button" ui-sref="propertyNew (::{decisionAidId: ctrl.decisionAid.id})"><i class="fa fa-fw fa-plus"></i> Add Property</a>
+          </div>
+          <h4>Properties</h4>
+        </div>
+          <div class="col-md-6">
+            <div class="auto-overflow-y" ng-show="ctrl.properties.length > 0">
+              <ul sv-root sv-part="ctrl.properties" sv-on-sort="ctrl.onPropertySort($item, $partFrom, $partTo, $indexFrom, $indexTo)" class="sortable-list">
+                <li style="margin-bottom: 10px;" sv-element ng-repeat="prop in ctrl.properties track by prop.id">
+                  <i sv-handle class="half-space-right fa fa-arrows drag-arrows movable"></i>
+                  <a ui-sref="propertyEdit (::{ decisionAidId: prop.decision_aid_id, id: prop.id })"><i class="fa fa-pencil"></i></a> {{::prop.title}}
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="text-center" ng-show="ctrl.groupedOptions[subDecision.id].length === 0 && ctrl.properties.length === 0">
+            <span class="text-warning">There are no properties yet.</span> 
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

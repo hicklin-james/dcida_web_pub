@@ -1,0 +1,108 @@
+.table-edge-border {
+  border-right: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+}
+
+.table-bottom-border {
+  border-bottom: 1px solid #ddd;
+}
+
+.dce-select-enabled {
+  opacity: 1;
+  -webkit-transition: opacity 0.5s ease-in-out;
+  -moz-transition: opacity 0.5s ease-in-out;
+  -ms-transition: opacity 0.5s ease-in-out;
+  -o-transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.5s ease-in-out;
+
+  .clickable-when-enabled {
+    cursor: pointer;
+  }
+}
+
+.dce-select-disabled {
+  opacity: 0.2;
+  -webkit-transition: opacity 0.5s ease-in-out;
+  -moz-transition: opacity 0.5s ease-in-out;
+  -ms-transition: opacity 0.5s ease-in-out;
+  -o-transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.5s ease-in-out;
+
+  .clickable-when-enabled {
+    cursor: not-allowed;
+  }
+}
+
+.dce-no-animation-select-enabled {
+  opacity: 1;
+}
+
+.dce-no-animation-select-disabled {
+  opacity: 0.2;
+}
+
+.dce-property-title {
+  font-weight: bold;
+  vertical-align: middle !important;
+  /** color: #0079c7; **/
+}
+
+.dce-property-title-box {
+  width: 80%;
+  text-align: left;
+}
+
+.dce-hypothetical-option-title {
+  font-weight: bold;
+  color: #0079c7;
+}
+
+.dce-property-more-info-box {
+  text-align: right;
+  width: 20%;
+}
+
+$base-color: #f5f5f5;
+
+.hypothetical-dce-property--1 {
+  background-color: darken($base-color, 4%);
+}
+
+/**
+.hypothetical-dce-property-0 {
+  background-color: $base-color;
+}
+
+.hypothetical-dce-property-1 {
+  background-color: darken($base-color, 5%);
+}
+
+.hypothetical-dce-property-2 {
+  background-color: darken($base-color, 10%);
+}
+
+.hypothetical-dce-property-3 {
+  background-color: darken($base-color, 15%);
+}
+
+.hypothetical-dce-property-4 {
+  background-color: darken($base-color, 20%);
+}
+
+.hypothetical-dce-property-5 {
+  background-color: darken($base-color, 25%);
+}
+**/
+
+.background-white {
+  background-color: white;
+}
+
+.force-background-white {
+  background-color: white !important;
+} 
+
+.fields-disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}

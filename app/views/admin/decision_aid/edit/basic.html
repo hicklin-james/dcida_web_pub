@@ -1,0 +1,98 @@
+<div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-spin fa-refresh"></i>
+</div>
+<div ng-show="!ctrl.loading">
+  <div class="space-bottom clearfix">
+    <div class="pull-right">
+      <span class="text-success flashing-success" ng-if="ctrl.saveSuccess">Saved! <i class="fa fa-lg fa-check-circle"></i></span>
+      <button class="btn btn-info" ng-disabled="!decisionAidEditForm.$dirty" ng-click="ctrl.save()">Save</button>
+    </div>
+    <h2>Basic</h2>
+  </div>
+  <form name="decisionAidEditForm" ng-show="ctrl.decisionAid">
+    <div sd-error-scroll sa-errors="ctrl.errors"></div>
+    <div id="decision_aid_edit_wrapper">
+      <div class="form-group">
+        <label for="decision_aid_title" input-required>Title</label>
+        <sd-information>The title for your tool shows in the header of every page.</sd-information>
+        <input class="form-control" id="decision_aid_title" placeholder="Title" ng-model="ctrl.decisionAidEdit.title" />
+      </div>
+      <div class="form-group">
+        <label for="decision_aid_slug" input-required>Slug</label>
+        <sd-information>The "slug" for your tool is the part of the url that identifies your decision aid. The slug is <span class="text-warning"><strong>case sensitive</strong></span>.</sd-information>
+        <input class="form-control" id="decision_aid_slug" placeholder="Slug" ng-model="ctrl.decisionAidEdit.slug" />
+        <span class="slug-example">Your url will look like this: <strong>{{ctrl.API_PUBLIC}}/#/decision_aid/{{ctrl.decisionAidEdit.slug}}</strong></span>
+      </div>
+      <div class="form-group">
+        <label for="decision_aid_description">Contact Information</label>
+        <sd-information>This will appear in a popup that is activated from the decision aid header.</sd-information>
+        <sd-redactor-wrapper sa-decision-aid-id="{{ctrl.decisionAid.id}}"><textarea class="form-control" id="decision_aid_description" placeholder="Contact Information" ng-model="ctrl.decisionAidEdit.description" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'video']}"></textarea></sd-redactor-wrapper>
+      </div>
+      <!-- <div class="form-group">
+        <label for="decision_aid_contact_email">Contact Email</label>
+        <input class="form-control" id="decision_aid_contact_email" placeholder="Contact Email" ng-model="ctrl.decisionAidEdit.contact_email" />
+      </div>
+      <div class="form-group">
+        <label for="decision_aid_contact_phone_number">Contact Phone Number</label>
+        <input class="form-control" id="decision_aid_contact_phone_number" placeholder="Contact Phone Number" ng-model="ctrl.decisionAidEdit.contact_phone_number" />
+      </div> -->
+      <div class="form-group">
+        <div><label><span>Protect with Password</span></label></div>
+        <sd-information>If you enable password protection, users will need to enter a password when they first access the tool.</sd-information>
+        <label class="clickable half-space-right" name="decision-aid-protect-with-password-yes">Yes <input id="decision-aid-protect-with-password-yes" class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.password_protected" ng-value="true"></label>
+        <label class="clickable" name="decision-aid-protect-with-password-no">No <input id="decision-aid-protect-with-password-no" class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.password_protected" ng-value="false"></label>
+      </div>
+      <div class="form-group" ng-show="ctrl.decisionAidEdit.password_protected">
+        <label for="decision_aid_access_password">Access Password</label>
+        <div class="input-group">
+          <span class="input-group-btn">
+            <button class="btn btn-default no-user-select" type="button" ng-click="ctrl.showDaPassword()"><i class="fa fa-fw fa-eye fa-lg" ng-class="{'fa-eye': !ctrl.passwordVisible, 'fa-eye-slash': ctrl.passwordVisible}"></i></button>
+          </span>
+          <input class="form-control" id="decision_aid_access_password" placeholder="Access Password" type="{{ctrl.passwordVisibleType}}" ng-model="ctrl.decisionAidEdit.access_password" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="half-space-right">Language</label>
+        <sd-information>Static text on the decision decision aid (e.g. next and back buttons) </sd-information>
+        <select class="form-control select-field" ng-model="ctrl.decisionAidEdit.language_code" ng-options="ds.value as ds.key for ds in ctrl.languageCodes"></select>
+      </div>
+
+      <div class="form-group">
+        <div><label><span>Hide Menu Bar</span></label></div>
+        <sd-information>Select "Yes" above to hide the menu bar in the decision aid.</sd-information>
+        <label class="clickable half-space-right" name="decision-aid-hide-menu-bar-yes">Yes <input id="decision-aid-hide-menu-bar-yes" class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.hide_menu_bar" ng-value="true"></label>
+        <label class="clickable" name="decision-aid-hide-menu-bar-no">No <input id="decision-aid-hide-menu-bar-no" class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.hide_menu_bar" ng-value="false"></label>
+      </div>
+
+      <div class="form-group">
+        <div><label><span>Full width pages</span></label></div>
+        <sd-information>Select "Yes" to use the full width of the page for text, otherwise there are margins on the left and right of the content.</sd-information>
+        <label class="clickable half-space-right" name="decision-aid-full-width-yes">Yes <input id="decision-aid-full-width-yes" class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.full_width" ng-value="true"></label>
+        <label class="clickable" name="decision-aid-full-width-no">No <input id="decision-aid-full-width-no" class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.full_width" ng-value="false"></label>
+      </div>
+
+      <div class="form-group">
+        <label class="half-space-right">Theme</label>
+        <sd-information>You can adjust the theme of the tool's header using this dropdown.</sd-information>
+        <select class="form-control select-field" ng-model="ctrl.decisionAidEdit.theme" ng-options="ds.value as ds.key for ds in ctrl.decisionAidThemes"></select>
+      </div>
+       <div class="form-group">
+        <label class="half-space-right">Query parameters</label>
+        <sd-information>When connecting with external survey tools, there are often parameters that need to be stored and passed back to the survey samplers. This is where you can define those parameters. Note that the "Primary" parameter must be unique for every participant, but any other defined parameters do not have this constraint.</sd-information>
+        <div ng-repeat="p in ctrl.decisionAidEdit.decision_aid_query_parameters | filter:{_destroy: '!1'}">
+          <div class="form-inline space-bottom">
+            <button class="btn btn-danger half-space-right" ng-disabled="p.is_primary" ng-click="ctrl.deleteQueryParam(p)"><i class="fa fa-trash fa-fw"></i></button>
+            <label>Input Name</label>
+            <input ng-model="p.input_name" class="form-control half-space-right"/>
+            <label>Output Name</label>
+            <input ng-model="p.output_name" class="form-control half-space-right"/>
+            <label for="primary_{{$index}}">Primary parameter</label>
+            <input id="primary_{{$index}}" ng-model="p.is_primary" class="form-control" type="checkbox" ng-click="ctrl.updateSelectedPrimaryParam(p)"/>
+          </div>
+        </div>
+        <button class="btn btn-primary" ng-click="ctrl.addQueryParam()"><i class="fa fa-fw fa-plus"></i> Add new parameter</button>
+      </div>
+    </div>
+  </form>
+</div>

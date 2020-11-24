@@ -1,0 +1,52 @@
+'use strict'
+
+describe 'Service: DecisionAidUserResponse', ->
+
+  beforeEach angular.mock.module 'dcida20App'
+
+  DecisionAidUserResponse = {}
+  _ = {}
+  questions = 
+    [
+      id: 1
+      question_response_type: "radio"
+     ,
+      id: 2
+      question_response_type: "text"
+    ]
+
+  decisionAidUser = 
+    id: 1
+
+  beforeEach inject (_DecisionAidUserResponse_, ___) ->
+    DecisionAidUserResponse = _DecisionAidUserResponse_
+    _ = ___
+
+  describe "createMissingResponses", () ->
+    it "should create responses if none exist", () ->
+      responses = DecisionAidUserResponse.createMissingResponses([], questions, decisionAidUser)
+      expect(responses.length).toEqual questions.length
+
+    it "should add to the responses if some responses exist", () ->
+      responses = DecisionAidUserResponse.createMissingResponses([], questions, decisionAidUser)
+      questions.push(
+        id: 3
+        question_response_type: "text"
+      )
+      rs = DecisionAidUserResponse.createMissingResponses(responses, questions, decisionAidUser)
+      expect(rs.length).toEqual 1
+
+    it "should include grid questions in the responses", () ->
+      questions.push(
+        id: 3
+        question_response_type: "grid"
+        grid_questions: [
+          id: 4
+          question_response_type: "radio"
+         ,
+          id: 5
+          question_response_type: "radio"
+        ]
+      )
+      rs = DecisionAidUserResponse.createMissingResponses([], questions, decisionAidUser)
+      expect(rs.length).toEqual questions.length + 2

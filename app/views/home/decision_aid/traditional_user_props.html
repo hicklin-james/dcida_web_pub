@@ -1,0 +1,110 @@
+<div>
+  <div class="modal-header clearfix">
+    <span class="pull-left">
+      <i class="clickable fa fa-lg fa-times" ng-click="ctrl.backOut()"></i>
+    </span>
+    <!-- <ul class="nav nav-pills">
+      <li class="clickable" ng-class="{'active': !ctrl.currentProperty}">
+        <a ng-click="ctrl.clearCurrentProperty()">
+          Introduction
+        </a>
+      </li>
+      <li ng-repeat="prop in ctrl.properties" class="clickable" ng-class="{'disabled': !ctrl.userPropsHash[prop.id].traditional_value, 'active': ctrl.currentProperty.id === prop.id}">
+        <a ng-click="ctrl.setCurrentProperty(prop)">{{prop.title}}</a>
+      </li>
+    </ul> -->
+  </div>
+  <div class="modal-body">
+    <div ng-if="!ctrl.currentProperty">
+      <div compile="ctrl.decisionAid.injected_properties_information_published"></div>
+    </div>
+    <div ng-if="ctrl.currentProperty">
+      <div class="clearfix">
+        <div class="pull-left space-right">
+          <h3>{{ctrl.currentProperty.title}}</h3>
+        </div>
+        <div ng-show="ctrl.currentProperty" class="pull-right space-right">
+          <h3>Question {{ctrl.currentProperty.property_order}} of {{ctrl.properties.length}}</h3>
+        </div>
+      </div>
+      <div class="half-space-bottom">
+        <div ng-if="ctrl.currentProperty.injected_long_about_published" compile="ctrl.currentProperty.injected_long_about_published"></div>
+      </div>
+      <div class="x-scrollable">
+        <table class="table table-bordered results-table full-height">
+          <thead class="full-height">
+            <tr class="full-height">
+              <th ng-repeat="option in ctrl.options track by option.id" class="results-option-image-cell top-align">
+                <div class="results-option-image-cell-div">
+                  <img class="img-responsive results-option-image" style="max-width: 200px;" ng-src="{{::option.results_image_url}}" />
+                  <div class="opt-title-wrapper clearfix">
+                    <div class="opt-title">
+                      <h4><span>{{::option.title}}</span></h4>
+                    </div>
+                  </div>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-sm-6" ng-repeat="option in ctrl.options">
+                <div compile="ctrl.optionProperties[ctrl.currentProperty.id][option.id].injected_information_published"></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div ng-if="ctrl.decisionAid.decision_aid_type === 'traditional'">
+        <div class="text-center space-bottom">
+          <h4>Considering "{{ctrl.currentProperty.short_label}}" alone, which do you prefer?</h4>
+          <div>
+            <div class="btn-group">
+              <!--
+              <button ng-repeat="option in ctrl.options" ng-class="{'btn-success': ctrl.userPropsHash[ctrl.currentProperty.id].traditional_option_id === option.id}" class="btn btn-default" style="width: 200px;" ng-click="ctrl.setUserPropTraditionalOptionId(option.id)">-->
+              <button ng-repeat="option in ctrl.options" ng-class="[ctrl.option_button_color_class(option.id)]" class="btn btn-default" style="width: 200px;" ng-click="ctrl.setUserPropTraditionalOptionId(option.id)">
+                {{option.title}}
+              </button>
+              <button ng-class="{'option-0-button': ctrl.userPropsHash[ctrl.currentProperty.id].traditional_option_id === 0}" class="btn btn-default" ng-click="ctrl.setUserPropTraditionalOptionId(0)" style="width: 200px;">
+                Unsure
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="text-center">
+          <h4>How much does "{{ctrl.currentProperty.short_label}}" matter to your decision?</h4>
+          <div>
+            <div class="btn-group">
+              <!--
+              <button ng-repeat="selection in ctrl.traditionalValueSelections" ng-class="{'btn-success': ctrl.userPropsHash[ctrl.currentProperty.id].traditional_value === selection.value}" class="btn btn-default" ng-click="ctrl.setUserPropTraditionalValue(selection.value)">
+                {{selection.label}}
+              </button>
+              -->
+              <span class="half-space-right"><strong>Not Important</strong></span>
+              <span ng-repeat="selection in ctrl.traditionalValueSelections" class="middle-align fa-stack fa-2x clickable half-space-right half-space-left" ng-click="ctrl.setUserPropTraditionalValue(selection.value)" ng-class="[ctrl.option_color_class(ctrl.userPropsHash[ctrl.currentProperty.id].traditional_option_id)]">
+                <span class="fa fa-stack-2x" ng-class="{'fa-circle': ctrl.userPropsHash[ctrl.currentProperty.id].traditional_value >= selection.value, 'fa-circle-o': ctrl.userPropsHash[ctrl.currentProperty.id].traditional_value < selection.value || !ctrl.userPropsHash[ctrl.currentProperty.id].traditional_value}"></span>
+                <span class="fa fa-stack-1x text-black calendar-text" style="font-family: sans-serif;">{{selection.value}}</span>
+              </span>
+              <span class="half-space-right"><strong>Very Important</strong></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer clearfix">
+    <div class="pull-left">
+      <button ng-if="!ctrl.completed" ng-disabled="!ctrl.currentProperty" class="btn btn-primary" type="button" ng-click="ctrl.prev()">
+        Prev
+      </button>
+    </div>
+    <div class="pull-right">
+      <button ng-if="!ctrl.completed" ng-disabled="ctrl.currentProperty && (!ctrl.userPropsHash[ctrl.currentProperty.id].traditional_value || ctrl.userPropsHash[ctrl.currentProperty.id].traditional_option_id === undefined)" class="btn btn-primary" type="button" ng-click="ctrl.next()">
+        {{ ctrl.currentProperty ? (ctrl.currentProperty.property_order === ctrl.properties.length) ? 'Close' : 'Next' : 'Begin'}}
+      </button>
+      <button class="btn btn-default" ng-if="ctrl.completed" ng-click="ctrl.close()">
+        Close
+      </button>
+    </div>
+  </div>
+</div>

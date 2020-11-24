@@ -1,0 +1,173 @@
+<div ng-if="ctrl.decisionAid.theme === 'default' || !ctrl.decisionAid">
+  <div class="navbar-default-theme">
+    <div class="navbar home-navbar no-bottom-margin navbar-default" role="navigation" id="decision-aid-header">
+      <div>
+        <div class="collapse navbar-collapse help-me-nav" ng-if="ctrl.decisionAid.navigation_links.length > 0 || ctrl.decisionAid.description">
+          <div class="navbar-left">
+            <ul class="nav navbar-nav"> 
+              <li ng-repeat="nl in ctrl.decisionAid.navigation_links">
+                <a href="{{nl.link_href}}" class="help-me-button" ng-class="{'active': nl.link_href === ctrl.$window.location.href}">{{nl.link_text}}</a>
+              </li>
+              <li ng-if="ctrl.decisionAid.description">
+                <a ng-click="ctrl.openHelpMe()" class="clickable help-me-button"><span>{{'HELP-ME-BTN' | translate}}</span></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="navbar-header main-navbar">
+          <button type="button" class="navbar-toggle collapsed pull-right" data-toggle="collapse" data-target="#js-navbar-collapse1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a ui-sref="decisionAidIntro({slug: ctrl.decisionAid.slug})" class="navbar-brand no-float full-height block">{{ctrl.decisionAid.title | uppercase }}</a>
+        </div>
+        <div class="collapse help-me-nav special-hidden-navbar" id="js-navbar-collapse1" ng-if="ctrl.decisionAid.navigation_links.length > 0 || ctrl.decisionAid.description">
+          <div class="navbar-left">
+            <ul class="nav navbar-nav"> 
+              <li ng-repeat="nl in ctrl.decisionAid.navigation_links">
+                <a href="{{nl.link_href}}" class="help-me-button" ng-class="{'active': nl.link_href === ctrl.$window.location.href}">{{nl.link_text}}</a>
+              </li>
+              <li ng-if="ctrl.decisionAid.description">
+                <a ng-click="ctrl.openHelpMe()" class="clickable help-me-button"><span>{{'HELP-ME-BTN' | translate}}</span></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="navbar home-navbar-lower no-bottom-margin" role="navigation" ng-show="!ctrl.decisionAid.hide_menu_bar && ctrl.decisionAid">
+      <div ng-class="{'container-fluid': ctrl.decisionAid.full_width, 'container': !ctrl.decisionAid.full_width}">
+        <div>
+          <ul class="nav navbar-nav navbar-left inline-block" ng-show="ctrl.currentPage">
+            <li>
+              <a class="brand" translate='SECTION-X-OF-N' translate-values="{x: ctrl.currentPage.page_index + 1, n: ctrl.allPages.length, title: ctrl.currentPage.page_title}"></a>
+            <li>
+          </ul>
+
+          <div ng-if="ctrl.decisionAid">
+            <ul class="nav navbar-nav navbar-right">
+              <li class="dropdown home-menu" uib-dropdown>
+                <a href="#" class="dropdown-toggle" uib-dropdown-toggle style="font-size: 13pt;">Menu <b class="caret"></b></a>
+                <ul class="dropdown-menu" uib-dropdown-menu>
+                  <li>
+                    <div class="row">
+                      <div class="text-left col-sm-6" ng-repeat="chunk in ctrl.pages">
+                        <div class="menu-item-wrapper" ng-repeat="page in chunk">
+                          <a ng-click="ctrl.goToPage(page)" ng-class="{'visited clickable': page.available, 'impassable': !page.available}">
+                            <i ng-show="page.completed" class="fa fa-lg fa-check fa-inverse text-success"></i> 
+                            <i ng-show="!page.completed && page.available" class="fa fa-lg fa-minus text-info"></i> 
+                            <i ng-show="!page.completed && !page.available" class="fa fa-lg fa-times text-danger"></i> 
+                            <span class="uppercase" translate="SECTION-X" translate-values="{x: page.page_index + 1}"></span>: {{page.page_title}}</a>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- flat theme -->
+<div ng-if="ctrl.decisionAid.theme === 'flat'">
+  <div class="navbar-flat">
+    <div class="navbar home-navbar no-bottom-margin navbar-default" role="navigation" id="decision-aid-header">
+      <div class="navbar-header">
+        <a ui-sref="decisionAidIntro({slug: ctrl.decisionAid.slug})" class="navbar-brand no-float">
+          <!-- <img src="{{ctrl.decisionAid.icon_image}}" /> -->
+          {{ctrl.decisionAid.title | uppercase }}
+        </a>
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#js-navbar-collapse1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+
+      <div class="collapse navbar-collapse" id="js-navbar-collapse1">
+        <div class="clearfix">
+          <div>
+            <div class="navbar-left">
+              <ul class="nav navbar-nav custom-nav-links"> 
+                <li ng-repeat="nl in ctrl.decisionAid.navigation_links">
+                  <a href="{{nl.link_href}}" ng-class="{'active': nl.link_href === ctrl.$window.location.href}">{{nl.link_text}}</a>
+                </li>
+                <li ng-if="ctrl.decisionAid.description">
+                  <a ng-click="ctrl.openHelpMe()" class="clickable btn help-me-button"><span>{{'HELP-ME-BTN' | translate}}</span></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+<!--           <div class="navbar-right inline-block pull-right space-right" ng-show="!ctrl.decisionAid.hide_menu_bar">
+            <ul class="nav navbar-nav"> 
+              <li><a class="clickable" data-toggle="collapse" data-target="#lower-navbar">Skip to Section <i class="fa fa-fw fa-bars"></i></a></li>
+            </ul>
+          </div> -->
+        </div>
+          <div id="lower-navbar" class="navbar home-navbar-lower no-bottom-margin" role="navigation" ng-show="!ctrl.decisionAid.hide_menu_bar" aria-expanded="false">
+          <div ng-class="{'container-fluid': ctrl.decisionAid.full_width, 'container': !ctrl.decisionAid.full_width}">
+            <div>
+              <div ng-if="ctrl.decisionAid" class="navbar-right">
+                <ul class="nav navbar-nav">
+                  <li ng-repeat="page in ctrl.sortedPages" ng-class="{'disabled': !page.available, 'active': ctrl.currentPage.page_title === page.page_title}">
+                    <a class="clickable" ng-click="ctrl.goToPage(page)">{{$index + 1}}. {{page.page_title}}</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div ng-if="ctrl.decisionAid.theme === 'chevron_navigation'">
+  <div class="chevron-nav">
+    <div class="navbar home-navbar no-bottom-margin navbar-default" role="navigation" id="decision-aid-header">
+      <div class="navbar-header">
+        <a ui-sref="decisionAidIntro({slug: ctrl.decisionAid.slug})" class="navbar-brand no-float">{{ctrl.decisionAid.title | uppercase }}</a>
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#js-navbar-collapse1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+
+      <div class="collapse navbar-collapse" id="js-navbar-collapse1" ng-if="ctrl.decisionAid.navigation_links.length > 0">
+        <div class="navbar-left">
+          <ul class="nav navbar-nav"> 
+            <li ng-repeat="nl in ctrl.decisionAid.navigation_links">
+              <a href="{{nl.link_href}}" ng-class="{'active': nl.link_href === ctrl.$window.location.href}">{{nl.link_text}}</a>
+            </li>
+            <li ng-if="ctrl.decisionAid.description">
+              <a ng-click="ctrl.openHelpMe()" class="clickable"><span>Help Me</span></a>
+            <li>
+          </ul>
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#js-navbar-collapse1" ng-if="ctrl.decisionAid">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="collapse navbar-collapse decision-aid-links-wrapper" id="js-navbar-collapse1">
+      <div class="decision-aid-links">
+        <ul class="nav-breadcrumb">
+          <li ng-repeat="page in ctrl.sortedPages">
+            <a ng-click="ctrl.goToPage(page)" ng-class="{'visited clickable available': page.available}">{{page.page_index + 1}}. {{page.page_title}}</a>
+            <div ng-show="ctrl.currentPage.page_title === page.page_title" class="current"></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

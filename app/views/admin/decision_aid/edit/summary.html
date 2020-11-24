@@ -1,0 +1,163 @@
+<div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-spin fa-refresh"></i>
+</div>
+<div ng-show="!ctrl.loading">
+  <div class="space-bottom clearfix">
+    <div class="pull-right">
+      <span class="text-success flashing-success" ng-if="ctrl.saveSuccess">Saved! <i class="fa fa-lg fa-check-circle"></i></span>
+      <button class="btn btn-info" ng-disabled="!decisionAidEditForm.$dirty" ng-click="ctrl.save()">Save</button>
+    </div>
+    <h2>Summary</h2>
+  </div>
+  <sd-extra-info>
+    <p>The <strong>Summary</strong> page is the final page of the tool. It includes a summary of your decision and all of the user's demographic and quiz question responses.</p>
+  </sd-extra-info>
+  <form on-submit="ctrl.save()" name="decisionAidEditForm" ng-show="ctrl.decisionAid">
+    <div sd-error-scroll sa-errors="ctrl.errors"></div>
+    <div class="space-bottom">
+      <div class="form-group">
+        <label for="summary-page-name" input-required>Page Name</label>
+        <sd-information>This title shows up in the sub-header of the page.</sd-information>
+        <input id="summary-page-name" class="form-control" ng-model="ctrl.decisionAidEdit.summary_page_label" />
+      </div>
+      <div class="form-group">
+        <label for="decision_aid_summary_link_to_url">Summary Link</label>
+        <sd-information>At the end of the tool, a button will be presented that can link to additional information or a survey. The link will append the patient's pid to the URL in the form of a query parameter (ie. "http://www.url.com?pid=XXX"). Ensure to include the "http://" at the start of the URL.</sd-information>
+        <input class="form-control" id="decision_aid_summary_link_to_url" placeholder="Summary URL" ng-model="ctrl.decisionAidEdit.summary_link_to_url" />
+        <span ng-show="ctrl.decisionAidEdit.summary_link_to_url" class="slug-example">Your summary link will be: <strong>{{ctrl.decisionAidEdit.summary_link_to_url}}pid=xxx</strong></span>
+      </div>
+      <div class="form-group">
+        <label for="decision_aid_more_information_button_text">Summary Link Text</label>
+        <sd-information>The summary link will show as a button. You can modify the button text using this field.</sd-information>
+        <input id="decision_aid_more_information_button_text" class="form-control" ng-model="ctrl.decisionAidEdit.more_information_button_text" />
+      </div>
+      <div class="form-group">
+        <label for="decision_aid_hide_menu_bar">Open summary link in new tab</label>
+        <sd-information>Use the option below to open the summary link in a new tab when it is clicked.</sd-information>
+        <label class="clickable half-space-right" name="decision-aid-open-summary-link-in-new-tab-yes">Yes <input id="decision-aid-open-summary-link-in-new-tab-yes" class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.open_summary_link_in_new_tab" ng-value="true"></label>
+        <label class="clickable" name="decision-aid-open-summary-link-in-new-tab-no">No <input id="decision-aid-open-summary-link-in-new-tab-no" class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.open_summary_link_in_new_tab" ng-value="false"></label>
+      </div>
+      <div class="form-group">
+        <label class="space-right"><span class="inline-block half-space-right">User Download Summary Report</span></label>
+        <sd-information>Use this setting to allow users to click a button to download their summary report.</sd-information>
+        <label class="clickable half-space-right" id="decision-aid-include-download-pdf-button-yes" name="decision-aid-include-download-pdf-button-yes">Yes <input class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.include_download_pdf_button" ng-value="true"></label>
+        <label class="clickable" name="decision-aid-include-download-pdf-button-no">No <input id="decision-aid-ratings-enabled-no" class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.include_download_pdf_button" ng-value="false"></label>
+      </div>
+      <div class="form-group">
+        <label class="space-right"><span class="inline-block half-space-right">User Email Summary Report?</span></label>
+        <sd-information>Use this setting to allow users to email a copy of their summary report to themselves. They will need to enter their email address to do so.</sd-information>
+        <label class="clickable half-space-right" name="decision-aid-include-user-summary-email-yes">Yes <input class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.include_user_summary_email" ng-value="true"></label>
+        <label class="clickable" name="decision-aid-include-user-summary-email-no">No <input class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.include_user_summary_email" ng-value="false"></label>
+      </div>
+      <div class="form-group half-space-left half-space-right" ng-show="ctrl.decisionAidEdit.include_user_summary_email">
+        <label for="summary-email-text">User Summary Email Label</label>
+        <sd-information>This text will appear next to the to email input box.</sd-information>
+        <input id="summary-email-text" class="form-control" ng-model="ctrl.decisionAidEdit.user_summary_email_text" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="decision_aid_final_summary_text">Final Summary Text</label>
+      <sd-information>This information will appear at the end of your summary page, below the summary panels. It will not be included in any summary reports.</sd-information>
+      <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAid.id}}" sa-question-types="demographic,quiz"><textarea class="form-control" id="decision_aid_final_summary_text" placeholder="Final Summary Text" ng-model="ctrl.decisionAidEdit.final_summary_text" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'questionSelector', 'video']}"></textarea></sd-redactor-wrapper>
+    </div>
+  </form>
+  <hr />
+  <div>
+    <div>
+      <div class="clearfix">
+        <div class="pull-right">
+          <button class="btn btn-primary" ng-click="ctrl.addNewSummaryPage()" ng-disabled="ctrl.newSummaryPageButtonDisabled"><i class="fa fa-plus"></i> Add Summary Page</button>
+        </div>
+        <h3>Summary Pages</h3>
+      </div>
+      <div>
+        <sd-information>Only <strong>one primary (indicated by<i class="fa fa-fw fa-bolt"></i>)</strong> summary page will show when users reach the end of the decision aid. You can configure additional summary pages that can be generated and emailed to other recipients.</sd-information>
+      </div>
+    </div>
+    <ul class="nav nav-tabs" id="decision-aid-type-selector">
+      <li role="presentation" ng-repeat="sp in ctrl.summaryPages track by $index" ng-class="{'active': ctrl.currentlyEditingSummaryPage === sp}"><a class="clickable" ng-click="ctrl.setCurrentlyEditingSummaryPage(sp)">Summary Page {{$index + 1}}  <span ng-show="sp.is_primary"><i class="fa fa-fw fa-bolt"></i></span></a></li>
+    </ul>
+    <div class="space-top space-left space-right space-bottom" ng-show="ctrl.currentlyEditingSummaryPage">
+      <div class="form-group space-bottom">
+        <div class="half-space-bottom">
+          <div class="pull-right clearfix">
+            <button class="btn btn-danger" ng-click="ctrl.deleteSummaryPage()"><i class="fa fa-trash"></i> Delete page</button>
+          </div>
+          <label class="space-right"><span class="inline-block half-space-right">Is primary page?</span></label>
+          <sd-information>Only one primary summary page is allowed.</sd-information>
+          <label class="clickable" ng-click="ctrl.pageMarkedPrimary()">Page marked primary <i class="fa fa-fw" ng-class="{'fa-check-square-o': ctrl.currentlyEditingSummaryPage.is_primary, 'fa-square-o': !ctrl.currentlyEditingSummaryPage.is_primary}"></i>
+        </div>
+        <div class="form-group half-space-bottom">
+          <label>Backend Identifier</label>
+          <sd-information>This is used to identify the summary page in various backend pages.</sd-information>
+          <input ng-model="ctrl.currentlyEditingSummaryPage.backend_identifier" class="form-control" ng-blur="ctrl.saveSummaryPage(ctrl.currentlyEditingSummaryPage)" />
+        </div>
+        <div class="space-bottom">
+          <label class="space-right"><span class="inline-block half-space-right">Auto Send Summary Emails</span></label>
+          <sd-information>Enabling this feature will allow you to setup email addresses that will automatically receive an email (including this summary page) when a user completes the tool.</sd-information>
+          <label class="clickable half-space-right" name="page-include-admin-summary-email-yes">Yes <input class="clickable" type="radio" ng-model="ctrl.currentlyEditingSummaryPage.include_admin_summary_email" ng-value="true" ng-change="ctrl.saveSummaryPage(ctrl.currentlyEditingSummaryPage)"></label>
+          <label class="clickable" name="page-include-admin-summary-email-no">No <input class="clickable" type="radio" ng-model="ctrl.currentlyEditingSummaryPage.include_admin_summary_email" ng-value="false" ng-change="ctrl.saveSummaryPage(ctrl.currentlyEditingSummaryPage)"></label>
+        </div>
+        <div ng-show="ctrl.currentlyEditingSummaryPage.include_admin_summary_email">
+          <div ng-repeat="email in ctrl.currentlyEditingSummaryPage.summary_email_addresses track by $index">
+            <div class="form-inline space-bottom">
+              <i ng-click="ctrl.removeEmail($index)" class="fa fa-trash fa-fw text-danger clickable"></i>
+              <i ng-show="ctrl.currentlyActiveEmailIndex !== $index" ng-click="ctrl.setCurrentlyActiveEmailIndex($index)" class="clickable fa fa-pencil fa-fw text-primary"></i>
+              <i ng-show="ctrl.currentlyActiveEmailIndex === $index" ng-click="ctrl.saveCurrentlyActiveEmail()" class="clickable fa fa-check fa-fw text-success"></i>
+              <label>Email</label>
+              <input ng-disabled="ctrl.currentlyActiveEmailIndex !== $index" ng-model="ctrl.currentlyEditingSummaryPage.summary_email_addresses[$index]" class="form-control half-space-right"/>
+            </div>
+          </div>
+          <div>
+            <a class="btn btn-primary" ng-click="ctrl.addEmail()"><i class="fa fa-fw fa-plus"></i> Add Email Address</a>
+          </div>
+        </div>
+      </div>
+      <div class="half-space-right half-space-left half-space-top half-space-bottom">
+        <div class="pull-right clearfix">
+          <a ui-sref="summaryPanelNew({decisionAidId: ctrl.decisionAid.id, summary_page_id: ctrl.currentlyEditingSummaryPage.id})" class="btn btn-primary"><i class="fa fa-plus"></i> Add Panel to Page</a>
+        </div>
+          <h4>Summary Panels</h4>
+        <table class="table">
+          <thead>
+            <tr class="">
+              <th class="col-xs-1"></th>
+              <th class="col-xs-10">
+                <div>Summary panel preview</div>
+                <div class="text-warning">The preview may be cutoff as it only shows 150 pixels high.</div>
+              </th>
+              <th class="col-xs-1"></th>
+            </tr>
+          </thead>
+          <tbody sv-root sv-part="ctrl.currentlyEditingSummaryPage.summary_panels" sv-on-sort="ctrl.onSort($item, $partFrom, $partTo, $indexFrom, $indexTo, ctrl.currentlyEditingSummaryPage.summary_panels)" class="sortable-table">
+            <tr sv-element ng-repeat="panel in ctrl.currentlyEditingSummaryPage.summary_panels track by panel.id" >
+              <td class="col-xs-1">
+                <div class="inline-block" uib-dropdown dropdown-append-to-body>
+                  <a type="button" id="dropdownMenu1" uib-dropdown-toggle aria-haspopup="true" aria-expanded="true">
+                    <div class="clickable" class="inline-block"><i class="fa fa-gear"></i><span class="caret"></span></div>
+                  </a>
+                  <ul uib-dropdown-menu aria-labelledby="dropdownMenu1">
+                    <li><a ui-sref="summaryPanelEdit(::{ decisionAidId: panel.decision_aid_id, summary_page_id: ctrl.currentlyEditingSummaryPage.id, id: panel.id })"><i class="fa fa-edit fa-fw"></i> Edit</a></li>
+                    <li><a class="clickable" ng-click="ctrl.deleteSummaryPanel(panel)"><i class="fa fa-trash fa-fw"></i> Delete</a></li>
+                  </ul>
+                </div>
+              </td>
+              <td class="col-xs-10">
+                <div class="summary-panel-preview" compile="panel.panel_information"></div>
+              </td>
+              <td class="col-xs-1">
+                <div sv-handle class="question-response-drag-icon"><i class="fa fa-lg fa-arrows drag-arrows movable"></i></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="text-center text-warning space-top space-bottom" ng-show="trl.currentlyEditingSummaryPage.summary_panels.length === 0">
+          <span>There are no summary panels yet. Add some using the button above!</span>
+        </div>
+      </div>
+    </div>
+    <div class="text-center text-warning space-top space-bottom" ng-show="ctrl.summaryPages.length === 0">
+      <span>There are no summary pages yet. Add some using the button above!</span>
+    </div>
+  </div>
+</div>

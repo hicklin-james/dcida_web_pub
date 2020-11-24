@@ -1,0 +1,180 @@
+<div>
+  <h2>Instructions</h2>
+  <p>
+    Use the buttons on the left or below to navigate the admin area. Define your basic decision aid information under the "BASIC INFORMATION" header and each specific page of your decision aid under the "DECISION AID PAGES" header.
+  </p>
+  <h3>Basic Information</h3>
+  <div class="row">
+    <div class="col-sm-3">
+      <div class="well text-center intro-well clickable " ui-sref="decisionAidShow.basic">
+        <div class="space-bottom">
+          <i class="fa fa-2x fa-pencil"></i> 
+        </div>
+        <h5>Basic</h5>
+        <p class="intro-well-text">
+          Define basic decision aid attributes, such as the title and URL that will be used.
+        </p>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="well text-center intro-well clickable" ui-sref="decisionAidShow.style">
+        <div class="space-bottom">
+          <i class="fa fa-2x fa-crop"></i> 
+        </div>
+        <h5>Styling</h5>
+        <p class="intro-well-text">
+          Style your decision aid with a main icon, footer icons, and navigable links.
+        </p>
+      </div>
+    </div>
+        <div class="col-sm-3">
+      <div class="well text-center intro-well clickable" ui-sref="decisionAidShow.staticPages">
+        <div class="space-bottom">
+          <i class="fa fa-2x fa-book"></i> 
+        </div>
+        <h5>Static pages</h5>
+        <p class="intro-well-text">
+          Add static pages to your decision aid
+        </p>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="well text-center intro-well clickable" ui-sref="decisionAidShow.advanced">
+        <div class="space-bottom">
+          <i class="fa fa-2x fa-wrench"></i> 
+        </div>
+        <h5>Advanced</h5>
+        <p class="intro-well-text">
+          Advanced options including REDCap integration
+        </p>
+      </div>
+    </div>
+  </div>
+  <h3>Decision Aid Pages</h3>
+  <div class="row">
+    <div class="col-sm-3">
+      <div class="well text-center intro-well clickable" ui-sref="decisionAidShow.introduction">
+        <div class="space-bottom">
+          <i class="fa fa-2x fa-hand-paper-o"></i> 
+        </div>
+        <h5>Introduction</h5>
+        <p class="intro-well-text">
+          Introduce your decision aid with a general description and introductory popup.
+        </p>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="well text-center intro-well clickable" ui-sref="decisionAidShow.aboutMe">
+        <div class="space-bottom">
+          <i class="fa fa-2x fa-user"></i> 
+        </div>
+        <h5>About Me</h5>
+        <p class="intro-well-text">
+          Define demographic questions to filter available options and collect user statistics.
+        </p>
+      </div>
+    </div>
+    <div ng-if="ctrl.decisionAid.decision_aid_type !== 'best_worst_no_results' && ctrl.decisionAid.decision_aid_type !== 'risk_calculator' && ctrl.decisionAid.decision_aid_type !== 'dce_no_results'"  class="col-sm-3">
+      <div class="well text-center intro-well clickable" ui-sref="decisionAidShow.myOptions">
+        <div class="space-bottom">
+          <i class="fa fa-2x fa-cubes"></i> 
+        </div>
+        <h5>My Options</h5>
+        <p class="intro-well-text">
+          Create the options, properties, and option properties that will guide the decision aid.
+        </p>
+      </div>
+    </div>
+    <div ng-if="ctrl.decisionAid.decision_aid_type === 'best_worst_no_results' || ctrl.decisionAid.decision_aid_type === 'dce_no_results'" class="col-sm-3">
+      <div class="well text-center intro-well clickable" ui-sref="decisionAidShow.propertiesNoResults">
+        <div class="space-bottom">
+          <i class="fa fa-2x fa-cubes"></i> 
+        </div>
+        <h5>Properties</h5>
+        <p class="intro-well-text">
+          Create the properties that will guide the decision aid.
+        </p>
+      </div>
+    </div>
+    <div ng-if="ctrl.decisionAid.decision_aid_type === 'standard' || ctrl.decisionAid.decision_aid_type === 'treatment_rankings' || ctrl.decisionAid.decision_aid_type === 'traditional' || ctrl.decisionAid.decision_aid_type === 'traditional_no_results' || ctrl.decisionAid.decision_aid_type === 'standard_enhanced' || ctrl.decisionAid.decision_aid_type === 'decide'" class="col-sm-3">
+      <div class="well text-center intro-well clickable" ui-sref="decisionAidShow.myProperties">
+        <div class="space-bottom">
+          <i class="fa fa-2x fa-building"></i> 
+        </div>
+        <h5>My Properties</h5>
+        <p class="intro-well-text">
+          Define your minimum property count and choose the chart visualization you would like to use.
+        </p>
+      </div>
+    </div>
+    <div ng-if="ctrl.decisionAid.decision_aid_type === 'dce' || ctrl.decisionAid.decision_aid_type === 'dce_no_results'" class="col-sm-3">
+      <div class="well text-center intro-well clickable" ui-sref="decisionAidShow.dce">
+        <div class="space-bottom">
+          <i class="fa fa-2x fa-building"></i> 
+        </div>
+        <h5>DCE</h5>
+        <p class="intro-well-text">
+          Setup the text fields and files associated with your discrete choice experiment here.
+        </p>
+      </div>
+    </div>
+    <div ng-if="ctrl.decisionAid.decision_aid_type === 'best_worst'" class="col-sm-3">
+      <div class="well text-center intro-well clickable" ui-sref="decisionAidShow.bestWorst">
+        <div class="space-bottom">
+          <i class="fa fa-2x fa-building"></i> 
+        </div>
+        <h5>Best Worst</h5>
+        <p class="intro-well-text">
+          Setup the text fields and files associated with your best-worst experiment here.
+        </p>
+      </div>
+    </div>
+    <div ng-if="ctrl.decisionAid.decision_aid_type !== 'best_worst_no_results' && ctrl.decisionAid.decision_aid_type !== 'risk_calculator' && ctrl.decisionAid.decision_aid_type !== 'dce_no_results' && ctrl.decisionAid.decision_aid_type !== 'decide'"  class="col-sm-3">
+      <div class="well text-center intro-well clickable" ui-sref="decisionAidShow.myChoice">
+        <div class="space-bottom">
+          <i class="fa fa-2x fa-mouse-pointer"></i> 
+        </div>
+        <h5>My Choice</h5>
+        <p class="intro-well-text">
+          Choose how you want the software to display the user's calculated best options.
+        </p>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="well text-center intro-well clickable" ui-sref="decisionAidShow.quiz">
+        <div class="space-bottom">
+          <i class="fa fa-2x fa-question"></i> 
+        </div>
+        <h5>Quiz</h5>
+        <p class="intro-well-text">
+          Define quiz questions to identify how much the user has learned from their decision aid.
+        </p>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="well text-center intro-well clickable" ui-sref="decisionAidShow.summary">
+        <div class="space-bottom">
+          <i class="fa fa-2x fa-check-square-o"></i> 
+        </div>
+        <h5>Summary</h5>
+        <p class="intro-well-text">
+          Summarize your decision aid and leave your user with some final words.
+        </p>
+      </div>
+    </div>
+  </div>
+  <h3>Data Manipulation</h3>
+  <div class="row">
+    <div class="col-sm-3">
+      <div class="well text-center intro-well clickable " ui-sref="decisionAidShow.dataTargets">
+        <div class="space-bottom">
+          <i class="fa fa-2x fa-database"></i> 
+        </div>
+        <h5>Data targets</h5>
+        <p class="intro-well-text">
+          Define data targets for exporting data to external applications.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

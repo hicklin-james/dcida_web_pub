@@ -1,0 +1,77 @@
+<div class="modal-header">
+  <h2 class="text-center">Upload Best-Worst Template Files</H2>
+</div>
+<div class="modal-body">
+  <div sd-error-scroll sa-errors="ctrl.errors"></div>
+  <div class="form-group">
+    <div>
+      <label>Select which Best-Worst related file you would like to upload</label>
+    </div>
+    <label class="radio-inline"><input type="radio" ng-model="ctrl.uploadOption" value="design" />Design File</label>
+    <!-- <label class="radio-inline"><input type="radio" ng-model="ctrl.uploadOption" value="results" />Results File</label> -->
+  </div>
+  <div class="space-top space-left space-right space-bottom">
+    <div ng-switch="ctrl.uploadOption">
+      <div ng-switch-when="design">
+        <p class="text-danger" style="font-size: 1.2em;">
+          WARNING: If you have already uploaded a valid Best/Worst design, and you choose to upload a new one, ALL responses that have been collected to date WILL BE LOST. Ensure that you download your data before uploading a new design.
+        </p>
+        <div>
+          <label>Design CSV File Upload</label>
+        </div>
+        <div class="full-width text-center space-top">
+          <div class="half-width inline-block">
+            <div class="table">
+              <div ngf-drop ng-model="ctrl.designUpload" class="drop-box" ngf-drag-over-class="dragover" ngf-pattern="'.csv'">
+                <div class="btn btn-default button" ngf-select ng-model="ctrl.designUpload" name="file" ngf-pattern="'.csv'" accept=".csv">Select File</div>
+                <div class="half-space-top">
+                  <span ng-show="!ctrl.inProgress && !ctrl.designUpload" class="media-drop-text">Drop CSV File Here</span>
+                  <span ng-show="ctrl.designUpload" class="text-center">{{ctrl.designUpload.name}}</span>
+                  <div ng-show="ctrl.inProgress" class="half-space-top"><i class="fa fa-lg fa-refresh fa-spin"></i></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="text-center">
+          <div class="half-space-bottom">
+            <button ng-disabled="ctrl.uploadInProgress()" class="btn btn-primary" ng-click="ctrl.uploadDesign()" type="button">Upload</button>
+          </div>
+          <i ng-class="{'ninja': !ctrl.uploadInProgress()}" class="fa text-success fa-lg fa-refresh fa-spin"></i>
+        </div>
+      </div>
+    </div>
+    <div ng-switch="ctrl.uploadOption">
+      <div ng-switch-when="results">
+        <div>
+          <label>Results CSV File Upload</label>
+        </div>
+        <div class="full-width text-center space-top">
+          <div class="half-width inline-block">
+            <div class="table">
+              <div ngf-drop ng-model="ctrl.resultsUpload" class="drop-box" ngf-drag-over-class="dragover" ngf-pattern="'.csv'">
+                <div class="btn btn-default button" ngf-select ng-model="ctrl.resultsUpload" name="file" ngf-pattern="'.csv'" accept=".csv">Select File</div>
+                <div class="half-space-top">
+                  <span ng-show="!ctrl.inProgress && !ctrl.resultsUpload" class="media-drop-text">Drop CSV File Here</span>
+                  <span ng-show="ctrl.resultsUpload" class="text-center">{{ctrl.resultsUpload.name}}</span>
+                  <div ng-show="ctrl.inProgress" class="half-space-top"><i class="fa fa-lg fa-refresh fa-spin"></i></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="text-center">
+          <div class="half-space-bottom">
+            <button ng-disabled="ctrl.uploadInProgress()" class="btn btn-primary" ng-click="ctrl.uploadResults()" type="button">Upload</button>
+          </div>
+          <i ng-class="{'ninja': !ctrl.uploadInProgress()}" class="fa text-success fa-lg fa-refresh fa-spin"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer clearfix">
+  <div class="pull-right">
+    <button class="btn btn-default inline-block half-space-right" ng-click="ctrl.close()">Close</button>
+  </div>
+</div>

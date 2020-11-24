@@ -1,0 +1,115 @@
+'use strict'
+
+describe 'Controller: DecisionAidEditMyChoiceCtrl', ->
+
+  # load the controller's module
+  beforeEach angular.mock.module 'dcida20App'
+
+  DecisionAidEditMyChoiceCtrl = {}
+  scope = {}
+  AdminTabHelper = {}
+  modal = {}
+
+  saveCalled = false
+  modalOpened = false
+
+  AdminTabHelper.saveDecisionAid = (scope, da) ->
+    saveCalled = true
+    then: (fn) ->
+      fn()
+
+  modal.open = (params) ->
+    modalOpened = true
+
+  
+  # Initialize the controller and a mock scope
+  beforeEach inject ($controller, $rootScope) ->
+    saveCalled = false
+    modalOpened = false
+    scope = $rootScope.$new()
+    DecisionAidEditMyChoiceCtrl = $controller 'DecisionAidEditMyChoiceCtrl', {
+      $scope: scope
+      AdminTabHelper: AdminTabHelper
+      $uibModal: modal
+    }
+    DecisionAidEditMyChoiceCtrl.decisionAidEdit = {}
+    DecisionAidEditMyChoiceCtrl.decisionAid = {}
+
+  describe "loading", () ->
+    it "should set the loading variable correctly", () ->
+      expect(DecisionAidEditMyChoiceCtrl.loading).toBe false
+
+  describe "saveAndPreview", () ->
+    it "should save the decision aid if the form is dirty and saveAndPreview is called", () ->
+      scope.decisionAidEditForm = {}
+      scope.decisionAidEditForm.$dirty = true
+      expect(saveCalled).toBe false
+      DecisionAidEditMyChoiceCtrl.saveAndPreview()
+      expect(saveCalled).toBe true
+      expect(modalOpened).toBe true
+
+    it "should not save the decision aid if the form is not dirty and saveAndPreview is called", () ->
+      scope.decisionAidEditForm = {}
+      scope.decisionAidEditForm.$dirty = false
+      DecisionAidEditMyChoiceCtrl.saveAndPreview()
+      expect(saveCalled).toBe false
+      expect(modalOpened).toBe true
+
+  describe "save", () ->
+    it "should save the decision aid when save is called", () ->
+      DecisionAidEditMyChoiceCtrl.save()
+      expect(saveCalled).toBe true
+
+  describe "ratingImage", () ->
+    it "should set to no_ratings if the ratings enabled is false and the decision aid type is standard", () ->
+      DecisionAidEditMyChoiceCtrl.decisionAidEdit.ratings_enabled = false
+      DecisionAidEditMyChoiceCtrl.decisionAid.decision_aid_type = "standard"
+      image = DecisionAidEditMyChoiceCtrl.ratingImage()
+      expect(image).toEqual "images/no_ratings.png"
+
+    it "should set to no_ratings when percentages isnt enabled and best_match isnt enabled", () ->
+      DecisionAidEditMyChoiceCtrl.decisionAidEdit.ratings_enabled = true
+      DecisionAidEditMyChoiceCtrl.decisionAidEdit.best_match_enabled = false
+      DecisionAidEditMyChoiceCtrl.decisionAidEdit.percentages_enabled = false
+      image = DecisionAidEditMyChoiceCtrl.ratingImage()
+      expect(image).toEqual "images/no_ratings.png"
+
+    it "should set to percentages_only when percentages is enabled and best_match isnt enabled", () ->
+      DecisionAidEditMyChoiceCtrl.decisionAidEdit.ratings_enabled = true
+      DecisionAidEditMyChoiceCtrl.decisionAidEdit.percentages_enabled = true
+      DecisionAidEditMyChoiceCtrl.decisionAidEdit.best_match_enabled = false
+      image = DecisionAidEditMyChoiceCtrl.ratingImage()
+      expect(image).toEqual "images/percentages_only.png"
+
+    it "should set to best_match_only when best_match is enabled and percentages is disabled", () ->
+      DecisionAidEditMyChoiceCtrl.decisionAidEdit.ratings_enabled = true
+      DecisionAidEditMyChoiceCtrl.decisionAidEdit.percentages_enabled = false
+      DecisionAidEditMyChoiceCtrl.decisionAidEdit.best_match_enabled = true
+      image = DecisionAidEditMyChoiceCtrl.ratingImage()
+      expect(image).toEqual "images/best_match_only.png"
+
+    it "should set to best_match_and_percentages when both best_match and percentages are enabled", () ->
+      DecisionAidEditMyChoiceCtrl.decisionAidEdit.ratings_enabled = true
+      DecisionAidEditMyChoiceCtrl.decisionAidEdit.percentages_enabled = true
+      DecisionAidEditMyChoiceCtrl.decisionAidEdit.best_match_enabled = true
+      image = DecisionAidEditMyChoiceCtrl.ratingImage()
+      expect(image).toEqual "images/best_match_and_percentages.png"
+
+  describe "checkRatingCheckboxes", () ->
+    it "should set percentages_enabled and best_match_enabled to false if ratings_enabled is set to false", () ->
+      DecisionAidEditMyChoiceCtrl.decisionAidEdit.ratings_enabled = false
+      DecisionAidEditMyChoiceCtrl.decisionAidEdit.percentages_enabled = true
+      DecisionAidEditMyChoiceCtrl.decisionAidEdit.best_match_enabled = true
+      DecisionAidEditMyChoiceCtrl.checkRatingCheckboxes()
+      expect(DecisionAidEditMyChoiceCtrl.decisionAidEdit.percentages_enabled).toBe false
+      expect(DecisionAidEditMyChoiceCtrl.decisionAidEdit.best_match_enabled).toBe false
+
+    it "shouldn't change anything if ratings_eabled is true", () ->
+      DecisionAidEditMyChoiceCtrl.decisionAidEdit.ratings_enabled = true
+      DecisionAidEditMyChoiceCtrl.decisionAidEdit.percentages_enabled = true
+      DecisionAidEditMyChoiceCtrl.decisionAidEdit.best_match_enabled = true
+      DecisionAidEditMyChoiceCtrl.checkRatingCheckboxes()
+      expect(DecisionAidEditMyChoiceCtrl.decisionAidEdit.percentages_enabled).toBe true
+      expect(DecisionAidEditMyChoiceCtrl.decisionAidEdit.best_match_enabled).toBe true
+
+

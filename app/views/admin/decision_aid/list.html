@@ -1,0 +1,51 @@
+<div>
+  <!-- TODO - implement permissions -->
+  <div class="pull-right" ng-show="$parent.ctrl.user && $parent.ctrl.user.is_superadmin">
+    <a class="btn btn-primary" id="new-decision-aid-btn" ui-sref="decisionAidNew"><i class="fa fa-fw fa-plus"></i> New Decision Aid</a>
+  </div>
+  <h1>Decision Aids</h1>
+</div>
+<div class="space-top space-bottom">
+  <div class="pull-right">
+    <input type="text" class="form-control" id="decision-aid-search" ng-model="searchText" placeholder="Search" ng-model-options="{debounce: 300}"/>
+  </div>
+  <table class="table">
+    <thead>
+    	<tr>
+        <th class="col-md-3">Title</th>
+        <th class="col-md-2">URL</th>
+        <th class="col-md-2">Creator</th>
+        <th class="col-md-2">Type</th>
+        <th class="col-md-3">Last Updated</th>
+      </tr>
+    </thead>
+  	<tbody>
+      <tr class="decision-aid-items" ng-repeat="decisionAid in (ctrl.decisionAids | filter:searchText | orderBy:'created_at') track by decisionAid.id">
+        <td>
+          <a uib-tooltip="Edit" ui-sref="decisionAidShow.instructions(::{ decisionAidId: decisionAid.id })"><i class="fa fa-pencil fa-fw"></i></a>
+          <a uib-tooltip="Show front-end" ui-sref="decisionAidIntro(::{ slug: decisionAid.slug })" target="_blank"><i class="fa fa-eye fa-fw"></i></a>
+          <a uib-tooltip="Delete" class="half-space-right text-danger clickable" ng-click="ctrl.deleteDecisionAid(decisionAid)"><i class="fa fa-trash fa-fw"></i></a>
+          <a ui-sref="decisionAidShow.instructions(::{ decisionAidId: decisionAid.id })">{{::decisionAid.title}}</a>
+        </td>
+        <td>
+          {{::decisionAid.slug}}
+        </td>
+        <td>
+          {{::decisionAid.creator}}
+        </td>
+        <td>
+          {{::decisionAid.decision_aid_type | underscoreless | capitalize}}
+        </td>
+        <td>
+          {{::decisionAid.updated_at | amDateFormat:'dddd, MMMM Do YYYY'}}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-refresh fa-spin"></i>
+</div>
+<div class="text-center" ng-show="ctrl.decisionAids.length === 0">
+  <span class="text-warning">There are no decision aids yet.</span> 
+</div>

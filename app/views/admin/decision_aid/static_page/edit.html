@@ -1,0 +1,32 @@
+<div class="text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-refresh fa-spin"></i>
+</div>
+<div ng-show="!ctrl.loading">
+  <div class="pull-right" ng-show="!ctrl.isNewStaticPage">
+    <button ng-click="ctrl.deleteStaticPage()" class="btn btn-danger">Delete Static Page</button>
+  </div>
+  <h2>{{ctrl.title}}</h2>
+  <div sd-error-scroll sa-errors="ctrl.errors"></div>
+  <form class="space-bottom space-top" name="StaticPageEditForm" ng-submit="ctrl.saveStaticPage()" novalidate>
+    
+    <div class="form-group">
+      <label for="static_page_title">Title</label>
+      <sd-information>The title of the static page.</sd-information>
+      <input class="form-control" id="static_page_title" placeholder="Title" ng-model="ctrl.staticPage.page_title" />
+    </div>
+
+    <div class="form-group">
+      <label for="static_page_slug">Slug</label>
+      <sd-information>The slug (URL) of the static page.</sd-information>
+      <input class="form-control" id="static_page_slug" placeholder="Slug" ng-model="ctrl.staticPage.page_slug" />
+    </div>
+
+    <div class="form-group">
+      <label>Page Text</label>
+      <sd-information>The main text for this summary panel.</sd-information>
+      <sd-redactor-wrapper sa-decision-aid-id="{{ctrl.decisionAidId}}"><textarea required name="static_page_page_text" class="form-control" id="static_page_page_text" placeholder="Page Text" ng-model="ctrl.staticPage.page_text" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'video']}"></textarea></sd-redactor-wrapper>
+    </div>
+
+    <input type="submit" value="Save" class="btn btn-primary" />
+  </form>
+</div>

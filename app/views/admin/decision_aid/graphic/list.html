@@ -1,0 +1,416 @@
+<div class="modal-header">
+  <div class="form-group pull-left space-top">
+    <button type="button" ng-click="ctrl.new()" class="btn btn-success">New</button>
+  </div>
+  <div class="pull-right space-top">
+    <div class="form-group">
+      <button type="button" ng-click="ctrl.cancel()" class="btn btn-default">Close</button>
+      <button type="button" ng-click="ctrl.insert()" class="btn btn-info">Insert Current</button>
+      <button type="button" ng-click="ctrl.save()" class="btn btn-primary">Save</button>
+    </div>
+    <div class="text-right clearfix">
+      <span>&nbsp;<span ng-if="ctrl.saved" class="text-success flashing-success">Saved! <i class="fa fa-check-circle-o"></i></span></span>
+    </div>
+  </div>
+  <h2 class="text-center">
+    <span ng-show="ctrl.currentlyEditing.id">{{ctrl.currentlyEditing.title}}</span>
+    <span ng-show="!ctrl.currentlyEditing.id">New Graphic</span>
+  </h2>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="text-center">
+        <h4 class="space-bottom">Existing Graphics</h4>
+      </div>
+      <div ng-show="ctrl.loading" class="text-center space-top space-bottom">
+        <i class="fa fa-refresh fa-spin"></i>
+      </div>
+      <div ng-repeat="graphic in ctrl.graphics">
+        <h5>
+          <a class="text-info clickable" ng-click="ctrl.editGraphic(graphic)"><i class="fa fa-pencil"></i></a> 
+          <a class="text-info clickable" ng-click="ctrl.insertGraphic(graphic)"><i class="fa fa-reply-all"></i></a>
+          <a class="text-danger clickable" ng-click="ctrl.deleteGraphic(graphic)"><i class="fa fa-trash"></i></a>
+          {{graphic.title}}
+        </h5>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div sd-error-scroll sa-errors="ctrl.errors"></div>
+      <div class="form-group">
+        <label>Title</label>
+        <input class="form-control" ng-model="ctrl.currentlyEditing.title" />
+      </div>
+      <div class="form-group">
+        <label class="half-space-right">Graphic Type</label>
+        <select required class="form-control select-field" ng-disabled="ctrl.currentlyEditing.id" ng-model="ctrl.currentlyEditing.actable_type" ng-options="grt.value as grt.key for grt in ctrl.graphicTypes"></select>
+      </div>
+
+      <div ng-if="ctrl.currentlyEditing.actable_type === 'HorizontalBarChartGraphic'" >
+        <div class="form-group">
+          <label>Max Value</label>
+          <input class="form-control" ng-model="ctrl.currentlyEditing.max_value" />
+        </div>
+        <div class="form-group">
+          <label class="half-space-right">Selected Index</label>
+          <sd-information>You can either select an index via an integer, or set it based on a question response's numeric value</sd-information>
+          <select class="form-control select-field" ng-model="ctrl.currentlyEditing.selected_index_type" ng-options="sit.value as sit.key for sit in ctrl.horizontalBarChartSelectedIndexTypes" ng-change="ctrl.resetSelectedIndex()">
+            <option value="">None</option>
+          </select>
+        </div>
+        <div class="form-group" ng-show="ctrl.currentlyEditing.selected_index_type">
+          <label>Selected Index</label>
+          <div ng-switch="ctrl.currentlyEditing.selected_index_type">
+            <div ng-switch-when="decimal">
+              <input class="form-control" ng-model="ctrl.currentlyEditing.selected_index" />
+            </div>
+            <div ng-switch-when="question_response">
+              <input disabled="disabled" class="form-control half-space-bottom" ng-model="ctrl.currentlyEditing.selected_index" />
+              <button class="btn btn-default" ng-click="ctrl.editSelectedIndex()">Select a Question</button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h4>Data points</h4>
+          <div class="space-top space-bottom" ng-show="ctrl.currentlyEditing.graphic_data.length === 0">
+            <span class="text-warning">There are no data points yet. Add one using the button below!</span>
+          </div>
+          <div sv-root sv-part="ctrl.currentlyEditing.graphic_data" sv-on-sort="ctrl.sortedData($item, $partFrom, $partTo, $indexFrom, $indexTo)" >
+            <div sv-element ng-repeat="graphicDatum in ctrl.currentlyEditing.graphic_data" class="graphic-data-wrapper clearfix space-bottom">
+              <div class="pull-right half-space-bottom">
+                <div sv-handle class="question-response-drag-icon"><i class="fa fa-lg fa-arrows drag-arrows movable"></i></div>
+              </div>
+              <div class="form-group">
+                <label>Data Label</label>
+                <input class="form-control" ng-model="graphicDatum.label" />
+              </div>
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label>Data Value Type</label>
+                  <select class="form-control select-field" ng-model="graphicDatum.value_type" ng-options="gdvt.value as gdvt.key for gdvt in ctrl.graphicDataValueTypes" ng-change="graphicDatum.value = null;"></select>
+                </div>
+                <div class="form-group col-md-6" ng-show="graphicDatum.value_type">
+                  <label>Data Value</label>
+                  <div ng-switch="graphicDatum.value_type">
+                    <div ng-switch-when="decimal">
+                      <input class="form-control" ng-model="graphicDatum.value" />
+                    </div>
+                    <div ng-switch-when="question_response">
+                      <input disabled="disabled" class="form-control half-space-bottom" ng-model="graphicDatum.value" />
+                      <button class="btn btn-default" ng-click="ctrl.addGraphicDatumQuestionResponseValue(graphicDatum)">Select a Question</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-md-12">
+                  <label>Data Color</label>
+                  <input class="form-control" ng-style="{'background-color': graphicDatum.color}" colorpicker colorpicker-parent="true" type="text" ng-model="graphicDatum.color" />
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label>Sub-Data Value Type</label>
+                  <select class="form-control select-field" ng-model="graphicDatum.sub_value_type" ng-options="gdvt.value as gdvt.key for gdvt in ctrl.graphicDataSubValueTypes" ng-change="graphicDatum.sub_value = null;"></select>
+                </div>
+                <div class="form-group col-md-6" ng-show="graphicDatum.sub_value_type">
+                  <label>Sub-Data Value</label>
+                  <div ng-switch="graphicDatum.sub_value_type">
+                    <div ng-switch-when="dec">
+                      <input class="form-control" ng-model="graphicDatum.sub_value" />
+                    </div>
+                    <div ng-switch-when="qr">
+                      <input disabled="disabled" class="form-control half-space-bottom" ng-model="graphicDatum.sub_value" />
+                      <button class="btn btn-default" ng-click="ctrl.addGraphicDatumQuestionResponseSubValue(graphicDatum)">Select a Question</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="clearfix">
+          <div class="pull-left">
+            <button class="btn btn-info" ng-click="ctrl.addGraphicDataPoint()"><i class="fa fa-plus"></i> Add Data Point</button>
+          </div>
+        </div>
+      </div>
+
+
+      <div ng-if="ctrl.currentlyEditing.actable_type === 'LineChartGraphic'" >
+        <div class="form-group">
+          <label>Chart Title</label>
+          <input class="form-control" ng-model="ctrl.currentlyEditing.chart_title" />
+        </div>
+        <div class="form-group">
+          <label>Min y value</label>
+          <input class="form-control" ng-model="ctrl.currentlyEditing.min_value" />
+        </div>
+        <div class="form-group">
+          <label>Max y value</label>
+          <input class="form-control" ng-model="ctrl.currentlyEditing.max_value" />
+        </div>
+        <div class="form-group">
+          <label>Y axis label</label>
+          <input class="form-control" ng-model="ctrl.currentlyEditing.y_label" />
+        </div>
+        <div class="form-group">
+          <label>X axis label</label>
+          <input class="form-control" ng-model="ctrl.currentlyEditing.x_label" />
+        </div>
+
+        <div>
+          <h4>Data points</h4>
+          <div class="space-top space-bottom" ng-show="ctrl.currentlyEditing.graphic_data.length === 0">
+            <span class="text-warning">There are no data points yet. Add one using the button below!</span>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label>Categories</label>
+              <div class="half-space-bottom input-group" ng-repeat="cat in ctrl.currentlyEditing.categories track by $index">
+                <input class="form-control" ng-model="ctrl.currentlyEditing.categories[$index]" /> 
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button" ng-click="ctrl.deleteCategoryFromLineChart($index)"><i class="fa fa-trash fa-lg text-danger"></i></button>
+                </span>
+              </div>
+              <div class="half-space-bottom">
+                <a href="" ng-click="ctrl.addCategoryToLineChart()"><i class="fa fa-plus fa-fw"></i>Add Category</a>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label>X-Values</label>
+              <div class="half-space-bottom input-group" ng-repeat="xval in ctrl.currentlyEditing.x_values track by $index">
+                <input class="form-control" ng-model="ctrl.currentlyEditing.x_values[$index]" />
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button" ng-click="ctrl.deleteXValFromLineChart($index)"><i class="fa fa-trash fa-lg text-danger"></i></button>
+                </span>
+              </div>
+              <div class="half-space-bottom">
+                <a href="" ng-click="ctrl.addXValueToLineChart()"><i class="fa fa-plus fa-fw"></i>Add X-Value</a>
+              </div>
+            </div>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Categories/X-Values</th>
+                <th ng-repeat="xval in ctrl.currentlyEditing.x_values track by $index">
+                  <span>{{xval}}</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="cat in ctrl.currentlyEditing.categories track by $index">
+                <th>
+                  <span>{{cat}}</span>
+                </th>
+                <td ng-repeat="xval in ctrl.currentlyEditing.x_values track by $index">
+                  <div class="input-group">
+                    <input class="form-control" ng-model="ctrl.currentlyEditing.indexedData[$parent.$index][$index].value" ng-focus="ctrl.openQuestionSelectorIfNecessary(ctrl.currentlyEditing.indexedData[$parent.$index][$index])"/>
+                    <span class="input-group-btn">
+                      <button class="btn btn-default" type="button" ng-click="ctrl.setValueType($parent.$index, $index, 'decimal')" ng-class="{'active': ctrl.currentlyEditing.indexedData[$parent.$index][$index].value_type !== 'question_response'}">#</button>
+                      <button class="btn btn-default" type="button" ng-click="ctrl.setValueType($parent.$index, $index, 'question_response')" ng-class="{'active': ctrl.currentlyEditing.indexedData[$parent.$index][$index].value_type === 'question_response'}">?</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+
+      <div ng-if="ctrl.currentlyEditing.actable_type === 'IconArrayGraphic'">
+        <div class="form-group">
+          <label>Number Per Row</label>
+          <input class="form-control" ng-model="ctrl.currentlyEditing.num_per_row" />
+        </div>
+        <div class="form-group">
+          <label class="half-space-right">Selected Index</label>
+          <sd-information>You can either select an index via an integer, or set it based on a question response's numeric value</sd-information>
+          <select class="form-control select-field" ng-model="ctrl.currentlyEditing.selected_index_type" ng-options="sit.value as sit.key for sit in ctrl.horizontalBarChartSelectedIndexTypes" ng-change="ctrl.resetSelectedIndex()">
+            <option value="">None</option>
+          </select>
+        </div>
+        <div class="form-group" ng-show="ctrl.currentlyEditing.selected_index_type">
+          <label>Selected Index</label>
+          <div ng-switch="ctrl.currentlyEditing.selected_index_type">
+            <div ng-switch-when="decimal">
+              <input class="form-control" ng-model="ctrl.currentlyEditing.selected_index" />
+            </div>
+            <div ng-switch-when="question_response">
+              <input disabled="disabled" class="form-control half-space-bottom" ng-model="ctrl.currentlyEditing.selected_index" />
+              <button class="btn btn-default" ng-click="ctrl.editSelectedIndex()">Select a Question</button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h4>Data points</h4>
+          <div class="space-top space-bottom" ng-show="ctrl.currentlyEditing.graphic_data.length === 0">
+            <span class="text-warning">There are no data points yet. Add one using the button below!</span>
+          </div>
+          <div sv-root sv-part="ctrl.currentlyEditing.graphic_data" sv-on-sort="ctrl.sortedData($item, $partFrom, $partTo, $indexFrom, $indexTo)" >
+            <div sv-element ng-repeat="graphicDatum in ctrl.currentlyEditing.graphic_data" class="graphic-data-wrapper clearfix space-bottom">
+              <div class="pull-right half-space-bottom">
+                <div sv-handle class="question-response-drag-icon"><i class="fa fa-lg fa-arrows drag-arrows movable"></i></div>
+              </div>
+              <div class="form-group">
+                <label>Data Label</label>
+                <input class="form-control" ng-model="graphicDatum.label" />
+              </div>
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label>Data Value Type</label>
+                  <select class="form-control select-field" ng-model="graphicDatum.value_type" ng-options="gdvt.value as gdvt.key for gdvt in ctrl.graphicDataValueTypes" ng-change="graphicDatum.value = null;"></select>
+                </div>
+                <div class="form-group col-md-6" ng-show="graphicDatum.value_type">
+                  <label>Data Value</label>
+                  <div ng-switch="graphicDatum.value_type">
+                    <div ng-switch-when="decimal">
+                      <input class="form-control" ng-model="graphicDatum.value" />
+                    </div>
+                    <div ng-switch-when="question_response">
+                      <input disabled="disabled" class="form-control half-space-bottom" ng-model="graphicDatum.value" />
+                      <button class="btn btn-default" ng-click="ctrl.addGraphicDatumQuestionResponseValue(graphicDatum)">Select a Question</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-md-12">
+                  <label>Data Color</label>
+                  <input class="form-control" ng-style="{'background-color': graphicDatum.color}" colorpicker colorpicker-parent="true" type="text" ng-model="graphicDatum.color" />
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label>Sub-Data Value Type</label>
+                  <select class="form-control select-field" ng-model="graphicDatum.sub_value_type" ng-options="gdvt.value as gdvt.key for gdvt in ctrl.graphicDataSubValueTypes" ng-change="graphicDatum.sub_value = null;"></select>
+                </div>
+                <div class="form-group col-md-6" ng-show="graphicDatum.sub_value_type">
+                  <label>Sub-Data Value</label>
+                  <div ng-switch="graphicDatum.sub_value_type">
+                    <div ng-switch-when="dec">
+                      <input class="form-control" ng-model="graphicDatum.sub_value" />
+                    </div>
+                    <div ng-switch-when="qr">
+                      <input disabled="disabled" class="form-control half-space-bottom" ng-model="graphicDatum.sub_value" />
+                      <button class="btn btn-default" ng-click="ctrl.addGraphicDatumQuestionResponseSubValue(graphicDatum)">Select a Question</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="clearfix">
+          <div class="pull-left">
+            <button class="btn btn-info" ng-click="ctrl.addGraphicDataPoint()"><i class="fa fa-plus"></i> Add Data Point</button>
+          </div>
+        </div>
+      </div>
+      <div ng-if="ctrl.currentlyEditing.actable_type === 'AnimatedIconArrayGraphic'">
+        <div class="row">
+          <div class="form-group col-md-6">
+            <div><label><span>Indicator location</span></label></div>
+            <sd-information>Choose whether to show the indicators above or below the graphic.</sd-information>
+            <label class="clickable" name="stage-discrete-yes">Above graphic <input class="clickable" type="radio" ng-model="ctrl.currentlyEditing.indicators_above" ng-value="true"></label>
+            <label class="clickable" name="indicator-location-no">Below graphic <input class="clickable" type="radio" ng-model="ctrl.currentlyEditing.indicators_above" ng-value="false"></label>
+          </div>
+          <div class="form-group col-md-6">
+            <div><label><span>Default stage</span></label></div>
+            <sd-information>Choose which stage to show when the graphic initially loads.</sd-information>
+            <select class="form-control select-field" ng-model="ctrl.currentlyEditing.default_stage" convert-to-number>
+              <option ng-repeat="stage in ctrl.currentlyEditing.animated_icon_array_graphic_stages" value="{{$index}}">Stage {{$index + 1}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="clearfix space-bottom">
+          <div class="pull-right">
+            <button class="btn btn-primary" ng-click="ctrl.addGraphicStage()">Add Graphic Stage</button>
+          </div>
+          <h3>Graphic stages</h3>
+        </div>
+        <div ng-repeat="stage in ctrl.currentlyEditing.animated_icon_array_graphic_stages" class="space-bottom graphic-stage-wrapper">
+          <div>
+<!--             <div class="pull-right">
+              <i class="clickable fa fa-trash fa-lg text-danger"></i>
+            </div> -->
+            <h4>Graphic stage {{$index+1}} <i class="clickable fa fa-trash text-danger" ng-click="ctrl.deleteStageFromGraphic($index)"></i></h4>
+          </div>
+          <div class="space-bottom">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Stage N</label>
+                  <input class="form-control" ng-model="stage.total_n" />
+                </div>
+              </div>
+              <div class="form-group col-md-6">
+                <div><label><span>Separate data points</span></label></div>
+                <sd-information>If you enable this, data points will be split apart in your icon array on this stage.</sd-information>
+                <label class="clickable half-space-right" name="stage-discrete-yes">Yes <input class="clickable" type="radio" ng-model="stage.seperate_values" ng-value="true"></label>
+                <label class="clickable" name="stage-discrete-no">No <input class="clickable" type="radio" ng-model="stage.seperate_values" ng-value="false"></label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label>Stage label</label>
+                  <input class="form-control" ng-model="stage.general_label" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="clearfix">
+            <div class="pull-right">
+              <button class="btn btn-warning" ng-click="ctrl.addDataToStage(stage)">Add data point to stage</button>
+            </div>
+            <h4>Stage data points</h4>
+          </div>
+          <div ng-repeat="graphicDatum in stage.graphic_data" class="graphic-data-wrapper space-bottom">
+            <div>
+              <h5>Data point {{$index+1}} <i class="clickable fa fa-trash text-danger" ng-click="ctrl.deleteDataPointFromStage($index, stage)"></i></h5>
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label>Data Label</label>
+                  <input class="form-control" ng-model="graphicDatum.label" />
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-md-12">
+                  <label>Data Color</label>
+                  <input class="form-control" ng-style="{'background-color': graphicDatum.color}" colorpicker colorpicker-parent="true" type="text" ng-model="graphicDatum.color" />
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label>Data Value Type</label>
+                  <select class="form-control select-field" ng-model="graphicDatum.value_type" ng-options="gdvt.value as gdvt.key for gdvt in ctrl.graphicDataValueTypes" ng-change="graphicDatum.value = null;"></select>
+                </div>
+                <div class="form-group col-md-6" ng-show="graphicDatum.value_type">
+                  <label>Data Value</label>
+                  <div ng-switch="graphicDatum.value_type">
+                    <div ng-switch-when="decimal">
+                      <input class="form-control" ng-model="graphicDatum.value" />
+                    </div>
+                    <div ng-switch-when="question_response">
+                      <input disabled="disabled" class="form-control half-space-bottom" ng-model="graphicDatum.value" />
+                      <button class="btn btn-default" ng-click="ctrl.addGraphicDatumQuestionResponseValue(graphicDatum)">Select a Question</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <div class="form-group pull-right space-top">
+    <button type="button" ng-click="ctrl.cancel()" class="btn btn-default">Close</button>
+    <button type="button" ng-click="ctrl.insert()" class="btn btn-info">Insert Current</button>
+    <button type="button" ng-click="ctrl.save()" class="btn btn-primary">Save</button>
+  </div>
+</div>

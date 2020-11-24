@@ -1,0 +1,642 @@
+'use strict'
+
+describe 'Controller: DecisionAidIntroCtrl', ->
+  beforeEach angular.mock.module 'dcida20App'
+
+  DecisionAidIntroCtrl = {}
+
+  rootScope = {}
+
+  decisionAidHasIntroPopup = false
+  stubbedIntroResponse = {
+    "decision_aid": {
+      "id": 4,
+      "title": "Colorectal Cancer Screening",
+      "slug": "clrcs",
+      "demographic_questions_count": 2,
+      "quiz_questions_count": 1,
+      "decision_aid_type": "standard",
+      "icon_image": null,
+      "footer_logos_with_urls": [],
+      "theme": "default",
+      "contact_email": null,
+      "contact_phone_number": null,
+      "description": "<p> [accordion id=\"2\"] <\/p>",
+      "injected_intro_popup_information_published": null,
+      "has_intro_popup": false,
+      "intro_pages": [
+        {
+          "id": 4,
+          "injected_description_published": "<p> <div><uib-accordion close-others='{{false}}'><uib-accordion-group is-open='ac_4_open ' panel-class='panel-default' ng-init='ac_4_open = true'>\n                              <uib-accordion-heading>\n                                <span class='half-space-right'>\n                                  <i ng-class=\"{'fa fa-minus': ac_4_open, 'fa fa-plus': !ac_4_open }\"><\/i>\n                                <\/span>\n                                Who is this decision aid for?\n                              <\/uib-accordion-heading>\n                              <p>This decision aid is for adults considering screening options for colorectal cancer. It provides information on the early testing, diagnosis, and treatment of colorectal cancer.<\/p><p>This is NOT for:<\/p><ul><li>People who want to learn about colorectal cancer that has come back or has spread (metastatic or recurrent cancer)<\/li><li>People who want to learn about anal cancer.<\/li><\/ul>\n                            <\/uib-accordion-group><uib-accordion-group is-open='ac_5_open ' panel-class='panel-default' ng-init='ac_5_open = true'>\n                              <uib-accordion-heading>\n                                <span class='half-space-right'>\n                                  <i ng-class=\"{'fa fa-minus': ac_5_open, 'fa fa-plus': !ac_5_open }\"><\/i>\n                                <\/span>\n                                Why is this decision important?\n                              <\/uib-accordion-heading>\n                              <p>Deciding between colorectal cancer screening tests is challenging, because there is no “best” screening option.<\/p><p>The options are very different and deciding what is best for you means making trade-offs between things like accuracy, side effects, convenience, and cost.<\/p><p>It is hard for doctors to select a screening test for you, because they don’t always know what is important to you.<\/p><p>This tool will help you review your options and think about what you prefer, so you can make an informed decision with your healthcare provider.<\/p>\n                            <\/uib-accordion-group><uib-accordion-group is-open='ac_6_open ' panel-class='panel-default' ng-init='ac_6_open = true'>\n                              <uib-accordion-heading>\n                                <span class='half-space-right'>\n                                  <i ng-class=\"{'fa fa-minus': ac_6_open, 'fa fa-plus': !ac_6_open }\"><\/i>\n                                <\/span>\n                                What screening tests does this decision aid discuss?\n                              <\/uib-accordion-heading>\n                              <p>This decision aid covers the three most popular, well-researched colorectal cancer screening tests.<\/p><ul><li>Sigmoidoscopy<\/li><li>Colonoscopy<\/li><li>FOBT (Fecal Occult Blood Test)<\/li><\/ul>\n                            <\/uib-accordion-group><uib-accordion-group is-open='ac_7_open ' panel-class='panel-default' ng-init='ac_7_open = false'>\n                              <uib-accordion-heading>\n                                <span class='half-space-right'>\n                                  <i ng-class=\"{'fa fa-minus': ac_7_open, 'fa fa-plus': !ac_7_open }\"><\/i>\n                                <\/span>\n                                What is colorectal cancer?\n                              <\/uib-accordion-heading>\n                              <p>Colorectal cancer means that cells that aren't normal are growing in your colon or rectum. These cells grow together and form polyps. Over time, some polyps can turn into cancer.<\/p><p>This cancer is also called colon cancer or rectal cancer, depending on where the cancer is. It is the third most common cancer in Canada and the United States. And it occurs most often in people older than 50.<\/p>\n                            <\/uib-accordion-group><uib-accordion-group is-open='ac_8_open ' panel-class='panel-default' ng-init='ac_8_open = false'>\n                              <uib-accordion-heading>\n                                <span class='half-space-right'>\n                                  <i ng-class=\"{'fa fa-minus': ac_8_open, 'fa fa-plus': !ac_8_open }\"><\/i>\n                                <\/span>\n                                What causes colorectal cancer?\n                              <\/uib-accordion-heading>\n                              <p>The exact cause of colorectal cancer is not known. Most cases begin as small growths, or polyps, inside the colon or rectum.<\/p><p>Colon polyps are very common. If they are found early, usually through routine screening tests, they can be removed before they turn into cancer.<\/p>\n                            <\/uib-accordion-group><uib-accordion-group is-open='ac_9_open ' panel-class='panel-default' ng-init='ac_9_open = false'>\n                              <uib-accordion-heading>\n                                <span class='half-space-right'>\n                                  <i ng-class=\"{'fa fa-minus': ac_9_open, 'fa fa-plus': !ac_9_open }\"><\/i>\n                                <\/span>\n                                What are the symptoms?\n                              <\/uib-accordion-heading>\n                              <p>Colorectal cancer usually doesn't cause symptoms until after it has started to spread. See your doctor if you have any of these symptoms:<\/p><ul><li>Pain in your belly<\/li><li>Blood in your stool or very dark stools<\/li><li>A change in your bowel habits, such as more frequent stools or a feeling that your bowels are not emptying completel<\/li><\/ul>\n                            <\/uib-accordion-group><uib-accordion-group is-open='ac_10_open ' panel-class='panel-default' ng-init='ac_10_open = false'>\n                              <uib-accordion-heading>\n                                <span class='half-space-right'>\n                                  <i ng-class=\"{'fa fa-minus': ac_10_open, 'fa fa-plus': !ac_10_open }\"><\/i>\n                                <\/span>\n                                How is colorectal cancer diagnosed?\n                              <\/uib-accordion-heading>\n                              <p>If your doctor thinks that you may have this cancer, you will need a test, called a colonoscopy, that lets the doctor see the inside of your entire colon and rectum. During this test, your doctor will remove polyps or take tissue samples from any areas that don't look normal. The tissue will be looked at under a microscope to see if it contains cancer.<\/p><p>Sometimes another test, such as a sigmoidoscopy, is used to diagnose colorectal cancer.<\/p>\n                            <\/uib-accordion-group><uib-accordion-group is-open='ac_11_open ' panel-class='panel-default' ng-init='ac_11_open = false'>\n                              <uib-accordion-heading>\n                                <span class='half-space-right'>\n                                  <i ng-class=\"{'fa fa-minus': ac_11_open, 'fa fa-plus': !ac_11_open }\"><\/i>\n                                <\/span>\n                                How is it treated?\n                              <\/uib-accordion-heading>\n                              <p>Colorectal cancer is usually treated with surgery, chemotherapy, or radiation.<\/p>\n                            <\/uib-accordion-group><uib-accordion-group is-open='ac_12_open ' panel-class='panel-default' ng-init='ac_12_open = false'>\n                              <uib-accordion-heading>\n                                <span class='half-space-right'>\n                                  <i ng-class=\"{'fa fa-minus': ac_12_open, 'fa fa-plus': !ac_12_open }\"><\/i>\n                                <\/span>\n                                How can you screen for colorectal cancer?\n                              <\/uib-accordion-heading>\n                              <p>Screening tests can find or prevent many cases of colon and rectal cancer. They look for a certain disease or condition before any symptoms appear. Experts recommend routine colon cancer testing for everyone age 50 and older who has a normal risk for colon cancer. Your doctor may recommend getting tested more often or at a younger age if you have a higher risk. Talk to your doctor about when you should be tested.<\/p>\n                            <\/uib-accordion-group><uib-accordion-group is-open='ac_13_open ' panel-class='panel-default' ng-init='ac_13_open = false'>\n                              <uib-accordion-heading>\n                                <span class='half-space-right'>\n                                  <i ng-class=\"{'fa fa-minus': ac_13_open, 'fa fa-plus': !ac_13_open }\"><\/i>\n                                <\/span>\n                                Key points to remember\n                              <\/uib-accordion-heading>\n                              <p>Screening tests find health problems early, before symptoms appear. Regular testing to find colon cancer early is very important because as soon as there are symptoms, it's usually too late to cure colon cancer. Regular testing lowers your risk of dying from colon cancer.<\/p><p>The two main types of tests are:<\/p><ul><li>Those that mostly find signs of colon cancer (stool tests).<\/li><li>Those that can also help prevent colon cancer by finding polyps before they turn into cancer (sigmoidoscopy and colonoscopy). And if you have a sigmoidoscopy or colonoscopy, any polyps that are found usually can be removed during the test.<\/li><\/ul><p>Routine testing is recommended for everyone age 50 and older who has a normal risk for colon cancer. Your doctor may recommend earlier or more frequent testing if you have a higher risk for colon cancer.<\/p>\n                            <\/uib-accordion-group><\/uib-accordion><\/div> <\/p>",
+          "intro_page_order": 1
+        },
+        {
+          "id": 11,
+          "injected_description_published": "<p>This decision aid is supported by the Cancer Association of America.<\/p>",
+          "intro_page_order": 2
+        }
+      ]
+    },
+    "meta": {
+      "pages": {
+        "intro": {
+          "available": true,
+          "completed": true,
+          "page_title": "Introduction",
+          "page_name": "Intro",
+          "page_params": null,
+          "page_index": 0
+        },
+        "about": {
+          "available": true,
+          "completed": false,
+          "page_title": "About Me",
+          "page_name": "About",
+          "page_params": null,
+          "page_index": 1
+        },
+        "properties": {
+          "available": false,
+          "completed": false,
+          "page_title": "My Values",
+          "page_name": "Properties",
+          "page_params": null,
+          "page_index": 2
+        },
+        "results_1": {
+          "available": false,
+          "completed": false,
+          "page_title": "My Choice",
+          "page_name": "Results",
+          "page_params": {
+            "sub_decision_order": 1
+          },
+          "page_index": 3
+        },
+        "quiz": {
+          "available": false,
+          "completed": false,
+          "page_title": "Review",
+          "page_name": "Quiz",
+          "page_params": null,
+          "page_index": 4
+        },
+        "summary": {
+          "available": false,
+          "completed": false,
+          "page_title": "Summary",
+          "page_name": "Summary",
+          "page_params": null,
+          "page_index": 5
+        }
+      },
+      "decision_aid_user": {
+        "id": 778,
+        "decision_aid_id": 4,
+        "about_me_complete": false,
+        "decision_aid_user_properties_count": 0,
+        "quiz_complete": false,
+        "selected_option_id": null,
+        "uuid": "18ed35c6-f7fe-4117-ac71-49ca20e6c094",
+        "pid": null,
+        "created_at": "2017-10-20T01:44:54.683Z",
+        "updated_at": "2017-10-20T01:44:54.683Z",
+        "decision_aid_user_responses_count": 0,
+        "decision_aid_user_option_properties_count": 0,
+        "decision_aid_user_dce_question_set_responses_count": 0,
+        "decision_aid_user_bw_question_set_responses_count": 0,
+        "decision_aid_user_sub_decision_choices_count": 0
+      },
+      "is_new_user": false
+    }
+  }
+
+  stubbedIntroResponseWithIntroPopup = {
+    "decision_aid": {
+      "id": 4,
+      "title": "Colorectal Cancer Screening",
+      "slug": "clrcs",
+      "demographic_questions_count": 2,
+      "quiz_questions_count": 1,
+      "decision_aid_type": "standard",
+      "icon_image": null,
+      "footer_logos_with_urls": [],
+      "theme": "default",
+      "contact_email": null,
+      "contact_phone_number": null,
+      "description": "<p> [accordion id=\"2\"] <\/p>",
+      "injected_intro_popup_information_published": null,
+      "has_intro_popup": true,
+      "intro_pages": [
+        {
+          "id": 4,
+          "injected_description_published": "<p> <div><uib-accordion close-others='{{false}}'><uib-accordion-group is-open='ac_4_open ' panel-class='panel-default' ng-init='ac_4_open = true'>\n                              <uib-accordion-heading>\n                                <span class='half-space-right'>\n                                  <i ng-class=\"{'fa fa-minus': ac_4_open, 'fa fa-plus': !ac_4_open }\"><\/i>\n                                <\/span>\n                                Who is this decision aid for?\n                              <\/uib-accordion-heading>\n                              <p>This decision aid is for adults considering screening options for colorectal cancer. It provides information on the early testing, diagnosis, and treatment of colorectal cancer.<\/p><p>This is NOT for:<\/p><ul><li>People who want to learn about colorectal cancer that has come back or has spread (metastatic or recurrent cancer)<\/li><li>People who want to learn about anal cancer.<\/li><\/ul>\n                            <\/uib-accordion-group><uib-accordion-group is-open='ac_5_open ' panel-class='panel-default' ng-init='ac_5_open = true'>\n                              <uib-accordion-heading>\n                                <span class='half-space-right'>\n                                  <i ng-class=\"{'fa fa-minus': ac_5_open, 'fa fa-plus': !ac_5_open }\"><\/i>\n                                <\/span>\n                                Why is this decision important?\n                              <\/uib-accordion-heading>\n                              <p>Deciding between colorectal cancer screening tests is challenging, because there is no “best” screening option.<\/p><p>The options are very different and deciding what is best for you means making trade-offs between things like accuracy, side effects, convenience, and cost.<\/p><p>It is hard for doctors to select a screening test for you, because they don’t always know what is important to you.<\/p><p>This tool will help you review your options and think about what you prefer, so you can make an informed decision with your healthcare provider.<\/p>\n                            <\/uib-accordion-group><uib-accordion-group is-open='ac_6_open ' panel-class='panel-default' ng-init='ac_6_open = true'>\n                              <uib-accordion-heading>\n                                <span class='half-space-right'>\n                                  <i ng-class=\"{'fa fa-minus': ac_6_open, 'fa fa-plus': !ac_6_open }\"><\/i>\n                                <\/span>\n                                What screening tests does this decision aid discuss?\n                              <\/uib-accordion-heading>\n                              <p>This decision aid covers the three most popular, well-researched colorectal cancer screening tests.<\/p><ul><li>Sigmoidoscopy<\/li><li>Colonoscopy<\/li><li>FOBT (Fecal Occult Blood Test)<\/li><\/ul>\n                            <\/uib-accordion-group><uib-accordion-group is-open='ac_7_open ' panel-class='panel-default' ng-init='ac_7_open = false'>\n                              <uib-accordion-heading>\n                                <span class='half-space-right'>\n                                  <i ng-class=\"{'fa fa-minus': ac_7_open, 'fa fa-plus': !ac_7_open }\"><\/i>\n                                <\/span>\n                                What is colorectal cancer?\n                              <\/uib-accordion-heading>\n                              <p>Colorectal cancer means that cells that aren't normal are growing in your colon or rectum. These cells grow together and form polyps. Over time, some polyps can turn into cancer.<\/p><p>This cancer is also called colon cancer or rectal cancer, depending on where the cancer is. It is the third most common cancer in Canada and the United States. And it occurs most often in people older than 50.<\/p>\n                            <\/uib-accordion-group><uib-accordion-group is-open='ac_8_open ' panel-class='panel-default' ng-init='ac_8_open = false'>\n                              <uib-accordion-heading>\n                                <span class='half-space-right'>\n                                  <i ng-class=\"{'fa fa-minus': ac_8_open, 'fa fa-plus': !ac_8_open }\"><\/i>\n                                <\/span>\n                                What causes colorectal cancer?\n                              <\/uib-accordion-heading>\n                              <p>The exact cause of colorectal cancer is not known. Most cases begin as small growths, or polyps, inside the colon or rectum.<\/p><p>Colon polyps are very common. If they are found early, usually through routine screening tests, they can be removed before they turn into cancer.<\/p>\n                            <\/uib-accordion-group><uib-accordion-group is-open='ac_9_open ' panel-class='panel-default' ng-init='ac_9_open = false'>\n                              <uib-accordion-heading>\n                                <span class='half-space-right'>\n                                  <i ng-class=\"{'fa fa-minus': ac_9_open, 'fa fa-plus': !ac_9_open }\"><\/i>\n                                <\/span>\n                                What are the symptoms?\n                              <\/uib-accordion-heading>\n                              <p>Colorectal cancer usually doesn't cause symptoms until after it has started to spread. See your doctor if you have any of these symptoms:<\/p><ul><li>Pain in your belly<\/li><li>Blood in your stool or very dark stools<\/li><li>A change in your bowel habits, such as more frequent stools or a feeling that your bowels are not emptying completel<\/li><\/ul>\n                            <\/uib-accordion-group><uib-accordion-group is-open='ac_10_open ' panel-class='panel-default' ng-init='ac_10_open = false'>\n                              <uib-accordion-heading>\n                                <span class='half-space-right'>\n                                  <i ng-class=\"{'fa fa-minus': ac_10_open, 'fa fa-plus': !ac_10_open }\"><\/i>\n                                <\/span>\n                                How is colorectal cancer diagnosed?\n                              <\/uib-accordion-heading>\n                              <p>If your doctor thinks that you may have this cancer, you will need a test, called a colonoscopy, that lets the doctor see the inside of your entire colon and rectum. During this test, your doctor will remove polyps or take tissue samples from any areas that don't look normal. The tissue will be looked at under a microscope to see if it contains cancer.<\/p><p>Sometimes another test, such as a sigmoidoscopy, is used to diagnose colorectal cancer.<\/p>\n                            <\/uib-accordion-group><uib-accordion-group is-open='ac_11_open ' panel-class='panel-default' ng-init='ac_11_open = false'>\n                              <uib-accordion-heading>\n                                <span class='half-space-right'>\n                                  <i ng-class=\"{'fa fa-minus': ac_11_open, 'fa fa-plus': !ac_11_open }\"><\/i>\n                                <\/span>\n                                How is it treated?\n                              <\/uib-accordion-heading>\n                              <p>Colorectal cancer is usually treated with surgery, chemotherapy, or radiation.<\/p>\n                            <\/uib-accordion-group><uib-accordion-group is-open='ac_12_open ' panel-class='panel-default' ng-init='ac_12_open = false'>\n                              <uib-accordion-heading>\n                                <span class='half-space-right'>\n                                  <i ng-class=\"{'fa fa-minus': ac_12_open, 'fa fa-plus': !ac_12_open }\"><\/i>\n                                <\/span>\n                                How can you screen for colorectal cancer?\n                              <\/uib-accordion-heading>\n                              <p>Screening tests can find or prevent many cases of colon and rectal cancer. They look for a certain disease or condition before any symptoms appear. Experts recommend routine colon cancer testing for everyone age 50 and older who has a normal risk for colon cancer. Your doctor may recommend getting tested more often or at a younger age if you have a higher risk. Talk to your doctor about when you should be tested.<\/p>\n                            <\/uib-accordion-group><uib-accordion-group is-open='ac_13_open ' panel-class='panel-default' ng-init='ac_13_open = false'>\n                              <uib-accordion-heading>\n                                <span class='half-space-right'>\n                                  <i ng-class=\"{'fa fa-minus': ac_13_open, 'fa fa-plus': !ac_13_open }\"><\/i>\n                                <\/span>\n                                Key points to remember\n                              <\/uib-accordion-heading>\n                              <p>Screening tests find health problems early, before symptoms appear. Regular testing to find colon cancer early is very important because as soon as there are symptoms, it's usually too late to cure colon cancer. Regular testing lowers your risk of dying from colon cancer.<\/p><p>The two main types of tests are:<\/p><ul><li>Those that mostly find signs of colon cancer (stool tests).<\/li><li>Those that can also help prevent colon cancer by finding polyps before they turn into cancer (sigmoidoscopy and colonoscopy). And if you have a sigmoidoscopy or colonoscopy, any polyps that are found usually can be removed during the test.<\/li><\/ul><p>Routine testing is recommended for everyone age 50 and older who has a normal risk for colon cancer. Your doctor may recommend earlier or more frequent testing if you have a higher risk for colon cancer.<\/p>\n                            <\/uib-accordion-group><\/uib-accordion><\/div> <\/p>",
+          "intro_page_order": 1
+        },
+        {
+          "id": 11,
+          "injected_description_published": "<p>This decision aid is supported by the Cancer Association of America.<\/p>",
+          "intro_page_order": 2
+        }
+      ]
+    },
+    "meta": {
+      "pages": {
+        "intro": {
+          "available": true,
+          "completed": true,
+          "page_title": "Introduction",
+          "page_name": "Intro",
+          "page_params": null,
+          "page_index": 0
+        },
+        "about": {
+          "available": true,
+          "completed": false,
+          "page_title": "About Me",
+          "page_name": "About",
+          "page_params": null,
+          "page_index": 1
+        },
+        "properties": {
+          "available": false,
+          "completed": false,
+          "page_title": "My Values",
+          "page_name": "Properties",
+          "page_params": null,
+          "page_index": 2
+        },
+        "results_1": {
+          "available": false,
+          "completed": false,
+          "page_title": "My Choice",
+          "page_name": "Results",
+          "page_params": {
+            "sub_decision_order": 1
+          },
+          "page_index": 3
+        },
+        "quiz": {
+          "available": false,
+          "completed": false,
+          "page_title": "Review",
+          "page_name": "Quiz",
+          "page_params": null,
+          "page_index": 4
+        },
+        "summary": {
+          "available": false,
+          "completed": false,
+          "page_title": "Summary",
+          "page_name": "Summary",
+          "page_params": null,
+          "page_index": 5
+        }
+      },
+      "decision_aid_user": {
+        "id": 778,
+        "decision_aid_id": 4,
+        "about_me_complete": false,
+        "decision_aid_user_properties_count": 0,
+        "quiz_complete": false,
+        "selected_option_id": null,
+        "uuid": "18ed35c6-f7fe-4117-ac71-49ca20e6c094",
+        "pid": null,
+        "created_at": "2017-10-20T01:44:54.683Z",
+        "updated_at": "2017-10-20T01:44:54.683Z",
+        "decision_aid_user_responses_count": 0,
+        "decision_aid_user_option_properties_count": 0,
+        "decision_aid_user_dce_question_set_responses_count": 0,
+        "decision_aid_user_bw_question_set_responses_count": 0,
+        "decision_aid_user_sub_decision_choices_count": 0
+      },
+      "is_new_user": false
+    }
+  }
+
+  stateParams = {}
+
+  q = {}
+  _ = {}
+  scope = {}
+
+  Auth = {}
+  decisionAidFoundCalled = false
+  Auth.decisionAidFound = () ->
+    decisionAidFoundCalled = true
+    return
+
+  stateTarget = null
+  stateTargetParams = null
+  state = {}
+  state.go = (target, params) ->
+    stateTarget = target
+    stateTargetParams = params
+
+  uibModalCalled = false
+  uibModal = {}
+  uibModal.open = (params) ->
+    uibModalCalled = true
+    params.resolve.options()
+
+  decisionAidIntroRequestError = false
+  decisionAidIntroCalled = false
+
+  DecisionAidHome = {}
+
+  DecisionAidHome.intro = (slug) ->
+    decisionAidIntroCalled = true
+    then: (successFn, errorFn) ->
+      if decisionAidIntroRequestError
+        errorFn("Error!")
+      else
+        # create a copy to return, otherwise live changes to things influence other tests
+        if decisionAidHasIntroPopup
+          successFn(angular.copy(stubbedIntroResponseWithIntroPopup))
+        else
+          successFn(angular.copy(stubbedIntroResponse))
+
+  basicPageSubmissionRequestError = false
+  basicPageSubmissionQueryCalled = false
+  basicPageSubmissionSaveCalled = false
+
+  BasicPageSubmission = () ->
+    return this
+
+  BasicPageSubmission.query = (params, successFn, errorFn) ->
+    basicPageSubmissionQueryCalled = true
+    if basicPageSubmissionRequestError
+      errorFn("Error!")
+    else
+      successFn([])
+
+  BasicPageSubmission.prototype.$save = (params, successFn, errorFn) ->
+    basicPageSubmissionSaveCalled = true
+    if basicPageSubmissionRequestError
+      errorFn("Error!")
+    else
+      successFn([])
+
+  beforeEach inject ($controller, $rootScope, ___, _$q_) ->
+    rootScope = $rootScope
+    scope = $rootScope.$new()
+    decisionAidIntroRequestError = false
+    basicPageSubmissionRequestError = false
+    decisionAidIntroCalled = false
+    basicPageSubmissionQueryCalled = false
+    decisionAidFoundCalled = false
+    basicPageSubmissionSaveCalled = false
+    stateTarget = null
+    stateTargetParams = null
+    uibModalCalled = false
+    decisionAidHasIntroPopup = false
+
+    stateParams = {decisionAidSlug: "clrcs"}
+    q = _$q_
+    _ = ___
+
+    DecisionAidIntroCtrl = $controller 'DecisionAidIntroCtrl', {
+      $scope: scope
+      DecisionAidHome: DecisionAidHome
+      Auth: Auth
+      BasicPageSubmission: BasicPageSubmission
+      _: _
+      $q: q
+      $state: state
+      $stateParams: stateParams
+      $uibModal: uibModal
+    }
+
+    scope.$apply()
+
+  describe "no request errors on load", () ->
+    it "should correctly set the loading variable", () ->
+      expect(DecisionAidIntroCtrl.loading).toBeFalsy()
+
+    it "should call DecisionAidHome.intro", () ->
+      expect(decisionAidIntroCalled).toBeTruthy()
+
+    it "should call BasicPageSubmission.query", () ->
+      expect(basicPageSubmissionQueryCalled).toBeTruthy()
+
+    it "should inform auth that a decision aid was found", () ->
+      expect(decisionAidFoundCalled).toBeTruthy()
+
+    it "should define variables needed by view", () ->
+      expect(DecisionAidIntroCtrl.decisionAid).toBeDefined()
+      expect(DecisionAidIntroCtrl.introPages).toBeDefined()
+      expect(DecisionAidIntroCtrl.introPagesByOrder).toBeDefined()
+      expect(DecisionAidIntroCtrl.introPagesById).toBeDefined()
+      expect(DecisionAidIntroCtrl.currentPage).toBeDefined()
+      expect(DecisionAidIntroCtrl.basicPageSubmissions).toBeDefined()
+
+    it "should not set the noDecisionAidFound variable", () ->
+      expect(DecisionAidIntroCtrl.noDecisionAidFound).not.toBeTruthy()
+
+    it "should set the @currentPage to the first intro page", () ->
+      firstPage = _.sortBy(DecisionAidIntroCtrl.introPages, "intro_page_order")[0]
+      expect(DecisionAidIntroCtrl.currentPage).toBe(firstPage)
+
+  describe "page_id in stateParams", () ->
+    beforeEach inject ($controller) ->
+      stateParams = 
+        decisionAidSlug: "clrcs"
+        page_id: 11
+      DecisionAidIntroCtrl = $controller 'DecisionAidIntroCtrl', {
+        $scope: scope
+        DecisionAidHome: DecisionAidHome
+        Auth: Auth
+        BasicPageSubmission: BasicPageSubmission
+        _: _
+        $q: q
+        $stateParams: stateParams
+      }
+      scope.$apply()
+
+    it "should set the @currentPage to the page with id: 11", () ->
+      page = _.find(DecisionAidIntroCtrl.introPages, (p) -> p.id is 11)
+      expect(DecisionAidIntroCtrl.currentPage).toBe(page)
+
+  describe "back in stateParams", () ->
+    beforeEach inject ($controller) ->
+      stateParams = 
+        decisionAidSlug: "clrcs"
+        back: true
+      DecisionAidIntroCtrl = $controller 'DecisionAidIntroCtrl', {
+        $scope: scope
+        DecisionAidHome: DecisionAidHome
+        Auth: Auth
+        BasicPageSubmission: BasicPageSubmission
+        _: _
+        $q: q
+        $stateParams: stateParams
+      }
+      scope.$apply()
+
+    it "should set the @currentPage to the last intro page", () ->
+      lastPage = _.sortBy(DecisionAidIntroCtrl.introPages, "intro_page_order").reverse()[0]
+      expect(DecisionAidIntroCtrl.currentPage).toBe(lastPage)
+
+  describe "errors in loading requests", () ->
+    describe "intro request error", () ->
+      beforeEach inject ($controller) ->
+        decisionAidIntroRequestError = true
+        DecisionAidIntroCtrl = $controller 'DecisionAidIntroCtrl', {
+          $scope: scope
+          DecisionAidHome: DecisionAidHome
+          Auth: Auth
+          BasicPageSubmission: BasicPageSubmission
+          _: _
+          $q: q
+        }
+        scope.$digest()
+
+      it "should set the noDecisionAidFound variable", () ->
+        expect(DecisionAidIntroCtrl.noDecisionAidFound).toBeTruthy()
+
+      it "should set the loading variable to false", () ->
+        expect(DecisionAidIntroCtrl.loading).toBeFalsy()
+
+    describe "basic page submissions query request error", () ->
+      beforeEach inject ($controller) ->
+        basicPageSubmissionRequestError = true
+        DecisionAidIntroCtrl = $controller 'DecisionAidIntroCtrl', {
+          $scope: scope
+          DecisionAidHome: DecisionAidHome
+          Auth: Auth
+          BasicPageSubmission: BasicPageSubmission
+          _: _
+          $q: q
+        }
+        scope.$digest()
+
+      it "should set the noDecisionAidFound variable", () ->
+        expect(DecisionAidIntroCtrl.noDecisionAidFound).toBeTruthy()
+
+      it "should set the loading variable to false", () ->
+        expect(DecisionAidIntroCtrl.loading).toBeFalsy()
+
+  describe "saveIfNewPageSubmission()", () ->
+    describe "no save error", () ->
+      it "should call '$save' on the basicPageSubmission if it doesn't exist yet", () ->
+        expect(DecisionAidIntroCtrl.basicPageSubmissions[DecisionAidIntroCtrl.currentPage.id]).not.toBeDefined()
+        DecisionAidIntroCtrl.saveIfNewPageSubmission()
+        expect(basicPageSubmissionSaveCalled).toBeTruthy()
+
+      it "should resolve the returned promise", (done) ->
+        DecisionAidIntroCtrl.saveIfNewPageSubmission().then(
+          ((r) ->
+            done()
+          ),
+          ((e) ->
+            fail()
+          )
+        )
+        scope.$apply()
+
+      it "should assign the saved page submission to basicPageSubmissions[currentPage.id]", () ->
+        expect(DecisionAidIntroCtrl.basicPageSubmissions[DecisionAidIntroCtrl.currentPage.id]).not.toBeDefined()
+        DecisionAidIntroCtrl.saveIfNewPageSubmission()
+        expect(DecisionAidIntroCtrl.basicPageSubmissions[DecisionAidIntroCtrl.currentPage.id]).toBeDefined()
+
+      it "should not call $save if the basicPageSubmission already exists", () ->
+        DecisionAidIntroCtrl.saveIfNewPageSubmission()
+        expect(DecisionAidIntroCtrl.basicPageSubmissions[DecisionAidIntroCtrl.currentPage.id]).toBeDefined()
+        # a basicPageSubmission not exists with the current page id. Now let's try saving again
+        basicPageSubmissionSaveCalled = false
+        DecisionAidIntroCtrl.saveIfNewPageSubmission()
+        expect(basicPageSubmissionSaveCalled).toBeFalsy()
+
+    describe "save error", () ->
+      it "should reject the returned promise", (done) ->
+        basicPageSubmissionRequestError = true
+        DecisionAidIntroCtrl.saveIfNewPageSubmission().then(
+          ((r) ->
+            fail()
+          ),
+          ((e) ->
+            done()
+          )
+        )
+        scope.$apply()
+
+  describe "submitNext()", () ->
+    describe "nextPage doesn't exist - note that this should never be reached and an issue occured further back for this to have happened", () ->
+      it "should set the state target to decisionAidIntro", () ->
+        # intentionally screw up the intro page order
+        #console.log DecisionAidIntroCtrl.introPagesByOrder
+        DecisionAidIntroCtrl.introPagesByOrder[2] = null
+        DecisionAidIntroCtrl.submitNext()
+        scope.$apply()
+        expect(stateTarget).not.toBeNull()
+        expect(stateTarget).toEqual("decisionAidIntro")
+
+    describe "currentPage isn't last intro page", () ->
+      it "should go to the next intro page", () ->
+        sortedPages = _.sortBy(DecisionAidIntroCtrl.introPages, "intro_page_order")
+        firstPage = sortedPages[0]
+        secondPage = sortedPages[1]
+        expect(DecisionAidIntroCtrl.currentPage).toBe(firstPage)
+        DecisionAidIntroCtrl.submitNext()
+        scope.$apply()
+        expect(DecisionAidIntroCtrl.currentPage).not.toBe(firstPage)
+        expect(DecisionAidIntroCtrl.currentPage).toBe(secondPage)
+
+    describe "currentPage is last intro page", () ->
+      beforeEach () ->
+        # go to last intro page
+        _.each DecisionAidIntroCtrl.introPages, (ip, ind) ->
+          if ind isnt DecisionAidIntroCtrl.introPages.length - 1
+            DecisionAidIntroCtrl.submitNext()
+            scope.$apply()
+
+      it "should go to decisionAidAbout if decision_aid.demographic_questions_count is > 0", () ->
+        DecisionAidIntroCtrl.submitNext()
+        scope.$apply()
+        expect(stateTarget).not.toBeNull()
+        expect(stateTarget).toEqual("decisionAidAbout")
+
+      describe "no demographic questions", () ->
+        beforeEach () ->
+          # set the demographic question count to 0 to get to other branches
+          DecisionAidIntroCtrl.decisionAid.demographic_questions_count = 0
+
+        describe "DCE decision aid", () ->
+          beforeEach () ->
+            DecisionAidIntroCtrl.decisionAid.decision_aid_type = "dce"
+
+          it "should go to the decisionAidDce state", () ->
+            DecisionAidIntroCtrl.submitNext()
+            scope.$apply()
+            expect(stateTarget).not.toBeNull()
+            expect(stateTarget).toEqual("decisionAidDce")
+
+        describe "Best Worst decision aid", () ->
+          beforeEach () ->
+            DecisionAidIntroCtrl.decisionAid.decision_aid_type = "best_worst"
+
+          it "should go to the decisionAidBestWorst state", () ->
+            DecisionAidIntroCtrl.submitNext()
+            scope.$apply()
+            expect(stateTarget).not.toBeNull()
+            expect(stateTarget).toEqual("decisionAidBestWorst")
+
+        describe "Best Worst No Results decision aid", () ->
+          beforeEach () ->
+            DecisionAidIntroCtrl.decisionAid.decision_aid_type = "best_worst_no_results"
+
+          it "should go to the decisionAidBestWorst state", () ->
+            DecisionAidIntroCtrl.submitNext()
+            scope.$apply()
+            expect(stateTarget).not.toBeNull()
+            expect(stateTarget).toEqual("decisionAidBestWorst")
+
+        describe "Traditional decision aid", () ->
+          beforeEach () ->
+            DecisionAidIntroCtrl.decisionAid.decision_aid_type = "traditional"
+
+          it "should go to the decisionAidResults state", () ->
+            DecisionAidIntroCtrl.submitNext()
+            scope.$apply()
+            expect(stateTarget).not.toBeNull()
+            expect(stateTarget).toEqual("decisionAidResults")
+
+        describe "Risk calculator decision aid", () ->
+          beforeEach () ->
+            DecisionAidIntroCtrl.decisionAid.decision_aid_type = "risk_calculator"
+
+          describe "decisionAid.quiz_questions_count === 0", () ->
+            beforeEach () ->
+              DecisionAidIntroCtrl.decisionAid.quiz_questions_count = 0
+
+            it "should go to the decisionAidSummary state", () ->
+              DecisionAidIntroCtrl.submitNext()
+              scope.$apply()
+              expect(stateTarget).not.toBeNull()
+              expect(stateTarget).toEqual("decisionAidSummary")
+
+          describe "decisionAid.question_questions_count > 0", () ->
+            it "should go to the decisionAidQuiz state", () ->
+              DecisionAidIntroCtrl.submitNext()
+              scope.$apply()
+              expect(stateTarget).not.toBeNull()
+              expect(stateTarget).toEqual("decisionAidQuiz")
+
+        describe "Standard decision aid", () ->
+          beforeEach () ->
+            DecisionAidIntroCtrl.decisionAid.decision_aid_type = "standard"
+
+          it "should go to the decisionAidProperties state", () ->
+            DecisionAidIntroCtrl.submitNext()
+            scope.$apply()
+            expect(stateTarget).not.toBeNull()
+            expect(stateTarget).toEqual("decisionAidProperties")
+
+  describe "prevLink", () ->
+    it "should go back to the previous page", () ->
+      sortedPages = _.sortBy(DecisionAidIntroCtrl.introPages, "intro_page_order")
+      firstPage = sortedPages[0]
+      secondPage = sortedPages[1]
+      # go to second page
+      DecisionAidIntroCtrl.submitNext()
+      scope.$apply()
+      expect(DecisionAidIntroCtrl.currentPage).toBe(secondPage)
+      # go back to first page
+      DecisionAidIntroCtrl.prevLink()
+      scope.$apply()
+      expect(DecisionAidIntroCtrl.currentPage).toBe(firstPage)
+
+    it "should do nothing if already on first page", () ->
+      sortedPages = _.sortBy(DecisionAidIntroCtrl.introPages, "intro_page_order")
+      firstPage = sortedPages[0]
+      expect(DecisionAidIntroCtrl.currentPage).toBe(firstPage)
+      DecisionAidIntroCtrl.prevLink()
+      scope.$apply()
+      expect(DecisionAidIntroCtrl.currentPage).toBe(firstPage)
+
+  describe "introPopup", () ->
+    beforeEach inject ($controller) ->
+      decisionAidHasIntroPopup = true
+      uibModalCalled = false
+      DecisionAidIntroCtrl = $controller 'DecisionAidIntroCtrl', {
+        $scope: scope
+        DecisionAidHome: DecisionAidHome
+        Auth: Auth
+        BasicPageSubmission: BasicPageSubmission
+        _: _
+        $q: q
+        $state: state
+        $stateParams: stateParams
+        $uibModal: uibModal
+      }
+
+    it "should open the modal to show the intro popup if this is the first intro page", () ->
+      sortedPages = _.sortBy(DecisionAidIntroCtrl.introPages, "intro_page_order")
+      firstPage = sortedPages[0]
+      expect(DecisionAidIntroCtrl.currentPage).toBe(firstPage)
+      expect(uibModalCalled).toBeTruthy()
+
+    describe "not first intro page", () ->
+      beforeEach inject ($controller) ->
+        decisionAidHasIntroPopup = true
+        uibModalCalled = false
+        stateParams = 
+          decisionAidSlug: "clrcs"
+          back: true
+        DecisionAidIntroCtrl = $controller 'DecisionAidIntroCtrl', {
+          $scope: scope
+          DecisionAidHome: DecisionAidHome
+          Auth: Auth
+          BasicPageSubmission: BasicPageSubmission
+          _: _
+          $q: q
+          $state: state
+          $stateParams: stateParams
+          $uibModal: uibModal
+        }
+
+      it "should not open the intro popup", () ->
+        sortedPages = _.sortBy(DecisionAidIntroCtrl.introPages, "intro_page_order")
+        firstPage = sortedPages[0]
+        expect(DecisionAidIntroCtrl.currentPage).not.toBe(firstPage)
+        expect(uibModalCalled).toBeFalsy()

@@ -1,0 +1,21 @@
+<div style="min-height: 100px;">
+  <div ng-if="!ctrl.stageData">
+    <div class="space-top space-bottom space-left space-right text-center">
+      <div>
+        <div class="space-bottom"><i class="fa fa-refresh fa-spin fa-2x"></i></div>
+        <div>
+          <span class="text-warning" style="font-size: 0.8em;">Loading data from ACCEPT API</span>
+        </div>
+        <div>
+          <span class="text-warning"><sd-animated-ellipsis></sd-animated-ellipsis></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div ng-if="ctrl.stageData">  <!-- ng-if="ctrl.stageData" -->
+    <div style='width: 100%;' 
+         sd-animated-icon-array-real sa-input-data="ctrl.stageData"
+         sa-indicators-above="false"
+         sa-default-stage-index="0"></div>
+  </div>
+</div>

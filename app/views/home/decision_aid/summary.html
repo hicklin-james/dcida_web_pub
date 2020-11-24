@@ -1,0 +1,416 @@
+<script type="text/ng-template" id="summary_panels">
+  <div>
+    <div ng-repeat="panel in ctrl.summaryPanels track by panel.id">
+      <div ng-switch="panel.panel_type" class="summary-panel-outer">
+        <div ng-switch-when="text">
+          <div compile="panel.injected_panel_information_published"></div>
+        </div>
+        <div ng-switch-when="decision_summary">
+          <!-- The decision summary will look different depending on the decision aid type, so we need a case statement here -->
+
+          <div compile="panel.injected_panel_information_published"></div>
+          <div ng-switch="ctrl.decisionAid.decision_aid_type">
+            <div ng-switch-when="best_worst_no_results">
+              <div sd-horizontal-bar-chart sa-data="ctrl.propertyData" sa-exclude-percentages="true" sa-single-color="#9ad29a"></div>
+            </div>
+            <div ng-switch-when="best_worst">
+               <div class="row">
+                <div class="col-xs-6 text-center space-bottom">
+                  <div ng-repeat="sd in ctrl.subDecisions">
+                    <div ng-if="ctrl.subDecisionChoiceHashIndexedBySubDecisionId[sd.id].option_id">
+                      <h5>{{panel.summary_table_header_json[sd.id]}}</h5>
+                      <table class="table table-striped table-condensed">
+                        <tr ng-repeat="o in ctrl.groupedOptions[sd.id]" ng-class="{'success': ctrl.subDecisionChoiceHashIndexedBySubDecisionId[sd.id].option_id === o.id}">
+                          <td class="col-xs-6">
+                            <span ng-class="{'bold': ctrl.subDecisionChoiceHashIndexedBySubDecisionId[sd.id].option_id === o.id}">{{o.title}}</span>
+                          </td>
+                          <td class="col-xs-6">
+                            {{(ctrl.resultMatchOption[o.id] * 100.0) | number:1}}%
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xs-6 text-center space-bottom">
+                  <h5>What matters most to me</h5>
+                  <div sd-horizontal-bar-chart sa-data="ctrl.propertyData" sa-exclude-percentages="yes"></div>
+                </div>
+              </div>
+              <div>
+                <div class="text-center" class="col-xs-12">
+                  <div ng-repeat="sd in ctrl.subDecisions">
+                    <div ng-if="ctrl.subDecisionChoiceHashIndexedBySubDecisionId[sd.id].option_id">
+                      <h5>{{panel.lookup_headers_json[sd.id]}}</h5>
+                      <h4>{{::ctrl.indexedOptions[ctrl.subDecisionChoiceHashIndexedBySubDecisionId[sd.id].option_id].title}}</h4>
+                    </div>
+                    <h4 ng-if="ctrl.subDecisionChoiceHashIndexedBySubDecisionId[sd.id].option_id === -1">
+                      Unsure
+                    </h4>
+                    <p>
+                      <em>
+                      {{ctrl.subDecisionChoiceHashIndexedBySubDecisionId[sd.id].option_id === -1 ? panel.option_lookup_json["_1"] : panel.option_lookup_json[ctrl.subDecisionChoiceHashIndexedBySubDecisionId[sd.id].option_id]}}
+                      </em>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div ng-switch-when="dce">
+               <div class="row">
+                <div class="col-xs-6 text-center space-bottom">
+                  <div ng-repeat="sd in ctrl.subDecisions">
+                    <div ng-if="ctrl.subDecisionChoiceHashIndexedBySubDecisionId[sd.id].option_id">
+                      <h5>{{panel.summary_table_header_json[sd.id]}}</h5>
+                      <div ng-repeat="sd in ctrl.subDecisions" class="space-bottom">
+                        <div ng-if="ctrl.subDecisionChoiceHashIndexedBySubDecisionId[sd.id].option_id">
+                          <h5>{{panel.lookup_headers_json[sd.id]}}</h5>
+                          <h4>{{::ctrl.indexedOptions[ctrl.subDecisionChoiceHashIndexedBySubDecisionId[sd.id].option_id].title}}</h4>
+                        </div>
+                        <p>
+                          <em>
+                          {{ctrl.subDecisionChoiceHashIndexedBySubDecisionId[sd.id].option_id === -1 ? panel.option_lookup_json["_1"] : panel.option_lookup_json[ctrl.subDecisionChoiceHashIndexedBySubDecisionId[sd.id].option_id]}}
+                          </em>
+                        </p>
+                      </div>
+                      <table class="table table-striped table-condensed">
+                        <tr ng-repeat="o in ctrl.groupedOptions[sd.id]" ng-class="{'success': ctrl.subDecisionChoiceHashIndexedBySubDecisionId[sd.id].option_id === o.id}">
+                          <td class="col-xs-6">
+                            {{o.title}}
+                          </td>
+                          <td class="col-xs-6">
+                            {{(ctrl.resultMatchOption[o.id] * 100.0) | number:1}}%
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xs-6">
+                  <div ng-repeat="sd in ctrl.subDecisions">
+                    <table class="table table-condensed">
+                      <tr ng-repeat="prop in ctrl.sortedProperties">
+                        <td class="col-xs-8"><strong>{{prop.title}}</strong></td>
+                        <td class="col-xs-4">{{ctrl.optionPropertyHash[prop.id][ctrl.subDecisionChoiceHashIndexedBySubDecisionId[sd.id].option_id].short_label}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div ng-switch-when="treatment_rankings">
+              <div class="row">
+                <div class="col-xs-12 space-bottom">
+                  <div>
+                    <table class="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th class="col-md-8"></th>
+                          <th class="col-md-4 text-center">Importance</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr ng-repeat="prop in (ctrl.filteredSortedProperties | limitTo:4)">
+                          <td><strong>{{prop.title}}</strong></td>
+                          <td class="text-center middle-align"><img class="summary-star-rating" ng-src='{{ctrl.indexedUserProps[prop.id].star_url}}'></img></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div ng-switch-default>
+              <div class="row">
+                <div class="col-xs-4">
+                  <span>Most important questions to the patient: </span>
+                </div>
+                <div class="col-xs-6">
+                  <ul>
+                    <li ng-repeat="prop in ctrl.sortedProperties.slice(0,3)">
+                      {{prop.title}}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div ng-repeat="sd in ctrl.subDecisions">
+                <span>{{panel.injectable_decision_summary_string}}</span>
+                <span style="font-style: italic; font-weight: bold;">
+                  {{ctrl.subDecisionChoiceHashIndexedBySubDecisionId[sd.id].option_id === -1 ? panel.option_lookup_json["_1"] : panel.option_lookup_json[ctrl.subDecisionChoiceHashIndexedBySubDecisionId[sd.id].option_id]}}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div ng-switch-when="question_responses">
+          <div compile="panel.injected_panel_information_published"></div>
+          <div>
+            <span>TODO</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
+
+<script type="text/ng-template" id="default_summary_page">
+  <div class="space-bottom" ng-repeat="subDecision in ctrl.subDecisions">
+    <div ng-if="ctrl.subDecisionChoiceHashIndexedBySubDecisionId[subDecision.id]">
+      <h4>Decision {{subDecision.sub_decision_order}}</h4>
+      <div class="half-space-bottom" compile="::ctrl.indexedOptions[ctrl.subDecisionChoiceHashIndexedBySubDecisionId[subDecision.id].option_id].injected_summary_text_published"></div>
+      <div class="x-scrollable text-center half-space-bottom">
+        <table class="table table-bordered results-table">
+          <thead>
+            <tr>
+              <th class="results-option-image-cell" style="vertical-align: middle;"></th>
+              <th ng-repeat="option in ctrl.groupedOptions[subDecision.id]" class="results-option-image-cell">
+                <div class="results-option-image-cell-div">
+                  <img class="img-responsive results-option-image" ng-src="{{::option.results_image_url}}" />
+                  <h4>{{::option.title}}</h4>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="property in ctrl.properties" id="results-row-{{$index}}">
+              <th class="property-header">
+                <div class="property-label" id="prop-row-info-{{$index}}">{{::property.title}}</div>
+              </th>
+              <td ng-style="{height: ctrl.setPropertyRowHeight($index) + 'px'}" ng-repeat="option in ctrl.groupedOptions[subDecision.id]" class="text-center" ng-class="{'selected': ctrl.subDecisionChoiceHash[option.id]}">
+                <div class="option-property-info table" id="prop-opt-{{$parent.$index}}-{{$index}}">
+                  <div class="table-row">
+                    <div class="table-cell top-align">
+                      {{::ctrl.optionPropertyHash[property.id][option.id].short_label}}
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </td>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div ng-if="ctrl.decisionAid.demographic_questions_count > 0" class="space-bottom">
+    <h3>About Me Responses</h3>
+    <div ng-repeat="question in (ctrl.questions | filter:{question_type:'demographic'})">
+      <div class="summary-question-wrapper">
+        <h5>Question:</h5>
+        <div compile="::question.question_text_published"></div>
+        <h5>Response:</h5>
+        <div ng-switch="::question.question_response_type">
+          <div ng-switch-when="radio">
+            <div class="inline-block" ng-if="question.has_correct_answer === true">
+              <span>TODO</span>
+            </div>
+            {{::ctrl.questionResponseHash[question.id][ctrl.userResponses[question.id].question_response_id].question_response_value}}
+          </div>
+          <div ng-switch-when="yes_no">
+            <div>
+              <i class="fa fa-2x" ng-class="{'fa-check-circle-o text-success': ctrl.userResponses[question.id].question_response_id === question.question_responses[0].id, 'fa-circle-o': ctrl.userResponses[question.id].question_response_id !== question.question_responses[0].id}"></i>
+            </div>
+          </div>
+           <div ng-switch-when="text">
+            {{::ctrl.userResponses[question.id].response_value}}
+           </div>
+           <div ng-switch-when="current_treatment">
+            {{::(ctrl.indexedOptions[ctrl.userResponses[question.id].option_id] ? ctrl.indexedOptions[ctrl.userResponses[question.id].option_id].title : "No Treatment/Not Sure")}}
+           </div>
+           <div ng-switch-when="number">
+             {{::ctrl.userResponses[question.id].number_response_value}}
+           </div>
+           <div ng-switch-when="grid">
+            <div ng-switch="question.grid_questions[0].question_response_type">
+              <div ng-switch-when="radio">
+                <table class="table fixed-table-layout ">
+                  <thead>
+                    <th></th>
+                    <th class="text-center" ng-repeat="r in question.grid_questions[0].question_responses">
+                      {{::r.question_response_value}}
+                    </th>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="q in question.grid_questions">
+                      <td>
+                        {{::q.question_text_published}}
+                      </td>
+                      <td class="text-center" ng-repeat="r in q.question_responses">
+                        <i class="fa fa-2x" ng-class="::{'fa-check-circle-o text-success': ctrl.userResponses[q.id].question_response_id == r.id, 'fa-circle-o': ctrl.userResponses[q.id].question_response_id !== r.id}" type="checkbox"></i>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div ng-switch-when="yes_no">
+                <table class="table fixed-table-layout ">
+                  <thead>
+                    <th></th>
+                    <th class="text-center">
+                    </th>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="q in question.grid_questions">
+                      <td>
+                        {{::q.question_text_published}}
+                      </td>
+                      <td class="text-center">
+                        <i class="fa fa-2x" ng-class="{'fa-check-circle-o text-success': ctrl.userResponses[q.id].question_response_id === q.question_responses[0].id, 'fa-circle-o': ctrl.userResponses[q.id].question_response_id !== q.question_responses[0].id}"></i>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div ng-if="ctrl.decisionAid.quiz_questions_count > 0" class="space-bottom">
+    <h3>Quiz Responses</h3>
+    <div ng-repeat="question in (ctrl.questions | filter:{question_type:'quiz'})">
+      <div class="summary-question-wrapper">
+        <h5>Question:</h5>
+        <div compile="::question.question_text_published"></div>
+        <h5>Response:</h5>
+        <div ng-switch="::question.question_response_type">
+          <div ng-switch-when="radio">
+            <div class="inline-block" ng-if="question.has_correct_answer === true">
+              <span>TODO</span>
+            </div>
+            {{ctrl.questionResponseHash[question.id][ctrl.userResponses[question.id].question_response_id].question_response_value}}
+          </div>
+          <div ng-switch-when="yes_no">
+            <div>
+              <i class="fa fa-2x" ng-class="{'fa-check-circle-o text-success': ctrl.userResponses[question.id].question_response_id === question.question_responses[0].id, 'fa-circle-o': ctrl.userResponses[question.id].question_response_id !== question.question_responses[0].id}"></i>
+            </div>
+          </div>
+          <div ng-switch-when="text">
+            {{::ctrl.userResponses[question.id].response_value}}
+          </div>
+          <div ng-switch-when="current_treatment">
+            {{::(ctrl.indexedOptions[ctrl.userResponses[question.id].option_id] ? ctrl.indexedOptions[ctrl.userResponses[question.id].option_id].title : "No Treatment/Not Sure")}}
+           </div>
+          <div ng-switch-when="number">
+            {{::ctrl.userResponses[question.id].number_response_value}}
+          </div>
+          <div ng-switch-when="grid">
+            <div ng-switch="question.grid_questions[0].question_response_type">
+              <div ng-switch-when="radio">
+                <table class="table fixed-table-layout ">
+                  <thead>
+                    <th></th>
+                    <th class="text-center" ng-repeat="r in question.grid_questions[0].question_responses">
+                      {{::r.question_response_value}}
+                    </th>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="q in question.grid_questions">
+                      <td>
+                        {{::q.question_text_published}}
+                      </td>
+                      <td class="text-center" ng-repeat="r in q.question_responses">
+                        <i class="fa fa-2x" ng-class="::{'fa-check-circle-o text-success': ctrl.userResponses[q.id].question_response_id == r.id, 'fa-circle-o': ctrl.userResponses[q.id].question_response_id !== r.id}" type="checkbox"></i>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div ng-switch-when="yes_no">
+                <table class="table fixed-table-layout ">
+                  <thead>
+                    <th></th>
+                    <th class="text-center">
+                    </th>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="q in question.grid_questions">
+                      <td>
+                        {{::q.question_text_published}}
+                      </td>
+                      <td class="text-center">
+                        <i class="fa fa-2x" ng-class="{'fa-check-circle-o text-success': ctrl.userResponses[q.id].question_response_id === q.question_responses[0].id, 'fa-circle-o': ctrl.userResponses[q.id].question_response_id !== q.question_responses[0].id}"></i>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
+
+<div id="decision_aid_summary">
+  <!-- <div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+    <i class="fa fa-2x fa-spin fa-refresh"></i>
+  </div> -->
+  <div ng-show="ctrl.noDecisionAidFound">
+    <div class="alert alert-danger">No Decision was found with the url: {{ctrl.decisionAidSlug}}</div>
+  </div>
+  <div ng-if="!ctrl.loading && ctrl.decisionAid">
+    <div ng-switch="ctrl.decisionAid.decision_aid_type" id="summary-content" class="space-bottom">
+      <div ng-switch-when="traditional">
+        <div ng-include="'summary_panels'"></div>
+      </div>
+      <div ng-switch-when="best_worst">
+        <div ng-include="'summary_panels'"></div>
+      </div>
+      <div ng-switch-when="best_worst_no_results">
+        <div ng-include="'summary_panels'"></div>
+      </div>
+      <div ng-switch-default>
+        <div ng-include="'summary_panels'"></div>
+      </div>
+    </div>
+    <div class="space-bottom">
+      <div compile="ctrl.decisionAid.injected_final_summary_text_published"></div>
+    </div>
+
+    <div class="space-bottom" ng-if="ctrl.decisionAid.include_download_pdf_button">
+      <button ng-click="ctrl.downloadPdf()" type="button" class="btn btn-primary half-space-right" ng-disabled="ctrl.startingPdfDownload">Save & Print this page</button> <i ng-class="{'hidden': !ctrl.startingPdfDownload}" class="fa fa-refresh fa-spin fa-lg"></i>
+    </div>
+    <div class="space-bottom" ng-if="ctrl.decisionAid.include_user_summary_email">
+      <label class="half-space-right" compile="ctrl.decisionAid.user_summary_email_text"></label>
+      <input class="form-control summary-email-input half-space-right" placeholder="Email address" ng-model="ctrl.summary_address"/>
+      <button class="btn btn-info inline-block" type="button" ng-click="ctrl.sendPdfEmail()"><i class="fa fa-fw fa-share"></i> Send</button>
+    </div>
+    
+    <div class="space-top space-bottom text-center">
+      <!--
+      <h4>Thank you for using DCIDA. Feel free to go back and review the decision aid.</h4>
+    -->
+    </div>
+    <sd-bottom-nav sa-should-hide-next="!ctrl.decisionAid.summary_link_to_url" sa-show-next="{{ctrl.decisionAid.more_information_button_text}}" sa-next-submit="ctrl.submitNext()" sa-show-prev="{{'BACK-BUTTON' | translate}}" sa-prev-link="ctrl.prevLink()"></sd-bottom-nav>
+  </div>
+</div>
+<div style="position: relative; overflow: hidden;">
+  <div style="left: -10000px; position: absolute; width: 1140;">
+    <div id="offscreen-content-wrapper">
+      <div class="offscren-content-inner">
+
+      </div>
+
+      <!-- <div id="offscreen-content">
+        <div ng-if="!ctrl.loading && ctrl.decisionAid">
+          <div ng-switch="ctrl.decisionAid.decision_aid_type">
+            <div ng-switch-when="traditional">
+              <div ng-include="'summary_panels'"></div>
+            </div>
+            <div ng-switch-when="best_worst">
+              <div ng-include="'summary_panels'"></div>
+            </div>
+            <div ng-switch-when="best_worst_no_results">
+              <div ng-include="'summary_panels'"></div>
+            </div>
+            <div ng-switch-default>
+              <div ng-include="'summary_panels'"></div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </div>
+</div>

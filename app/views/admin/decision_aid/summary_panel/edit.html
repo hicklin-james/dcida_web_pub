@@ -1,0 +1,76 @@
+<div class="text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-refresh fa-spin"></i>
+</div>
+<div ng-show="!ctrl.loading">
+  <div class="pull-right" ng-show="!ctrl.isNewSummaryPanel">
+    <button ng-click="ctrl.deleteSummaryPanel()" class="btn btn-danger">Delete Summary Panel</button>
+  </div>
+  <h2>{{ctrl.title}}</h2>
+  <div sd-error-scroll sa-errors="ctrl.errors"></div>
+  <form class="space-bottom space-top" name="summaryPanelEditForm" ng-submit="ctrl.saveSummaryPanel()" novalidate>
+    <div class="form-group">
+      <label>Panel Type</label>
+      <select required name="summary_panel_panel_type" class="form-control select-field" ng-model="ctrl.summaryPanel.panel_type" ng-options="pt.value as pt.key for pt in ctrl.summaryPanelTypes"></select>
+    </div>
+    <label>Panel Information</label>
+    <sd-information>The main information for this summary panel.</sd-information>
+    <sd-redactor-wrapper sa-include-question-selector sa-question-types="quiz,demographic" sa-decision-aid-id="{{ctrl.decisionAidId}}"><textarea required name="summary_panel_panel_information" class="form-control" id="summary_panel_panel_information" placeholder="Panel Information" ng-model="ctrl.summaryPanel.panel_information" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'questionSelector', 'video']}"></textarea></sd-redactor-wrapper>
+    <div ng-switch="ctrl.summaryPanel.panel_type">
+      <div ng-switch-when="text">
+      </div>
+      <div ng-switch-when="question_responses">
+        <label>Select which questions to show in this panel</label>
+        <div ng-repeat="question in ctrl.questions">
+          <div class="clickable" ng-click="ctrl.toggleQuestion(question)">
+            <i class="inline-block fa half-space-right" ng-class="{'fa-check-square-o text-success': ctrl.questionHash[question.id], 'fa-square-o': !ctrl.questionHash[question.id]}"></i>
+            <div class="inline-block" compile="question.question_text"></div>
+          </div>
+          <div class="space-left space-right space-bottom" ng-show="question.grid_questions.length > 0">
+            <div ng-repeat="gq in question.grid_questions" class="clickable" ng-click="ctrl.toggleQuestion(gq)">
+              <i class="inline-block fa half-space-right" ng-class="{'fa-check-square-o text-success': ctrl.questionHash[gq.id], 'fa-square-o': !ctrl.questionHash[gq.id]}"></i>
+              <div class="inline-block" compile="gq.question_text"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div ng-switch-when="decision_summary">
+        <div class="space-bottom">
+          <div class="form-group">
+            <label>Injectable text above selection labels</label>"
+            <input ng-model="ctrl.summaryPanel.injectable_decision_summary_string" class="form-control" />
+          </div>
+          <h4>Option specific labels</h4>
+          <div class="half-space-left half-space-right half-space-top">
+            <div class="form-group" ng-repeat="option in ctrl.options">
+              <label>Selection label for "{{option.title}}"</label>
+              <input ng-model="ctrl.summaryPanel.option_lookup_json[option.id]" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label>Selection label for "Unsure"</label>
+              <input ng-model='ctrl.summaryPanel.option_lookup_json["_1"]' class="form-control" />
+            </div>
+          </div>
+        </div>
+        <div class="space-bottom">
+          <h4>Decision specific labels</h4>
+          <div class="half-space-left half-space-right half-space-top">
+            <div class="form-group" ng-repeat="sd in ctrl.sub_decisions">
+              <label>Header label for sub decision "{{sd.sub_decision_order}}"</label>
+              <input ng-model="ctrl.summaryPanel.lookup_headers_json[sd.id]" class="form-control" />
+            </div>
+          </div>
+        </div>
+        <div class="space-bottom">
+          <h4>Decision summary table sub decision labels</h4>
+          <div class="half-space-left half-space-right half-space-top">
+            <div class="form-group" ng-repeat="sd in ctrl.sub_decisions">
+              <label>Header label for sub decision "{{sd.sub_decision_order}}"</label>
+              <input ng-model="ctrl.summaryPanel.summary_table_header_json[sd.id]" class="form-control" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <input type="submit" value="Save" class="btn btn-primary" />
+  </form>
+</div>

@@ -1,0 +1,156 @@
+mock = require('protractor-http-mock')
+SigninPage = require('../signin/signin_page')
+DecisionAidListPage = require('./decision_aid_list_page')
+DecisionAidShowPage = require('./decision_aid_show_page')
+
+describe 'decisionAidList', () ->
+
+  afterEach () ->
+    mock.teardown()
+
+  beforeEach () ->
+    mock(['users', 'decision_aids'])
+    sipage = new SigninPage()
+    sipage.loginToDcida()
+    browser.waitForAngular()
+    lipage = new DecisionAidListPage()
+    lipage.getDecisionAidItems().first().element(By.css(".fa.fa-pencil.fa-fw")).element(By.xpath('..')).click()
+    browser.waitForAngular()
+
+  it 'should start at the instructions page', () ->
+    page = new DecisionAidShowPage()
+    expect(page.instructionsHeader.isDisplayed()).toBe(true)
+
+  it "should navigate to the basic page", () ->
+    page = new DecisionAidShowPage()
+    page.basicLink.click()
+
+    browser.waitForAngular()
+
+    expect(page.basicHeader.isDisplayed()).toBe(true)
+
+  it "should navigate to the styling page", () ->
+    page = new DecisionAidShowPage()
+    page.stylingLink.click()
+
+    browser.waitForAngular()
+
+    expect(page.stylingHeader.isDisplayed()).toBe(true)
+
+  it "should navigate to the introduction page", () ->
+    page = new DecisionAidShowPage()
+    page.introductionLink.click()
+
+    browser.waitForAngular()
+
+    expect(page.introductionHeader.isDisplayed()).toBe(true)
+
+  it "should navigate to the about me page", () ->
+    demographicQuestionQuery = {
+      request: {
+        path: "http://localhost:3000/api/decision_aids/1/questions",
+        method: "GET"
+      },
+      response: {
+        data: {
+          questions: [
+            {
+              id: 1
+              decision_aid_id: 1
+              question_order: 1
+              question_response_type: "radio"
+              question_text: "<p>Radio question</p>"
+              question_type: "demographic"
+            },
+            {
+              id: 1
+              decision_aid_id: 1
+              question_order: 2
+              question_response_type: "text"
+              question_text: "<p>Text question</p>"
+              question_type: "demographic"
+            }
+          ]
+        }
+      }
+    }
+
+    mock.add(demographicQuestionQuery)
+
+    page = new DecisionAidShowPage()
+    page.aboutMeLink.click()
+
+    browser.waitForAngular()
+
+    expect(page.aboutMeHeader.isDisplayed()).toBe(true)
+
+  it "should navigate to the my options page", () ->
+    page = new DecisionAidShowPage()
+    page.myOptionsLink.click()
+
+    browser.waitForAngular()
+
+    expect(page.myOptionsHeader.isDisplayed()).toBe(true)
+
+  it "should navigate to the my properties page", () ->
+    page = new DecisionAidShowPage()
+    page.myPropertiesLink.click()
+
+    browser.waitForAngular()
+
+    expect(page.myPropertiesHeader.isDisplayed()).toBe(true)
+
+  it "should navigate to the my choice page", () ->
+    page = new DecisionAidShowPage()
+    page.myChoiceLink.click()
+
+    browser.waitForAngular()
+
+    expect(page.myChoiceHeader.isDisplayed()).toBe(true)
+
+  it "should navigate to the quiz page", () ->
+    
+    quizQuestionQuery = {
+      request: {
+        path: "http://localhost:3000/api/decision_aids/1/questions",
+        method: "GET"
+      },
+      response: {
+        data: {
+          questions: [
+            {
+              id: 1
+              decision_aid_id: 1
+              question_order: 1
+              question_response_type: "radio"
+              question_text: "<p>Radio question</p>"
+              question_type: "quiz"
+            },
+            {
+              id: 1
+              decision_aid_id: 1
+              question_order: 2
+              question_response_type: "text"
+              question_text: "<p>Text question</p>"
+              question_type: "quiz"
+            }
+          ]
+        }
+      }
+    }
+    mock.add(quizQuestionQuery)
+    
+    page = new DecisionAidShowPage()
+    page.quizLink.click()
+
+    browser.waitForAngular()
+
+    expect(page.quizHeader.isDisplayed()).toBe(true)
+
+  it "should navigate to the summary page", () ->
+    page = new DecisionAidShowPage()
+    page.summaryLink.click()
+
+    browser.waitForAngular()
+
+    expect(page.summaryHeader.isDisplayed()).toBe(true)

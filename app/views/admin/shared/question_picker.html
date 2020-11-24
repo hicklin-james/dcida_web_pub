@@ -1,0 +1,131 @@
+<div class="question-picker">
+  <div class="modal-header">
+    <div class="pull-right">
+      <button class="btn btn-default" ng-click="ctrl.cancelQuestionPicker()">Cancel</button>
+    </div>
+    <h3>Question Picker</h3>
+  </div>
+  <div class="modal-body">
+    <div class="meta-panel" ng-show="ctrl.selectedQuestion">
+      <h5 class="space-bottom">
+        Add metadata to the question injection. You can do things like use the numeric value or access the JSON fields.
+      </h5>
+      <hr />
+      <div>
+        <h5>Selected question</h5>
+        <div compile="ctrl.selectedQuestion.question_text"></div>
+      </div>
+      <hr />
+      <div class="form-group space-bottom">
+        <label>Metadata</label>
+        <input ng-model="ctrl.selectedQuestion.additional_meta" class="form-control"/>
+      </div>
+      <div class="clearfix">
+        <button ng-click="ctrl.clearCurrentQuestion()" class="btn btn-default pull-left"><i class="fa fa-arrow-left"></i> Back</button>
+        <button ng-click="ctrl.selectQuestion()" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> Inject</button>
+      </div>
+    </div>
+    <div ng-show="!ctrl.selectedQuestion" class="question-picker-panel">
+      <h5 class="space-bottom">
+        {{ctrl.description}}
+      </h5>
+      <div class="question-filter-box">
+        <div>
+          <h4>Filters</h4>
+          <div class="form-group form-inline">
+            <div class="half-space-right inline-block">
+              <label>Question type: </label>
+              <select ng-model="ctrl.currentQuestionType" ng-options="item.questionType as item.key for item in ctrl.questionTypeFilters" class="form-control"></select>
+            </div>
+            <div class="inline-block half-space-right">
+              <label>Question source: </label>
+              <select ng-model="ctrl.currentHiddenFilter" ng-options="item.hidden as item.key for item in ctrl.hiddenFilters" class="form-control"></select>
+            </div>
+            <div class="inline-block">
+              <label>Search: </label>
+              <input type="text" class="form-control" id="question-search" ng-model="searchText" placeholder="Search" ng-model-options="{debounce: 300}"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Question response types: </label>
+            <div class="form-inline">
+              <span ng-repeat="qrtf in ctrl.questionResponseTypeFilters" class="half-space-right">
+                <label>{{qrtf.key}}
+                  <input ng-model="qrtf.selected" type="checkbox" class="form-control" />
+                </label>
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="half-space-left half-space-right half-space-top half-space-bottom">
+        <div class="space-bottom">
+          <div class="question-headers clearfix">
+            <div class="row">
+              <div class="col-xs-10">
+                <div class="inline-block"><h5>Question</h5></div>
+              </div>
+              <div class="col-xs-2 text-center">
+                <h5>Question type</h5>
+              </div>
+            </div>
+          </div>
+          <div ng-repeat="question in (ctrl.questions | onlyQuestionType: ctrl.currentQuestionType | questionVisibility: ctrl.currentHiddenFilter | onlyQuestionResponseTypes: ctrl.questionResponseTypeFilters | filter:searchText) as filteredQuestions" class="clearfix question-row half-space-bottom" ng-class="{'clickable': question.question_response_type !== 'grid' || ctrl.gridSelectable}" ng-click="ctrl.setSelectedQuestion(question)">
+            <div class="row">
+              <div class="col-xs-10">
+                <div class="inline-block" compile="question.question_text"></div>
+              </div>
+              <div class="col-xs-2 text-center">
+                <span>{{::question.question_response_type | underscoreless | capitalize}}</span>
+              </div>
+            </div>
+            <div ng-if="question.question_response_type === 'grid' && !ctrl.gridSelectable" class="half-space-top half-space-left half-space-bottom">
+              <!-- <div ng-if="ctrl.gridSelectable">
+
+              </div> -->
+              <h5>Grid Questions</h5>
+              <hr />
+              <div ng-repeat="q in question.grid_questions" class="half-space-bottom clearfix inner-question-row clickable" ng-click="ctrl.setSelectedQuestion(q)">
+                <div class="row">
+                  <div class="col-xs-10">
+                    <div class="inline-block" compile="q.question_text"></div>
+                  </div>
+                  <div class="col-xs-2 text-center">
+                    <span>{{::q.question_response_type | underscoreless | capitalize}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div ng-if="filteredQuestions.length === 0" class="text-center text-warning">
+            No questions found. Try adjusting your filters.
+          </div>
+        </div>
+
+        <!-- <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th class="col-md-10">Question</th>
+              <th class="text-center col-md-2">Question Type</th>
+            </tr>
+          </thead>
+          <tr ng-repeat="question in (ctrl.questions | onlyQuestionType: ctrl.currentQuestionType | questionVisibility: ctrl.currentHiddenFilter)">
+            <td class="vertical-align col-md-10">
+              <div class="inline-block" compile="question.question_text"></div>
+            </td>
+            <td class="col-md-2 vertical-align text-center">
+              <span>{{::question.question_response_type | underscoreless | capitalize}}</span>
+            </td>
+            <td class="col-md-2 text-center vertical-align">
+              <input ng-model="question.additional_meta" class="form-control" />
+            </td>
+            <td class="col-md-1 text-center vertical-align question-add clickable" ng-click="ctrl.selectQuestion(question)">
+              <i class="fa fa-lg fa-plus"></i>
+            </td>
+          </tr>
+        </table> -->
+      </div>
+    </div>
+  </div>
+</div>

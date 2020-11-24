@@ -1,0 +1,71 @@
+mock = require('protractor-http-mock')
+SigninPage = require('./signin_page')
+DecisionAidListPage = require('../decision_aid/decision_aid_list_page')
+
+describe 'login', () ->
+
+  beforeEach () ->
+    mock(['users', 'decision_aids'])
+
+  afterEach () ->
+    mock.teardown()
+
+  it 'should show an error if we enter the wrong email', () ->
+
+    mock([{
+      request: {
+        path: 'http://localhost:3000/oauth/token',
+        method: 'POST'
+      },
+      response: {
+        status: 401,
+        data: {
+          error: 'Invalid username'
+        }
+      }
+    }])
+
+    page = new SigninPage()
+    page.visit()
+    page.setUsername('admin@tt.co')
+    page.setPassword('test123')
+    page.login()
+
+    browser.waitForAngular()
+
+    expect(page.error.isDisplayed()).toBe(true)
+
+  it 'should show an error if we enter the wrong password', () ->
+
+    mock([{
+      request: {
+        path: 'http://localhost:3000/oauth/token',
+        method: 'POST'
+      },
+      response: {
+        status: 401,
+        data: {
+          error: 'Invalid password'
+        }
+      }
+    }])
+
+    page = new SigninPage()
+    page.visit()
+    page.setUsername('admin@tt.com')
+    page.setPassword('test12')
+    page.login()
+
+    browser.waitForAngular()
+
+    expect(page.error.isDisplayed()).toBe(true)
+
+  it 'should redirect to the decision aid list on successful login', () ->
+
+    page = new SigninPage()
+    page.loginToDcida()
+
+    browser.waitForAngular()
+
+    decisionAidListPage = new DecisionAidListPage()
+    expect(decisionAidListPage.header.isDisplayed()).toBe(true)

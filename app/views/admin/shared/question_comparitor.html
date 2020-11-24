@@ -1,0 +1,46 @@
+<div class="modal-header">
+  <h3>Sub-option question responses</h3>
+</div>
+<div class="modal-body">
+  <div>
+    <div class="form-group space-bottom">
+      <label>Select a question</label>
+      <sd-information>Select from the list of questions a question that you would like to filter sub-options by. A grid will be shown below that you can use to filter the sub-options.</sd-information>
+      <ui-select ng-model="ctrl.currentQuestion">
+        <ui-select-match>
+          <span ng-bind="$select.selected.question_text | html_stripped"></span>
+        </ui-select-match>    
+        <ui-select-choices repeat="q in (ctrl.questions | filter: $select.search)">
+          <span ng-bind="::q.question_text | html_stripped"></span>
+        </ui-select-choices>
+      </ui-select>
+    </div>
+    <div class="form-group space-bottom option-response-table" style="height: 300px; overflow: scroll;">
+      <div class="table-responsive">
+        <table class="table table-striped fixed-table-layout" ng-if="ctrl.currentQuestionIndex >= 0">
+          <thead>
+            <tr class="text-center">
+              <th class="no-wrap">Sub-Option</th>
+              <th class="text-center" ng-repeat="qr in ctrl.currentQuestion.question_responses track by qr.id">
+                {{::qr.question_response_value}}
+              </th>
+            </tr>
+          </thead>
+          <tbody vs-repeat vs-scroll-parent=".option-response-table">
+            <tr ng-repeat="so in ctrl.option.sub_options" class="vertical-align" class="vertical-align">
+              <td><div class="no-wrap"><span uib-tooltip="{{::so.label}}"><strong>{{::so.label}}</strong></span></div></td>
+              <td class="text-center" ng-repeat="qr in ctrl.currentQuestion.question_responses track by qr.id">
+                <input class="clickable" type="checkbox" ng-model="so.questions_with_responses[ctrl.currentQuestionIndex].question_responses[$index].selected" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer clearfix">
+  <div class="pull-right">
+    <button class="btn btn-default" ng-click="ctrl.closeQuestionComparitor()">Close</button>
+  </div>
+</div>

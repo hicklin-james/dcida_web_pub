@@ -1,0 +1,71 @@
+<div class="text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-refresh fa-spin"></i>
+</div>
+<div ng-show="!ctrl.loading">
+  <div>
+    <div class="inline-block space-right">
+      <h1 class="inline half-space-right">{{ctrl.decisionAid.title}}</h1>
+      <div class="inline-block">
+        <a class="half-space-right clickable fa-ln" ui-sref="decisionAidIntro(::{ slug: ctrl.decisionAid.slug })" target="_blank">
+          <i class="fa fa-2x fa-eye"></i>
+        </a>
+        <div class="dropdown inline-block">
+          <a type="button" id="dropdownMenu1" data-toggle="dropdown" uib-dropdown-toggle aria-haspopup="true" aria-expanded="true">
+            <div class="clickable" class="inline-block">
+              <i class="fa fa-2x fa-gear inline-block"></i>
+              <i class="fa fa-fw fa-caret-down inline-block"></i>
+            </div>
+          </a>
+          <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="dropdownMenu1">
+            <!--<li><a href="#"><i class="fa fa-clone fa-fw"></i> Clone Decision Aid</a></li>-->
+            <!--<li><a class="clickable" ng-click="ctrl.exportDecisionAid()"><i class="fa fa-gear fa-fw"></i> Export</a></li>-->
+            <li><a class="clickable" ng-click="ctrl.deleteDecisionAid()"><i class="fa fa-trash fa-fw"></i> Delete</a></li>
+            <li>
+              <a class="clickable" ng-click="ctrl.downloadUserData()"><i class="fa fa-download fa-fw"></i> Download User Data</a>
+            </li>
+            <li>
+              <a class="clickable" ng-click="ctrl.clearUserData()"><i class="fa fa-trash fa-fw"></i> Clear User Data</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="inline-block text-info" ng-show="ctrl.exportRequested">
+        <i class="fa fa-2x fa-refresh fa-spin"></i>
+      </div>
+    </div>
+  </div>
+  <div class="space-top space-bottom">
+    <div class="row">
+      <div class="col-md-2 space-bottom">
+        <div>
+          <ul class="nav nav-pills nav-stacked">
+            <li class="clickable" role="presentation" ng-class="{active: ctrl.activeTab === 'instructions'}" ng-click="ctrl.changeTab('instructions')"><a><i class="fa fa-fw fa-info"></i> Instructions</a></li>
+            <li class="nav-header"><a class="sidebar-header">Basic Information</a></li>
+            <li class="clickable" role="presentation" ng-class="{active: ctrl.activeTab === 'basic'}" ng-click="ctrl.changeTab('basic')"><a><i class="fa fa-fw fa-pencil"></i> Basic</a></li>
+            <li class="clickable" role="presentation" ng-class="{active: ctrl.activeTab === 'style'}" ng-click="ctrl.changeTab('style')"><a><i class="fa fa-fw fa-crop"></i> Styling</a></li>
+            <li class="clickable" role="presentation" ng-class="{active: ctrl.activeTab === 'staticPages'}" ng-click="ctrl.changeTab('staticPages')"><a><i class="fa fa-fw fa-book"></i> Static Pages</a></li>
+            <li class="clickable" role="presentation" ng-class="{active: ctrl.activeTab === 'advanced'}" ng-click="ctrl.changeTab('advanced')"><a><i class="fa fa-fw fa-wrench"></i> Advanced</a></li>
+            <li class="nav-divider"></li>
+            <li class="nav-header"><a class="sidebar-header">Decision Aid Pages</a></li>
+            <li class="clickable" role="presentation" ng-class="{active: ctrl.activeTab === 'introduction'}" ng-click="ctrl.changeTab('introduction')"><a><i class="fa fa-fw fa-hand-paper-o"></i> Introduction</a></li>
+            <li class="clickable" role="presentation" ng-class="{active: ctrl.activeTab === 'aboutMe'}" ng-click="ctrl.changeTab('aboutMe')"><a><i class="fa fa-fw fa-user"></i> About Me</a></li>
+            <li ng-if="ctrl.decisionAid.decision_aid_type !== 'best_worst_no_results' && ctrl.decisionAid.decision_aid_type !== 'risk_calculator' && ctrl.decisionAid.decision_aid_type !== 'dce_no_results'" class="clickable" role="presentation" ng-class="{active: ctrl.activeTab === 'myOptions'}" ng-click="ctrl.changeTab('myOptions')"><a><i class="fa fa-fw fa-cubes"></i> My Options</a></li>
+            <li ng-if="ctrl.decisionAid.decision_aid_type === 'best_worst_no_results' || ctrl.decisionAid.decision_aid_type === 'dce_no_results'" class="clickable" role="presentation" ng-class="{active: ctrl.activeTab === 'propertiesNoResults'}" ng-click="ctrl.changeTab('propertiesNoResults')"><a><i class="fa fa-fw fa-cubes"></i> Properties</a></li>
+            <li ng-if="ctrl.decisionAid.decision_aid_type === 'standard' || ctrl.decisionAid.decision_aid_type === 'treatment_rankings' || ctrl.decisionAid.decision_aid_type === 'traditional' || ctrl.decisionAid.decision_aid_type === 'traditional_no_results' || ctrl.decisionAid.decision_aid_type === 'best_worst_with_prefs_after_choice' || ctrl.decisionAid.decision_aid_type === 'standard_enhanced' || ctrl.decisionAid.decision_aid_type === 'decide'" class="clickable" role="presentation" ng-class="{active: ctrl.activeTab === 'myProperties'}" ng-click="ctrl.changeTab('myProperties')"><a><i class="fa fa-fw fa-building-o"></i> My Properties</a></li>
+            <li ng-if="ctrl.decisionAid.decision_aid_type === 'dce' || ctrl.decisionAid.decision_aid_type === 'dce_no_results'" class="clickable" role="presentation" ng-class="{active: ctrl.activeTab === 'dce'}" ng-click="ctrl.changeTab('dce')"><a><i class="fa fa-fw fa-building-o"></i> DCE</a></li>
+            <li ng-if="ctrl.decisionAid.decision_aid_type === 'best_worst' || ctrl.decisionAid.decision_aid_type == 'best_worst_no_results' || ctrl.decisionAid.decision_aid_type == 'best_worst_with_prefs_after_choice'" class="clickable" role="presentation" ng-class="{active: ctrl.activeTab === 'bestWorst'}" ng-click="ctrl.changeTab('bestWorst')"><a><i class="fa fa-fw fa-building-o"></i> Best Worst</a></li>
+            <li class="clickable" ng-if="ctrl.decisionAid.decision_aid_type !== 'best_worst_no_results' && ctrl.decisionAid.decision_aid_type !== 'risk_calculator' && ctrl.decisionAid.decision_aid_type !== 'dce_no_results' && ctrl.decisionAid.decision_aid_type !== 'decide'" role="presentation" ng-class="{active: ctrl.activeTab === 'myChoice'}" ng-click="ctrl.changeTab('myChoice')"><a><i class="fa fa-fw fa-mouse-pointer"></i> My Choice</a></li>
+            <li class="clickable" role="presentation" ng-class="{active: ctrl.activeTab === 'quiz'}" ng-click="ctrl.changeTab('quiz')"><a><i class="fa fa-fw fa-question"></i> Quiz</a></li>
+            <li class="clickable" role="presentation" ng-class="{active: ctrl.activeTab === 'summary'}" ng-click="ctrl.changeTab('summary')"><a><i class="fa fa-fw fa-check-square-o"></i> Summary</a></li>
+            <li class="nav-divider"></li>
+            <li class="nav-header"><a class="sidebar-header">Data Manipulation</a></li>
+            <li class="clickable" role="presentation" ng-class="{active: ctrl.activeTab === 'dataTargets'}" ng-click="ctrl.changeTab('dataTargets')"><a><i class="fa fa-fw fa-database"></i> Data Targets</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-10">
+        <div ui-view></div>
+      </div>
+    </div>
+  </div>
+</div>

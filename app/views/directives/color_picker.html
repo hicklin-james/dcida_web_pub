@@ -1,0 +1,21 @@
+<ul class="nav cp-dropdown">  
+  <li class="dropdown" uib-dropdown>
+    <button ng-style="{'background-color': currentColor}" type="button" class="btn btn-default btn-block dropdown-toggle color-picker-toggle" uib-dropdown-toggle>
+      <div class="text-right">
+        <b class="caret big-caret"></b>
+      </div>
+    </button>
+
+    <ul class="dropdown-menu cp-dropdown-menu">
+      <li>
+        <div class="row cp-color-row">
+          <div ng-repeat="color in colorValMap" class="list-unstyled col-md-4 col-xs-4">
+            <div ng-click="selectColor(color)" class="text-center cp-color-choice" ng-style="{'background-color': color.value}">
+              <i class="fa fa-fw"></i>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </li>
+</ul>

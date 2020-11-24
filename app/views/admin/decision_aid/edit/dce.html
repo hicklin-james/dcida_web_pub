@@ -1,0 +1,163 @@
+<div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-spin fa-refresh"></i>
+</div>
+<div ng-show="!ctrl.loading">
+  <div class="space-bottom clearfix">
+    <div class="pull-right">
+      <span class="text-success flashing-success" ng-if="ctrl.saveSuccess">Saved! <i class="fa fa-lg fa-check-circle"></i></span>
+      <button class="btn btn-info" ng-disabled="!decisionAidEditForm.$dirty" ng-click="ctrl.save()">Save</button>
+      <button class="btn btn-success" ng-click="ctrl.saveAndPreview()">Preview</button>
+    </div>
+    <h3>DCE</h3>
+  </div>
+  <sd-extra-info>
+    <p>The <strong>DCE</strong> page is where the user goes through the discrete choice experiment that you have uploaded. There is an introductory page, which will display the <strong>DCE Information</strong> entered below. You can also add a block of text that will appear above question set in your DCE, which is the <strong>DCE Specific Information</strong> box below..</p>
+    <p>You will also create your DCE on this page. Download the templates using the <strong>Setup DCE</strong> button below. Once you have completed filling out the templates, upload them using the <strong>Upload DCE Templates</strong> button.</p>
+  </sd-extra-info>
+  <form name="decisionAidEditForm" ng-show="ctrl.decisionAid">
+    <div sd-error-scroll sa-errors="ctrl.errors"></div>
+    <div id="decision_aid_edit_wrapper">
+      <div class="form-group">
+        <label for="dce-page-name" input-required>Page name</label>
+        <sd-information>This title shows up in the sub-header of the page.</sd-information>
+        <input id="dce-page-name" class="form-control" ng-model="ctrl.decisionAidEdit.properties_page_label" />
+      </div>
+      <div class="form-group">
+        <label class="half-space-right">DCE Type</label>
+        <sd-information>You can select a DCE type using this dropdown.</sd-information>
+        <select class="form-control select-field" ng-model="ctrl.decisionAidEdit.dce_type" ng-options="ds.value as ds.key for ds in ctrl.dceTypes"></select>
+      </div>
+      <div class="form-group">
+        <label for="decision_aid_dce_information">DCE Information</label>
+        <sd-information>This description shows up before starting the DCE.</sd-information>
+        <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAid.id}}"><textarea class="form-control" id="decision_aid_dce_information" placeholder="DCE Information" ng-model="ctrl.decisionAidEdit.dce_information" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'questionSelector', 'video']}"></textarea></sd-redactor-wrapper>
+      </div>
+      <div class="form-group">
+        <label for="decision_aid_dce_specific_information">DCE Specific Information</label>
+        <sd-information>This information shows above every DCE question set.</sd-information>
+        <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAid.id}}"><textarea class="form-control" id="decision_aid_dce_specific_information" placeholder="DCE Specific Information" ng-model="ctrl.decisionAidEdit.dce_specific_information" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'questionSelector', 'video']}"></textarea></sd-redactor-wrapper>
+      </div>
+      <div class="form-group">
+        <label for="decision_aid_dce_option_prefix">DCE Option Prefix</label>
+        <sd-information>This text appears as the prefix above each potential option in your DCE (e.g. Option A, Option B, etc.).</sd-information>
+        <input class="form-control" id="decision_aid_dce_option_prefix" placeholder="Option" ng-model="ctrl.decisionAidEdit.dce_option_prefix" />
+      </div>
+      <div class="form-group">
+        <label for="dce-selection-label" input-required>Selection Label</label>
+        <sd-information>This is the text for the question asking the user to select an option in the DCE.</sd-information>
+        <input id="dce-selection-label" class="form-control" ng-model="ctrl.decisionAidEdit.dce_selection_label" />
+      </div>
+      <div class="form-group">
+        <label class="clickable" for="properties-auto-submit">Autosubmit on selection?</label>
+        <sd-information>Use this option to autosubmit the DCE response when a response is selected. If you leave this option unselected, users will need to push a <em>next</em> button to submit their responses.</sd-information>
+        <label class="clickable half-space-right" name="decision-aid-properties-auto-submit-yes">Yes <input id="decision-aid-properties-auto-submit-yes" class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.properties_auto_submit" ng-value="true"></label>
+        <label class="clickable" name="decision-aid-properties-auto-submit-no">No <input id="decision-aid-properties-auto-submit-no" class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.properties_auto_submit" ng-value="false"></label>
+      </div>
+      <div class="form-group">
+        <label class="clickable" for="dce-color-rows-based-on-attribute-levels">Shade DCE rows based on level</label>
+        <sd-information>Use this option to shade the rows of DCE questions based on the level. Higher levels will be shaded darker than lower levels, and identical levels across options will not be shaded at all.</sd-information>
+        <label class="clickable half-space-right" name="decision-aid-dce-color-rows-based-on-attribute-levels-yes">Yes <input id="decision-aid-dce-color-rows-based-on-attribute-levels-yes" class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.color_rows_based_on_attribute_levels" ng-value="true"></label>
+        <label class="clickable" name="decision-aid-dce-color-rows-based-on-attribute-levels-no">No <input id="decision-aid-dce-color-rows-based-on-attribute-levels-no" class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.color_rows_based_on_attribute_levels" ng-value="false"></label>
+      </div>
+      <div ng-show="ctrl.decisionAidEdit.color_rows_based_on_attribute_levels">
+        <div class="form-group">
+          <label class="clickable" for="dce-min-level-color">Color for minimum level</label><br>
+          <input colorpicker="rgb" class="form-control half-width" ng-model="ctrl.decisionAidEdit.dce_min_level_color" type="text" ng-style="ctrl.getDceColor('dce_min_level_color')" readonly />
+        </div>
+        <div class="form-group">
+          <label class="clickable" for="dce-max-level-color">Color for maximum level</label><br>
+          <input colorpicker="rgb" class="form-control half-width" ng-model="ctrl.decisionAidEdit.dce_max_level_color" type="text" ng-style="ctrl.getDceColor('dce_max_level_color')" readonly />
+        </div>
+      </div>
+      <div class="form-group" ng-show="ctrl.decisionAidEdit.dce_type === 'opt_out'">
+        <label class="clickable" for="dce-compare-opt-out-to-last-selected">Compare opt-out option to last selected</label>
+        <sd-information>In normal DCEs, the opt-out comparison is with the option that was <strong>selected</strong>  . Use this option to compare the opt-out option with the option that was <strong>not selected</strong>.</sd-information>
+        <label class="clickable half-space-right" name="decision-aid-dce-compare-opt-out-to-last-selected-yes">Yes <input id="decision-aid-dce-compare-opt-out-to-last-selected-yes" class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.compare_opt_out_to_last_selected" ng-value="true"></label>
+        <label class="clickable" name="decision-aid-dce-compare-opt-out-to-last-selected-no">No <input id="decision-aid-dce-compare-opt-out-to-last-selected-no" class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.compare_opt_out_to_last_selected" ng-value="false"></label>
+      </div>
+      <div class="form-group">
+        <label for="opt-out-title">Extra option title</label>
+        <sd-information>This will be used for the name of the extra option if you are using one (opt-out).</sd-information>
+        <input id="opt-out-title" class="form-control" ng-model="ctrl.decisionAidEdit.opt_out_label" />
+      </div>
+      <div class="form-group">
+        <sd-information>This information shows above each DCE question set <span class="text-warning"><strong>for the opt-out question</strong></span></sd-information>
+        <label for="decision_aid_dce_specific_information">DCE Opt-Out Information</label>
+        <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAid.id}}"><textarea class="form-control" id="decision_aid_dce_specific_information" placeholder="DCE Opt-Out Information" ng-model="ctrl.decisionAidEdit.opt_out_information" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'questionSelector', 'video']}"></textarea></sd-redactor-wrapper>
+      </div>
+      <div ng-show="ctrl.decisionAidEdit.dce_type === 'normal'">
+        <div class="form-group">
+          <label class="clickable" for="dce-include-dce-confirmation-question">Include confirmation question</label>
+          <label class="clickable half-space-right" name="dce-include-dce-confirmation-question-yes">Yes <input id="dce-include-dce-confirmation-question-yes" class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.include_dce_confirmation_question" ng-value="true"></label>
+          <label class="clickable" name="dce-include-dce-confirmation-question-no">No <input id="dce-include-dce-confirmation-question-no" class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.include_dce_confirmation_question" ng-value="false"></label>
+        </div>
+        <div class="form-group" ng-if="ctrl.decisionAidEdit.include_dce_confirmation_question">
+          <label for="decision_aid_dce_confirmation_question">DCE Confirmation Question</label>
+          <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAid.id}}"><textarea class="form-control" id="decision_aid_dce_confirmation_question" placeholder="DCE Confirmation Question" ng-model="ctrl.decisionAidEdit.dce_confirmation_question" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'questionSelector', 'video']}"></textarea></sd-redactor-wrapper>
+        </div>
+      </div>
+      <hr />
+      <h4>DCE File Setup</h4>
+      <div>
+        <div class="form-group">
+          <div>
+            <label>Setup your DCE</label>
+          </div>
+          <sd-information>
+            Use this button to download template design and results files for your DCE. Based on your options and properties, it will design csv sheets that you can fill in to complete your DCE. <span class="text-danger">Remember that changing your <strong>options</strong>, <strong>properties</strong> and <strong>demographic questions</strong> will result in <strong>different</strong> template files being generated, and therefore your results files need to be <strong>reuploaded</strong>.</span>
+          </sd-information>
+          <button class="btn btn-default" ng-click="ctrl.setupDce()">Setup DCE</button>
+        </div>
+        <div class="form-group">
+          <div>
+            <label>Upload your DCE Templates</label>
+          </div>
+          <sd-information>
+            Use this button to upload your completed csv files. Some basic validation will be performed on your files to ensure that all the necessary components are completed. DecidApp will let you know if something is amiss.
+          </sd-information>
+          <button class="btn btn-default" ng-click="ctrl.uploadDceTemplates()">Upload DCE Templates</button>
+          <div class="half-space-top half-space-left half-space-right half-space-bottom">
+            <div class="half-space-bottom">
+              <div>
+                <span><strong>Design File: </strong> 
+                  <a ng-show="ctrl.decisionAid.dce_design_fileinfo" ng-href="{{ctrl.API_PUBLIC + ctrl.decisionAid.dce_design_fileinfo.filepath}}">
+                    <em>{{ctrl.decisionAid.dce_design_fileinfo.filename}}</em>
+                  </a>
+                  <span ng-show="!ctrl.decisionAid.dce_design_fileinfo" class="text-warning">
+                    <em>No File Uploaded</em>
+                  </span>
+                </span>
+              </div>
+              <div>
+                <span ng-show="ctrl.decisionAid.dce_design_fileinfo && ctrl.decisionAid.dce_design_success" class="text-success">Valid file uploaded!</span>
+                <span ng-show="ctrl.decisionAid.dce_design_fileinfo && !ctrl.decisionAid.dce_design_success" class="text-danger">Invalid file uploaded!</span>
+              </div>
+            </div>
+            <div>
+              <div>
+                <span><strong>Results File: </strong> 
+                  <a ng-show="ctrl.decisionAid.dce_results_fileinfo" ng-href="{{ctrl.API_PUBLIC + ctrl.decisionAid.dce_results_fileinfo.filepath}}">
+                    <em>{{ctrl.decisionAid.dce_results_fileinfo.filename}}</em>
+                  </a>
+                  <span ng-show="!ctrl.decisionAid.dce_results_fileinfo" class="text-warning">
+                    <em>No File Uploaded</em>
+                  </span>
+                </span>
+              </div>
+              <div>
+                <span ng-show="ctrl.decisionAid.dce_results_fileinfo && ctrl.decisionAid.dce_results_success" class="text-success">Valid file uploaded!</span>
+                <span ng-show="ctrl.decisionAid.dce_results_fileinfo && !ctrl.decisionAid.dce_results_success" class="text-danger">Invalid file uploaded!</span>
+              </div>
+            </div>
+          </div>
+          <hr />
+          <div class="form-group">
+            <label for="decision_aid_use_latent_class_analysis">Question set editor</label>
+            <sd-information>Use this button to edit your DCE question sets.</sd-information>
+            <button class="btn btn-primary" ng-click="ctrl.openQuestionSetEditor()">Open question set editor</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,19 @@
+<div class="modal-header">
+  <h2>{{ctrl.property.title}}</h2>
+  <h5>Additional Information</h5>
+</div>
+<div class="modal-body">
+  <div class="clearfix" ng-repeat="option in ctrl.options">
+    <div class="clearfix">
+      <img class="more-info-option-image pull-left half-space-right half-space-bottom" ng-src="{{option.results_image_url}}">
+      <h4>{{option.title}}</h4>
+    </div>
+    <div compile="ctrl.optionPropertiesHash[option.id].injected_information_published"></div>
+    <hr />
+  </div>
+</div>
+<div class="modal-footer">
+  <div class=" pull-right btn-group">
+    <button class="btn btn-default" ng-click="ctrl.closeMoreInfoPopup()">Close</button>
+  </div>
+</div>

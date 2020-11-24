@@ -1,0 +1,48 @@
+.equation-editor-wrapper {
+  border-left: 1px solid lightgrey;
+  border-bottom: 1px solid lightgrey;
+  border-right: 1px solid lightgrey;
+
+  a, a.dropdown-toggle {
+    color: black;
+  }
+
+  a:hover, a:active, a:focus, a:visited {
+    text-decoration: none;
+  }
+
+  .equation-editor-box {
+    min-height: 50px;
+  }
+
+  .equation-editor-panel {
+    border-bottom: 1px solid black;
+    color: black;
+    padding: 5px 10px;
+  }
+
+  .token-wrapper {
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+
+    .inner-token-wrapper {
+      padding: 5px;
+      display: table-cell;
+    }
+
+    .draggable {
+      width: 20px;
+      height: 100%;
+      background-color: lightblue;
+      display: table-cell;
+    }
+
+    .trashable {
+      width: 20px;
+      height: 100%;
+      display: table-cell;
+      background-color: #F5C6C6;
+    }
+  }
+
+}

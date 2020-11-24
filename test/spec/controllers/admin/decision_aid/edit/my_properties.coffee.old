@@ -1,0 +1,108 @@
+'use strict'
+
+describe 'Controller: DecisionAidEditMyPropertiesCtrl', ->
+
+  # load the controller's module
+  beforeEach angular.mock.module 'dcida20App'
+
+  DecisionAidEditMyPropertiesCtrl = {}
+  scope = {}
+  # AdminTabHelper = {}
+  modal = {}
+
+  TestForm = () ->
+    this.$dirty = false
+
+  TestForm.prototype.$setDirty = () ->
+    this.$dirty = true
+
+  saveCalled = false
+  modalOpened = false
+
+  # AdminTabHelper.saveDecisionAid = (scope, da) ->
+  #   saveCalled = true
+  #   then: (fn) ->
+  #     fn()
+
+  modal.open = (params) ->
+    modalOpened = true
+
+  
+  # Initialize the controller and a mock scope
+  beforeEach inject ($controller, $rootScope, $q, AdminTabHelper) ->
+    saveCalled = false
+    modalOpened = false
+    scope = $rootScope.$new()
+
+    spyOn(AdminTabHelper, 'saveDecisionAid').and.callFake () =>
+      saveCalled = true
+      return $q.resolve()
+
+    DecisionAidEditMyPropertiesCtrl = $controller 'DecisionAidEditMyPropertiesCtrl', {
+      $scope: scope
+      AdminTabHelper: AdminTabHelper
+      $uibModal: modal
+    }
+    DecisionAidEditMyPropertiesCtrl.decisionAidEdit = {}
+    DecisionAidEditMyPropertiesCtrl.decisionAid = {}
+    scope.decisionAidEditForm = new TestForm
+
+  describe "loading", () ->
+    it "should set the loading variable correctly", () ->
+      expect(DecisionAidEditMyPropertiesCtrl.loading).toBe false
+
+  describe "saveAndPreview", () ->
+    it "should save the decision aid if the form is dirty and saveAndPreview is called", () ->
+      scope.decisionAidEditForm = {}
+      scope.decisionAidEditForm.$dirty = true
+      expect(saveCalled).toBe false
+      DecisionAidEditMyPropertiesCtrl.saveAndPreview()
+      DecisionAidEditMyPropertiesCtrl.$scope.$digest()
+      expect(saveCalled).toBe true
+      expect(modalOpened).toBe true
+
+    it "should not save the decision aid if the form is not dirty and saveAndPreview is called", () ->
+      scope.decisionAidEditForm = {}
+      scope.decisionAidEditForm.$dirty = false
+      DecisionAidEditMyPropertiesCtrl.saveAndPreview()
+      DecisionAidEditMyPropertiesCtrl.$scope.$digest()
+      expect(saveCalled).toBe false
+      expect(modalOpened).toBe true
+
+  describe "save", () ->
+    it "should save the decision aid when save is called", () ->
+      DecisionAidEditMyPropertiesCtrl.save()
+      DecisionAidEditMyPropertiesCtrl.$scope.$digest()
+      expect(saveCalled).toBe true
+
+  describe "chartImage", () ->
+    it "should return the pie_sample if the decision aid chart type is pie", () ->
+      DecisionAidEditMyPropertiesCtrl.decisionAidEdit.chart_type = "pie"
+      image = DecisionAidEditMyPropertiesCtrl.chartImage()
+      expect(image).toEqual "images/pie_sample.png"
+
+    it "should return the bar_sample if the decision aid chart type is bar", () ->
+      DecisionAidEditMyPropertiesCtrl.decisionAidEdit.chart_type = "bar"
+      image = DecisionAidEditMyPropertiesCtrl.chartImage()
+      expect(image).toEqual "images/bar_sample.png"
+
+  describe "setChartType", () ->
+    it "should set the form to dirty if the chart type changes", () ->
+      DecisionAidEditMyPropertiesCtrl.decisionAidEdit.chart_type = "bar"
+      DecisionAidEditMyPropertiesCtrl.setChartType("pie")
+      expect(DecisionAidEditMyPropertiesCtrl.$scope.decisionAidEditForm.$dirty).toBeTruthy()
+
+    it "should not set the form to dirty if the chart type doesn't change", () ->
+      DecisionAidEditMyPropertiesCtrl.decisionAidEdit.chart_type = "bar"
+      DecisionAidEditMyPropertiesCtrl.setChartType("bar")
+      expect(DecisionAidEditMyPropertiesCtrl.$scope.decisionAidEditForm.$dirty).toBeFalsy()
+
+    it "should change the chart type if the chart type changes", () ->
+      DecisionAidEditMyPropertiesCtrl.decisionAidEdit.chart_type = "bar"
+      DecisionAidEditMyPropertiesCtrl.setChartType("pie")
+      expect(DecisionAidEditMyPropertiesCtrl.decisionAidEdit.chart_type).toEqual "pie"
+
+    it "should j0t change the chart type if the chart type doesn't changes", () ->
+      DecisionAidEditMyPropertiesCtrl.decisionAidEdit.chart_type = "bar"
+      DecisionAidEditMyPropertiesCtrl.setChartType("bar")
+      expect(DecisionAidEditMyPropertiesCtrl.decisionAidEdit.chart_type).toEqual "bar"

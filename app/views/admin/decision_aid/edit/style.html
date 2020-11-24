@@ -1,0 +1,66 @@
+<div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-spin fa-refresh"></i>
+</div>
+<div ng-show="!ctrl.loading">
+  <div class="space-bottom clearfix">
+    <div class="pull-right">
+      <span class="text-success flashing-success" ng-if="ctrl.saveSuccess">Saved! <i class="fa fa-lg fa-check-circle"></i></span>
+      <button class="btn btn-info" ng-disabled="!decisionAidEditForm.$dirty" ng-click="ctrl.save()">Save</button>
+    </div>
+    <h2>Styling</h2>
+  </div>
+  <form on-submit="ctrl.save()" name="decisionAidEditForm" ng-show="ctrl.decisionAid">
+    <div sd-error-scroll sa-errors="ctrl.errors"></div>
+    <div id="decision_aid_style_wrapper">
+      <div class="space-bottom">
+        <div class="space-bottom">
+          <div class="half-space-bottom">
+            <label>Decision Aid Icon</label>
+            <button type="button" class="btn btn-default" ng-click="ctrl.selectIcon()">Select Main Icon</button>
+            <input type="hidden" ng-model="ctrl.decisionAidEdit.icon_image" />
+          </div>
+          <div ng-if="ctrl.decisionAidEdit.icon_image" class="half-space-left half-space-right half-space-top half-space-bottom">
+            <img class="img-responsive" ng-src="{{ctrl.decisionAidEdit.icon_image}}" />
+          </div>
+          <div ng-if="!ctrl.decisionAidEdit.icon_image">
+            <p class="text-warning">No icon has been selected</p>
+          </div>
+        </div>
+        <div>
+          <div class="half-space-bottom">
+            <label>Footer Icons</label>
+            <button type="button" class="btn btn-default" ng-click="ctrl.selectFooterIcons()">Select Footer Icons</button>
+          </div>
+          <div ng-show="ctrl.decisionAidEdit.footer_logo_images.length === 0">
+            <p class="text-warning">No footer logos have been selected</p>
+          </div>
+          <div class="image-picker-img-wrapper inline-block" ng-repeat="icon in ctrl.decisionAidEdit.footer_logo_images">
+            <img class="img-responsive" ng-src="{{icon}}" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="half-space-right">Nav Links</label>
+          <sd-information>Nav links will show up in your navigation bar.</sd-information>
+          <div sv-root sv-part="ctrl.navLinks" sv-on-sort="ctrl.onSort($item, $partFrom, $partTo, $indexFrom, $indexTo)">
+            <div sv-element ng-repeat="nl in ctrl.navLinks">
+              <div class="form-inline space-bottom">
+                <i ng-click="ctrl.deleteNavLink(nl)" class="fa fa-trash fa-fw text-danger clickable"></i>
+                <i ng-show="ctrl.currentlyActiveNl !== nl" ng-click="ctrl.setCurrentlyActive(nl)" class="clickable fa fa-pencil fa-fw text-primary"></i>
+                <i ng-show="ctrl.currentlyActiveNl === nl" ng-click="ctrl.saveNl()" class="clickable fa fa-check fa-fw text-success"></i>
+                <label>Title</label>
+                <input ng-disabled="ctrl.currentlyActiveNl !== nl" ng-model="nl.link_text" class="form-control half-space-right"/>
+                <label>URL</label>
+                <input ng-disabled="ctrl.currentlyActiveNl !== nl" ng-model="nl.link_href" class="form-control half-space-right"/>
+                <div sv-handle class="question-response-drag-icon inline-block" ng-show="!ctrl.currentlyActiveNl"><i class="fa fa-lg fa-arrows drag-arrows movable"></i></div>
+              </div>
+            </div>
+          </div>
+          <div class="text-warning space-top space-bottom" ng-show="ctrl.navLinks.length === 0">
+            <span>There are no static pages yet. Add some using the button above!</span>
+          </div>
+          <button class="btn btn-primary" ng-click="ctrl.addNavLink()"><i class="fa fa-fw fa-plus"></i> Add new nav link</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

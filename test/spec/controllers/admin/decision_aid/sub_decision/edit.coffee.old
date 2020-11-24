@@ -1,0 +1,97 @@
+'use strict'
+
+describe 'Controller: SubDecisionEditCtrl', ->
+
+  beforeEach angular.mock.module 'dcida20App'
+
+  SubDecisionEditCtrl = {}
+  scope = {}
+  _ = {}
+  stateParams = {}
+  mockId = 1234
+  q = {}
+  q.defer = () ->
+    resolve: () ->
+      null
+    reject: () ->
+      null
+    promise:
+      then: (fn) ->
+        fn()
+
+  SubDecision = () ->
+    this.id = mockId
+    this
+  SubDecision.get = (params, fn) ->
+    sd = new SubDecision
+    sd.required_option_ids = []
+    fn(sd)
+
+  Option = {}
+  Option.getOptionsFromSubDecision = (sdId, sdOrder) ->
+    options = [
+      id: 1
+      title: "Option 1"
+      sub_options: []
+     ,
+      id: 2
+      title: "Option 2"
+      sub_options: []
+    ]
+
+    then: (fn) ->
+      fn(options)
+
+  # q = {}
+  # q.defer = ()
+  # q.promise = () ->
+  #   then: (fn) ->
+  #     fn()
+
+  # Initialize the controller and a mock scope
+  beforeEach inject ($controller, $rootScope, ___) ->
+    
+    scope = $rootScope.$new()
+    _ = ___
+    SubDecisionEditCtrl = $controller 'SubDecisionEditCtrl', {
+      $scope: scope
+      SubDecision: SubDecision
+      Option: Option
+      $q: q
+    }
+
+  describe "loading", () ->
+    it "should correctly set the loading variable", () ->
+      expect(SubDecisionEditCtrl.loading).toBeFalsy()
+
+    it "should set the isNewSubDecision variable to true if there is no id in the stateparams", () ->
+      expect(SubDecisionEditCtrl.isNewSubDecision).toBeTruthy()
+
+    it "should correctly set the options variable to an array of options", () ->
+      expect(SubDecisionEditCtrl.options.length).toBe > 0
+
+    describe "id in stateParams", () ->
+      beforeEach inject ($controller, $rootScope, ___) ->
+        scope = $rootScope.$new()
+        _ = ___
+        stateParams = {id: 1234}
+        SubDecisionEditCtrl = $controller 'SubDecisionEditCtrl', {
+          $scope: scope
+          SubDecision: SubDecision
+          Option: Option
+          $q: q
+          $stateParams: stateParams
+        }
+
+      it "should not set the isNewSubDecision", () ->
+        expect(SubDecisionEditCtrl.isNewSubDecision).toBeFalsy()
+
+      it "should correctly set the loading variable", () ->
+        expect(SubDecisionEditCtrl.loading).toBeFalsy()
+
+    # it "should only set options that have ids in required_option_ids as selected", () ->
+    #   o1 = 
+    #     id: 1
+
+
+

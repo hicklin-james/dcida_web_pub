@@ -1,0 +1,92 @@
+<div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-spin fa-refresh"></i>
+</div>
+<div ng-show="!ctrl.loading">
+  <div class="space-bottom clearfix">
+    <div class="pull-right">
+      <span class="text-success flashing-success" ng-if="ctrl.saveSuccess">Saved! <i class="fa fa-lg fa-check-circle"></i></span>
+      <button class="btn btn-info" ng-disabled="!decisionAidEditForm.$dirty" ng-click="ctrl.save()">Save</button>
+      <button class="btn btn-success" ng-click="ctrl.saveAndPreview()">Preview</button>
+    </div>
+    <h2>Introduction</h2>
+  </div>
+  <sd-extra-info>
+    <p>The <strong>Introduction</strong> pages are the user's first interaction with your tool. Use them to introduce what the tool does and what information is important to know immediately.</p>
+    <p>You can have an <strong>arbitrary</strong> number of introduction pages. Add them using the &nbsp; <strong><i class="fa fa-plus"></i> Add Introduction Page</strong>&nbsp; button below.</p>
+    <p>You can optionally add an introductory popup that will appear the first time a user visits the tool, by toggling the Yes/No buttons below.</p>
+  </sd-extra-info>
+  <form on-submit="ctrl.save()" name="decisionAidEditForm" ng-show="ctrl.decisionAid">
+    <div sd-error-scroll sa-errors="ctrl.errors"></div>
+    <div class="space-bottom">
+      <div class="form-group">
+        <label for="intro-page-name" input-required>Page name</label>
+        <sd-information>This title shows up in the sub-header of the page.</sd-information>
+        <input class="form-control" id="intro-page-name" ng-model="ctrl.decisionAidEdit.intro_page_label" />
+      </div>
+      <div class="form-group">
+        <label for="begin-button-text" input-required>Begin button text</label>
+        <sd-information>This is the button text to show on the very first page.</sd-information>
+        <input class="form-control" id="begin-button-text" ng-model="ctrl.decisionAidEdit.begin_button_text" />
+      </div>
+      <div class="form-group half-space-bottom">
+        <div><label><span>Would you like to include a welcome pop-up?</span></label></div>
+        <label class="clickable half-space-right" name="decision-aid-ratings-enabled-yes">Yes <input id="decision-aid-ratings-enabled-yes" class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.has_intro_popup" ng-value="true"></label>
+        <label class="clickable" name="decision-aid-ratings-enabled-no">No <input id="decision-aid-ratings-enabled-no" class="clickable" type="radio" ng-model="ctrl.decisionAidEdit.has_intro_popup" ng-value="false"></label>
+        <sd-information>This text will show in a popup when a user first accesses the tool.</sd-information>
+      </div>
+      <div class="form-group" ng-show="ctrl.decisionAidEdit.has_intro_popup">
+        <label for="decision_aid_introduction">Welcome Information</label>
+        <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAid.id}}"><textarea class="form-control" id="decision_aid_introduction" placeholder="Introduction" ng-model="ctrl.decisionAidEdit.intro_popup_information" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'video', 'questionSelector']}"></textarea></sd-redactor-wrapper>
+      </div>
+    </div>
+
+    <hr />
+    <!-- <div class="form-group">
+      <label for="decision_aid_description">Description</label>
+      <sd-redactor-wrapper sa-include-question-selectorr sa-decision-aid-id="{{ctrl.decisionAid.id}}"><textarea class="form-control" id="decision_aid_description" placeholder="Description" ng-model="ctrl.decisionAidEdit.description" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'video', 'questionSelector']}"></textarea></sd-redactor-wrapper>
+    </div> -->
+  </form>
+
+  <div style="overflow: hidden;">
+    <div class="clearfix pull-right">
+      <a ui-sref="introPageNew(::{decisionAidId: ctrl.decisionAid.id})" class="btn btn-primary"><i class="fa fa-plus"></i> Add Introduction Page</a>
+    </div>
+    <h4>Intro Pages</h4>
+    <table class="table fixed-table-layout">
+      <thead>
+        <tr class="">
+          <th class="col-xs-1"></th>
+          <th class="col-xs-10">
+            <div>Introduction panel preview</div>
+            <div class="text-warning">The preview may be cutoff as it only shows 150 pixels high.</div>
+          </th>
+          <th class="col-xs-1"></th>
+        </tr>
+      </thead>
+      <tbody sv-root sv-part="ctrl.introPages" sv-on-sort="ctrl.onSort($item, $partFrom, $partTo, $indexFrom, $indexTo)" class="sortable-table">
+        <tr sv-element ng-repeat="page in ctrl.introPages track by page.id" >
+          <td class="col-xs-1">
+            <div class="inline-block" uib-dropdown dropdown-append-to-body>
+              <a type="button" id="dropdownMenu1" uib-dropdown-toggle aria-haspopup="true" aria-expanded="true">
+                <div class="clickable" class="inline-block"><i class="fa fa-gear"></i><span class="caret"></span></div>
+              </a>
+              <ul uib-dropdown-menu aria-labelledby="dropdownMenu1">
+                <li><a ui-sref="introPageEdit(::{ decisionAidId: page.decision_aid_id, id: page.id })"><i class="fa fa-edit fa-fw"></i> Edit</a></li>
+                <li><a class="clickable" ng-click="ctrl.deleteIntroPage(page)"><i class="fa fa-trash fa-fw"></i> Delete</a></li>
+              </ul>
+            </div>
+          </td>
+          <td class="col-xs-10">
+            <div class="summary-panel-preview" compile="page.description"></div>
+          </td>
+          <td class="col-xs-1">
+            <div sv-handle class="question-response-drag-icon"><i class="fa fa-lg fa-arrows drag-arrows movable"></i></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="text-center text-warning space-top space-bottom" ng-show="ctrl.introPages.length === 0">
+      <span>There are no intro pages yet. Add some using the button above!</span>
+    </div>
+  </div>
+</div>

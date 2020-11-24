@@ -1,0 +1,116 @@
+<div class="chatbot-wrapper">
+  <!-- <button ng-click="ctrl.slide()">Show/hide</button> -->
+<!--   <div class="start-chat clickable" ng-click="ctrl.slide()" ng-show="!ctrl.isVisible">
+    <div class="text-center">
+      <i class="fa fa-fw fa-2x fa-comments"></i>
+    </div>
+  </div> -->
+
+  <div class="outer-chatbot" ng-class="{'visible': ctrl.isVisible}">
+    <div class="chat-header">
+      <div class="inner-chat-header">
+        <strong>Lung Cancer Screening Chatbot</strong>
+        <i class="pull-right fa fa-fw fa-lg fa-times clickable chatbot-close" ng-click="ctrl.slide()"></i>
+      </div>
+    </div>
+    <div class="inner-chat-pad">
+      <div class="chatbot-messages" sd-scroll-bottom sa-scroll-container="ctrl.messages" sa-typing-in-progress="ctrl.typingInProgress" sa-rescroll-watch="ctrl.carouselInited" ng-class="{'disabled': ctrl.connectionLost}">
+        <div ng-show="ctrl.loading" class="text-center space-top space-bottom">
+          <i class="fa fa-2x fa-spin fa-refresh"></i>
+        </div>
+        <div ng-repeat="message in ctrl.messages" class="outer-bot-message">
+          <div ng-switch="message.message_type">
+            <div ng-switch-when="carousel" class="clearfix" ng-if="$index === ctrl.messages.length-1">
+              <div class="outer-carousel-wrapper">
+                <div uib-carousel no-wrap="true" >
+                  <div uib-slide ng-repeat="item in message.payload.elements">
+                    <div class="message-text">
+                      <p class="text-center"><strong>{{item.title}}</strong></p>
+                      <p class="text-center text-subtitle">{{item.subtitle}}</p>
+                      <div class="text-center">
+                        <div ng-repeat="buttonItem in item.buttons" class="inline-block">
+                          <button class="btn btn-primary" ng-click="ctrl.sendQuickReply({title: buttonItem.title, payload: buttonItem.payload}, message)">{{buttonItem.title}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div ng-switch-when="custom">
+              <div ng-if="message.payload.component === 'QuickReplies'">
+                <div class="clearfix">
+                  <div class="message-text" ng-class="{'user-message': message.userId, 'bot-message': !message.userId, 'indent-level-1': message.payload.wrapped.indentLevel === 1, 'indent-level-2': message.payload.wrapped.indentLevel === 2}">
+                    <div compile="message.payload.wrapped.text"></div>
+                  </div>
+                </div>
+                <div ng-if="message.payload.quick_replies.length > 0 && $index === ctrl.messages.length-1" class="clearfix half-space-bottom half-space-top">
+                  <div ng-class="{'indent-level-1': message.payload.wrapped.indentLevel === 1, 'indent-level-2': message.payload.wrapped.indentLevel === 2}">
+                    <div class="text-left">
+                      <div class="btn-{{message.payload.quick_replies.length}}-wide">
+                        <div class="btn-outer" ng-repeat="reply in message.payload.quick_replies">
+                          <button class="btn btn-info chatbot-btn" ng-click="ctrl.sendQuickReply(reply, message)">{{reply.title}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div ng-switch-default>
+              <div class="clearfix">
+                <div class="message-text {{message.payload.addedClasses}}" ng-class="{'user-message': message.userId, 'bot-message': !message.userId, 'indent-level-1': message.payload.indentLevel === 1, 'indent-level-2': message.payload.indentLevel === 2}">
+                  <div compile="message.message_text"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div ng-show="ctrl.typingInProgress">
+          <div class="clearfix">
+            <div class="message-text bot-message ellipsis-message">
+              <sd-animated-ellipsis></sd-animated-ellipsis>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div ng-show="ctrl.connectionLost" class="connection-lost">
+        <table>
+          <tr>
+            <td class="vertical-align text-center">
+              <div>
+                <div class="inline-block connection-lost-inner">
+                  <div class="half-space-bottom">Connnection lost!</div>
+                  <button ng-click="ctrl.reconnect()" class="btn btn-danger">Reconnect</button>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+<!-- <div class="chat-text-enter" ng-class="{'disabled': ctrl.lastMessageFromBot.payload.quick_replies.length > 0 || ctrl.loading || ctrl.connectionLost}"> -->
+  <div class="chat-text-enter ninja">
+      <div class="half-space-right">
+        <button ng-click="ctrl.goBack()" class="btn btn-primary back-button" ng-disabled="!ctrl.backEnabled || ctrl.lastMessageFromBot.payload.component != 'QuickReplies'"><i class="fa fa-fw fa-arrow-left"></i> Go back to previous question</button>
+      </div>
+    </div>
+    <!--
+    <h4>User messages</h4>
+    <div ng-repeat="message in ctrl.userTextMessages">
+      <div>{{message.message_text}}</div>
+    </div>
+    <h4>Bot messages</h4>
+    <div ng-repeat="message in ctrl.botTextMessages">
+      <div>{{message.message_text}}</div>-->
+      <!-- This is a single-choice question -->
+      <!--
+      <div ng-if="message.message_data.quick_replies.length > 0">
+        <button ng-repeat="reply in message.message_data.quick_replies" ng-click="ctrl.sendQuickReply(reply)">{{reply.title}}</button>
+      </div>
+    </div>
+    <textarea ng-model="ctrl.currentText"></textarea>
+    <button ng-click="ctrl.sendTextReply()">Send</button>
+    -->
+  </div>
+</div>

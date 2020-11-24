@@ -1,0 +1,90 @@
+.simulate-btn {
+  transition: fill 0.2s ease-in-out;
+  fill: #58b7a1;
+}
+
+.simulate-btn:hover {
+  cursor: pointer;
+  fill: rgb(46, 117, 101);
+}
+
+.fill-opacity-visible {
+  transition: fill-opacity 0.5s ease-in-out;
+  fill-opacity: 1;
+}
+
+.fill-opacity-hidden {
+  transition: fill-opacity 0.5s ease-in-out;
+  fill-opacity: 0;
+}
+
+.fill-black {
+  transition: fill-opacity 0.5s ease-in-out, stroke-opacity 0.5s ease-in-out, fill 0.5s ease-in-out;
+  stroke-opacity: 1;
+  fill-opacity: 1;
+  fill: black;
+}
+
+.fill-transparent {
+  stroke-opacity: 0;
+  fill-opacity: 0;
+  fill: white;
+  user-select: none;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.transition-circle {
+  stroke: white;
+  stroke-width: 3;
+  stroke-dasharray: 125 125;
+  stroke-dashoffset: 125;
+}
+
+.transition-circle.timed {
+  stroke-dasharray: 125 125;
+  stroke-dashoffset: 0;
+  stroke: black;
+  transition: stroke-dashoffset 5s linear;
+}
+
+.step-indicator-wrap {
+  width: 20px;
+  height: 20px;  
+  margin: 5px;
+}
+
+.step-indicator {
+  background-color: white;
+  border-radius: 50%;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  position: relative;
+  background: black;
+  background: linear-gradient(to left, lightgrey 50%, #7cd5ff 50%);
+  background-position: right bottom;
+  background-size: 200% 100%;
+  box-shadow: 0 0 2px black;
+}
+
+.active .step-indicator.not-animating-in {
+  background-position: left bottom;
+  transition: none;
+}
+
+.active .step-indicator.animating-in {
+  background-position: left bottom;
+  transition: background-position 5s linear;
+}
+
+.play-all-button {
+  margin-top: 4px;
+}
+
+/** Be warned, this removes accessibility **/
+.play-all-button:focus {
+  outline: 0;
+}

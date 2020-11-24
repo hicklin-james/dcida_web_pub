@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html class="no-js">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        
+    <title>decideapp</title>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/jquery-ui/themes/base/jquery-ui.css" />
+    <link rel="stylesheet" href="bower_components/ui-cropper/compile/minified/ui-cropper.css" />
+    <link rel="stylesheet" href="bower_components/intro.js/introjs.css" />
+    <link rel="stylesheet" href="bower_components/redactor/redactor.css" />
+    <link rel="stylesheet" href="bower_components/angular-bootstrap-colorpicker/css/colorpicker.css" />
+    <link rel="stylesheet" href="bower_components/angular-ui-select/dist/select.css" />
+    <link rel="stylesheet" href="bower_components/ng-sortable/dist/ng-sortable.css" />
+    <link rel="stylesheet" href="bower_components/animate.css/animate.css" />
+    <link rel="stylesheet" href="bower_components/bootstro/bootstro.css" />
+    <link rel="stylesheet" href="bower_components/angular-ui-carousel/dist/ui-carousel.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+    <link rel="stylesheet" href="styles/main_dist.css">
+  </head>
+  <body ng-app="dcida20App">
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <!-- Add your site or application content here -->
+    <div ng-controller="NavCtrl" class="main-nav">
+      <div class="header" ng-cloak>
+        <div ng-if="ctrl.isAdmin || ctrl.isSignIn">
+          <div ng-if="ctrl.isAdmin">
+            <div ng-include="'views/admin_nav.html'"></div>
+          </div>
+          <div ng-if="ctrl.isSignIn">
+            <div ng-include="'views/signin_nav.html'"></div>
+          </div>
+        </div>
+        <div ng-if="!ctrl.isAdmin && !ctrl.isSignIn">
+          <div ng-if="ctrl.theme === 'flat'"><link rel="stylesheet" href="styles/flat.css"></div>
+          <style>{{ctrl.decisionAid.custom_css}}</style>
+          <div ng-include="'views/decision_aid_nav.html'"></div>
+        </div>
+      </div>
+      <div ng-if="ctrl.isAdmin" class="container" ng-cloak>
+        <div ncy-breadcrumb></div>
+      </div>
+      <div class="main-content-wrap">
+        <div ng-show="ctrl.user || ctrl.isAdmin === false || ctrl.isSignIn" class="main-content" ng-class="{'admin-body': ctrl.isAdmin || ctrl.isSignIn, 'user-body': !ctrl.isAdmin, 'container-fluid': ctrl.decisionAid.full_width, 'container': !ctrl.decisionAid.full_width}" ng-cloak>
+          <div ng-show="ctrl.daError">
+            <div ng-switch="ctrl.daError">
+              <div ng-switch-when="password_required">
+                <div class="space-top space-bottom text-center text-danger">
+                  <span ng-bind="'This decision aid is password protected.'"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div ng-show="ctrl.loading" class="space-top space-bottom text-center">
+            <i class="fa fa-2x fa-spin fa-refresh"></i>
+          </div>
+          <div ui-view autoscroll="true"></div>
+        </div>
+      </div>
+      <div class="footer" ng-cloak sd-dynamic-footer-height>
+        <div class="container-fluid">
+          <div ng-if="ctrl.isAdmin">
+            <p class="text-center copyright">© 2019 DCIDA All Rights Reserved</p>
+          </div>
+          <div ng-if="!ctrl.isAdmin">
+            <div id="decision-aid-footer" class="dtable margin-auto full-width">
+              <div class="table-row">
+                <div class="table-cell middle-align text-center">
+                  <div ng-repeat="img in ctrl.decisionAid.footer_logos_with_urls" class="half-space-left half-space-right half-space-top half-space-bottom inline-block"> 
+                    <a target="_blank" ng-if="img.url" href="{{img.url ? img.url : '#'}}"><img ng-src="{{img.image_url}}" class="img-responsive footer-img" sd-image-loaded /></a>
+                    <span ng-if="!img.url"><img ng-src="{{img.image_url}}" class="img-responsive footer-img" sd-image-loaded /></span>
+                  </div>
+                </div>
+              </div>
+              <div class="table-row">
+                <div class="table-cell top-align text-center half-pad-top">
+                  <!-- <p class="copyright" ng-if="ctrl.decisionAid.contact_phone_number && !ctrl.decisionAid.contact_email" compile="ctrl.decisionAid.contact_phone_number"></p>
+                  <p class="copyright"  ng-if="!ctrl.decisionAid.contact_phone_number && ctrl.decisionAid.contact_email"><a class="copyright" href="mailto:{{ctrl.decisionAid.contact_email}}" compile="ctrl.decisionAid.contact_phone_number"></a></p>
+                  <p class="copyright" ng-if="ctrl.decisionAid.contact_phone_number && ctrl.decisionAid.contact_email"><a class="copyright" href="mailto:{{ctrl.decisionAid.contact_email}}" compile="ctrl.decisionAid.contact_email"></a><span> &nbsp; | &nbsp; </span><span compile="ctrl.decisionAid.contact_phone_number"></span></p> -->
+                  <p class="copyright"><!-- © 2019 DCIDA All Rights Reserved -->Powered by <span class="decideapp-text"><a href="https://decideapp.org" target="_blank"><span class="decideapp-innertext">decideapp</span></a></span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>  
+    </div>
+
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
+     <script>
+       !function(A,n,g,u,l,a,r){A.GoogleAnalyticsObject=l,A[l]=A[l]||function(){
+       (A[l].q=A[l].q||[]).push(arguments)},A[l].l=+new Date,a=n.createElement(g),
+       r=n.getElementsByTagName(g)[0],a.src=u,r.parentNode.insertBefore(a,r)
+       }(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+       ga('create', 'UA-XXXXX-X');
+       ga('send', 'pageview');
+    </script>
+
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-bind-html-compile/angular-bind-html-compile.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="bower_components/angular-breadcrumb/release/angular-breadcrumb.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="bower_components/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="bower_components/angular-dragdrop/src/angular-dragdrop.js"></script>
+    <script src="bower_components/angular-http-auth/src/http-auth-interceptor.js"></script>
+    <script src="bower_components/ui-cropper/compile/minified/ui-cropper.js"></script>
+    <script src="bower_components/intro.js/intro.js"></script>
+    <script src="bower_components/angular-intro.js/src/angular-intro.js"></script>
+    <script src="bower_components/moment/moment.js"></script>
+    <script src="bower_components/angular-moment/angular-moment.js"></script>
+    <script src="bower_components/angular-redactor/angular-redactor.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/angular-translate/angular-translate.js"></script>
+    <script src="bower_components/angular-scroll/angular-scroll.js"></script>
+    <script src="bower_components/angular-touch/angular-touch.js"></script>
+    <script src="bower_components/angular-ui-slider/src/slider.js"></script>
+    <script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap.js"></script>
+    <script src="bower_components/jqueryui-touch-punch/jquery.ui.touch-punch.min.js"></script>
+    <script src="bower_components/highcharts/highcharts.js"></script>
+    <script src="bower_components/highcharts/highcharts-more.js"></script>
+    <script src="bower_components/highcharts/modules/exporting.js"></script>
+    <script src="bower_components/highcharts-ng/dist/highcharts-ng.js"></script>
+    <script src="bower_components/ng-file-upload/ng-file-upload.js"></script>
+    <script src="bower_components/ng-slide-down/dist/ng-slide-down.js"></script>
+    <script src="bower_components/redactor/redactor.js"></script>
+    <script src="bower_components/redactor/redactor-plugins/imagemanager.js"></script>
+    <script src="bower_components/redactor/redactor-plugins/video.js"></script>
+    <script src="bower_components/underscore/underscore.js"></script>
+    <script src="bower_components/my-angular-sortable-view/angular-sortable-view.js"></script>
+    <script src="bower_components/d3/d3.min.js"></script>
+    <script src="bower_components/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.js"></script>
+    <script src="bower_components/websocket-rails/websocket-rails.js"></script>
+    <script src="bower_components/angular-ui-select/dist/select.js"></script>
+    <script src="bower_components/angular-vs-repeat/src/angular-vs-repeat.js"></script>
+    <script src="bower_components/ng-sortable/dist/ng-sortable.js"></script>
+    <script src="bower_components/ngSilent/ngSilent.js"></script>
+    <script src="bower_components/rainbowvis/rainbowvis.js"></script>
+    <script src="bower_components/bootstro/bootstro.js"></script>
+    <script src="bower_components/angularSlideables/angularSlideables.js"></script>
+    <script src="bower_components/angular-ui-carousel/dist/ui-carousel.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    <!-- build:js({.tmp,app}) scripts/scripts.js -->
+    <script src="scripts/app.js"></script>
+    <script src="scripts/underscore.string.js"></script>
+    <script src="scripts/config.js"></script>
+    <script src="scripts/theme_config.js"></script>
+    <script src="scripts/parse_uri.js"></script>
+    <!--
+    <script src="includes/redactor/redactor.js"></script>
+    <script src="includes/redactor/redactor-plugins/imagemanager.js"></script>
+    -->
+
+    <script src="scripts/translations.js"></script>
+    <script src="scripts/app.templates.js"></script>
+
+    <script src="scripts/services/storage.js"></script>
+    <script src="scripts/services/nav_broadcast_service.js"></script>
+    <script src="scripts/services/authhttpinterceptor.js"></script>
+    <script src="scripts/services/redactor_settings.js"></script>
+    <script src="scripts/services/auth.js"></script>
+    <script src="scripts/services/util.js"></script>
+    <script src="scripts/services/state_change_requested.js"></script>
+    <script src="scripts/services/sortable.js"></script>
+    <script src="scripts/services/user.js"></script>
+    <script src="scripts/services/decision_aid.js"></script>
+    <script src="scripts/services/option.js"></script>
+    <script src="scripts/services/summary_page.js"></script>
+    <script src="scripts/services/summary_panel.js"></script>
+    <script src="scripts/services/intro_page.js"></script>
+    <script src="scripts/services/question_page.js"></script>
+    <script src="scripts/services/media_file.js"></script>
+    <script src="scripts/services/confirm.js"></script>
+    <script src="scripts/services/icon.js"></script>
+    <script src="scripts/services/property.js"></script>
+    <script src="scripts/services/latent_class.js"></script>
+    <script src="scripts/services/dce_question_set.js"></script>
+    <script src="scripts/services/option_property.js"></script>
+    <script src="scripts/services/question.js"></script>
+    <script src="scripts/services/accordion.js"></script>
+    <script src="scripts/services/sub_decision.js"></script>
+    <script src="scripts/services/graphic.js"></script>
+    <script src="scripts/services/admin_tab_helper.js"></script>
+    <script src="scripts/services/decision_aid_home.js"></script>
+    <script src="scripts/services/decision_aid_user.js"></script>
+    <script src="scripts/services/decision_aid_user_response.js"></script>
+    <script src="scripts/services/decision_aid_user_property.js"></script>
+    <script src="scripts/services/decision_aid_user_option_property.js"></script>
+    <script src="scripts/services/decision_aid_user_dce_question_set_response.js"></script>
+    <script src="scripts/services/decision_aid_user_sub_decision_choice.js"></script>
+    <script src="scripts/services/decision_aid_user_bw_question_set_response.js"></script>
+    <script src="scripts/services/download_item.js"></script>
+    <script src="scripts/services/download_manager.js"></script>
+    <script src="scripts/services/upload_manager.js"></script>
+    <script src="scripts/services/basic_page_submission.js"></script>
+    <script src="scripts/services/question_control.js"></script>
+    <script src="scripts/services/user_authentication.js"></script>
+    <script src="scripts/services/dce_question_set_response.js"></script>
+    <script src="scripts/services/bw_question_set_response.js"></script>
+    <script src="scripts/services/static_page.js"></script>
+    <script src="scripts/services/nav_link.js"></script>
+    <script src="scripts/services/error_handler.js"></script>
+    <script src="scripts/services/skip_logic_target.js"></script>
+    <script src="scripts/services/skip_logic_condition.js"></script>
+    <script src="scripts/services/data_export_field.js"></script>
+    <script src="scripts/services/icon_array_util.js"></script>
+
+    <script src="scripts/directives/decision_aid_bottom_nav.js"></script>
+    <script src="scripts/directives/compile.js"></script>
+    <script src="scripts/directives/color_picker.js"></script>
+    <script src="scripts/directives/table_header_fixer.js"></script>
+    <script src="scripts/directives/new_table_header_fixer.js"></script>
+    <script src="scripts/directives/error_scroll.js"></script>
+    <script src="scripts/directives/pie_chart.js"></script>
+    <script src="scripts/directives/bar_chart.js"></script>
+    <script src="scripts/directives/man_chart.js"></script>
+    <script src="scripts/directives/fixed_header.js"></script>
+    <script src="scripts/directives/horizontal_bar_chart.js"></script>
+    <script src="scripts/directives/circle_chart.js"></script>
+    <script src="scripts/directives/extra_info.js"></script>
+    <script src="scripts/directives/kill_focus.js"></script>
+    <script src="scripts/directives/should_show.js"></script>
+    <script src="scripts/directives/information.js"></script>
+    <script src="scripts/directives/equation_editor.js"></script>
+    <script src="scripts/directives/redactor_wrapper.js"></script>
+    <script src="scripts/directives/inner_nav.js"></script>
+    <script src="scripts/directives/eat_click_if.js"></script>
+    <script src="scripts/directives/icon_array_chart.js"></script>
+    <script src="scripts/directives/animated_icon_array.js"></script>
+    <script src="scripts/directives/animated_icon_array_real.js"></script>
+    <script src="scripts/directives/dynamic_content.js"></script>
+    <script src="scripts/directives/carousel_slide.js"></script>
+    <script src="scripts/directives/scroll_to_property.js"></script>
+    <script src="scripts/directives/scrollable_results_table.js"></script>
+    <script src="scripts/directives/scrollable_validation_errors.js"></script>
+    <script src="scripts/directives/proms_chart.js"></script>
+    <script src="scripts/controllers/admin/signin.js"></script>
+    <script src="scripts/controllers/admin/signin_modal.js"></script>
+    <script src="scripts/controllers/nav.js"></script>
+    <script src="scripts/controllers/admin/user/list.js"></script>
+    <script src="scripts/controllers/admin/user/edit.js"></script>
+    <script src="scripts/controllers/admin/user/new.js"></script>
+    <script src="scripts/controllers/admin/user/create.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/list.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/new.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/show.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/setup_dce.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/setup_bw.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/upload_dce_templates.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/upload_bw_templates.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/edit/instructions.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/edit/basic.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/edit/advanced.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/edit/style.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/edit/static_pages.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/edit/introduction.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/preview/introduction.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/edit/about_me.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/edit/data_targets.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/preview/about_me.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/edit/my_options.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/preview/my_options.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/edit/my_properties.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/edit/dce.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/preview/dce.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/edit/best_worst.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/preview/best_worst.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/preview/my_properties.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/edit/my_choice.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/preview/my_choice.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/edit/quiz.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/preview/quiz.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/edit/summary.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/option/edit.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/property/edit.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/summary_panel/edit.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/intro_page/edit.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/option_property/edit.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/static_pages/edit.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/sub_decision/edit.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/question/edit.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/data_target/edit.js"></script>
+    <script src="scripts/controllers/admin/shared/image_picker.js"></script>
+    <script src="scripts/controllers/admin/shared/latent_class_editor.js"></script>
+    <script src="scripts/controllers/admin/shared/dce_question_set_editor.js"></script>
+    <script src="scripts/controllers/admin/shared/icon_picker.js"></script>
+    <script src="scripts/controllers/admin/shared/question_picker.js"></script>
+    <script src="scripts/controllers/admin/shared/question_comparitor.js"></script>
+    <script src="scripts/controllers/admin/shared/number_picker.js"></script>
+    <script src="scripts/controllers/admin/shared/skip_logic_editor.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/accordion/list.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/graphic/edit.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/graphic/list.js"></script>
+    <script src="scripts/controllers/admin/decision_aid/download_data_wizard.js"></script>
+    <script src="scripts/controllers/admin/reset_password_request.js"></script>
+    <script src="scripts/controllers/admin/user/reset_password.js"></script>
+    <script src="scripts/controllers/admin/user/terms.js"></script>
+
+    <script src="scripts/controllers/home/new_session.js"></script>
+    <script src="scripts/controllers/home/current_session.js"></script>
+    <script src="scripts/controllers/home/decision_aid_password.js"></script>
+    <script src="scripts/controllers/home/results_more_info.js"></script>
+    <script src="scripts/controllers/home/intro_popup.js"></script>
+    <script src="scripts/controllers/home/response_popups.js"></script>
+    <script src="scripts/controllers/home/dce_properties_popup.js"></script>
+    <script src="scripts/controllers/home/contact_help.js"></script>
+    <script src="scripts/controllers/home/decision_aid/traditional_user_properties.js"></script>
+    <script src="scripts/controllers/home/decision_aid/intro.js"></script>
+    <script src="scripts/controllers/home/decision_aid/about.js"></script>
+    <script src="scripts/controllers/home/decision_aid/options.js"></script>
+    <script src="scripts/controllers/home/decision_aid/properties.js"></script>
+    <script src="scripts/controllers/home/decision_aid/properties_enhanced.js"></script>
+    <script src="scripts/controllers/home/decision_aid/properties_decide.js"></script>
+    <script src="scripts/controllers/home/decision_aid/properties_post_best_worst.js"></script>
+    <script src="scripts/controllers/home/decision_aid/dce.js"></script>
+    <script src="scripts/controllers/home/decision_aid/dce/dce_conditional.js"></script>
+    <script src="scripts/controllers/home/decision_aid/dce/dce_standard.js"></script>
+    <script src="scripts/controllers/home/decision_aid/dce/dce_opt_out.js"></script>
+    <script src="scripts/controllers/home/decision_aid/bw.js"></script>
+    <script src="scripts/controllers/home/decision_aid/results.js"></script>
+    <script src="scripts/controllers/home/decision_aid/results/standard_results_ctrl.js"></script>
+    <script src="scripts/controllers/home/decision_aid/results/standard_enhanced_results_ctrl.js"></script>
+    <script src="scripts/controllers/home/decision_aid/results/dce_results_ctrl.js"></script>
+    <script src="scripts/controllers/home/decision_aid/results/best_worst_results_ctrl.js"></script>
+    <script src="scripts/controllers/home/decision_aid/results/traditional_results_ctrl.js"></script>
+    <script src="scripts/controllers/home/decision_aid/results/traditional_no_rankings_results_ctrl.js"></script>
+    <script src="scripts/controllers/home/decision_aid/traditional_properties.js"></script>
+    <script src="scripts/controllers/home/decision_aid/static_page.js"></script>
+
+    <script src="scripts/controllers/home/decision_aid/quiz.js"></script>
+    <script src="scripts/controllers/home/decision_aid/summary.js"></script>
+
+    <script src="scripts/directives/limit_text_words_to.js"></script>
+    <script src="scripts/directives/confirm.js"></script>
+    <script src="scripts/directives/user_export_question_selector.js"></script>
+    <script src="scripts/directives/fa_checkbox.js"></script>
+    <script src="scripts/directives/form_group.js"></script>
+    <script src="scripts/directives/general_info_popup.js"></script>
+    <script src="scripts/directives/input_required.js"></script>
+    <script src="scripts/directives/dynamic_footer_height.js"></script>
+    <script src="scripts/directives/line_chart.js"></script>
+    <script src="scripts/directives/human_body_heatmap_question.js"></script>
+    <script src="scripts/directives/scroll_bottom.js"></script>
+    <script src="scripts/directives/image_loaded.js"></script>
+    <script src="scripts/directives/botpress_webchat.js"></script>
+    <script src="scripts/directives/enter.js"></script>
+    <script src="scripts/directives/animated_ellipsis.js"></script>
+    <script src="scripts/directives/accept_vis.js"></script>
+
+    <!-- endbuild -->
+</body>
+</html>

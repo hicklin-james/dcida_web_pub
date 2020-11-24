@@ -1,0 +1,35 @@
+<div class="modal-header">
+  <h2 class="text-center">Setup DCE</H2>
+</div>
+<div class="modal-body">
+  <div sd-error-scroll sa-errors="ctrl.errors"></div>
+  <p>
+    Enter values for the number of question sets and number of responses below. Note that the generation may take a while <strong>(up to 5 minutes)</strong> depending on how many questions you have defined, the number of question sets, and the number of responses. DCIDA will inform you when your download is ready.
+  </p>
+  <div class="form-group">
+    <label>Number of question sets:</label>
+    <input class="form-control half-width" ng-model="ctrl.numQuestions" />
+  </div>
+  <div class="form-group">
+    <label>Number of responses:</label>
+    <input class="form-control half-width" ng-model="ctrl.numResponses" />
+  </div>
+  <div class="form-group">
+    <label>Number of blocks:</label>
+    <input class="form-control half-width" ng-model="ctrl.numBlocks" />
+  </div>
+  <div class="form-group" ng-if="ctrl.decisionAid.dce_type === 'normal'">
+    <label>Include opt-out option
+      <input ng-model="ctrl.includeOptOut" type="checkbox" class="half-space-left" />
+    </label>
+  </div>
+</div>
+<div class="modal-footer clearfix">
+  <div class="pull-left">
+    <button class="btn btn-primary" ng-disabled="ctrl.downloadInProgress()" ng-click="ctrl.submitDceParams()">Download template files</button>&nbsp;
+    <i ng-class="{'ninja': !ctrl.downloadInProgress()}" class="fa fa-lg fa-refresh text-info fa-spin"></i>
+  </div>
+  <div class="pull-right">
+    <button class="btn btn-default inline-block half-space-right" ng-click="ctrl.close()">Close</button>
+  </div>
+</div>

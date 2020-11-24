@@ -1,0 +1,38 @@
+<div id="decision_aid_results">
+  <!-- <div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+    <i class="fa fa-2x fa-spin fa-refresh"></i>
+  </div> -->
+  <div ng-show="ctrl.noDecisionAidFound">
+    <div class="alert alert-danger">No Decision was found with the url: {{ctrl.decisionAidSlug}}</div>
+  </div>
+  <div ng-if="!ctrl.loading && ctrl.decisionAid">
+    <div class="space-bottom" compile="::ctrl.decisionAid.sub_decision.injected_my_choice_information_published"></div>
+    <div ng-switch="::ctrl.decisionAid.decision_aid_type">
+      <div ng-switch-when="standard">
+        <div ng-include="'views/home/decision_aid/results/standard_results_table.html'"></div>
+      </div>
+      <div ng-switch-when="treatment_rankings">
+        <div ng-include="'views/home/decision_aid/results/option_rankings_results_table.html'"></div>
+      </div>
+      <div ng-switch-when="dce">
+        <div ng-include="'views/home/decision_aid/results/dce_results_table.html'"></div>
+      </div>
+      <div ng-switch-when="best_worst">
+        <div ng-include="'views/home/decision_aid/results/best_worst_results_table.html'"></div>
+      </div>
+      <div ng-switch-when="best_worst_with_prefs_after_choice">
+        <div ng-include="'views/home/decision_aid/results/best_worst_results_table.html'"></div>
+      </div>
+      <div ng-switch-when="traditional">
+        <div ng-include="'views/home/decision_aid/results/traditional_results_table.html'"></div>
+      </div>
+      <div ng-switch-when="traditional_no_results">
+        <div ng-include="'views/home/decision_aid/results/traditional_no_rankings_results_table.html'"></div>
+      </div>
+      <div ng-switch-when="standard_enhanced">
+        <div ng-include="'views/home/decision_aid/results/standard_enhanced_results_table.html'"></div>
+      </div>
+    </div>
+    <sd-bottom-nav sa-show-next="{{'NEXT-BUTTON' | translate}}" sa-next-submit="ctrl.submitNext()" sa-show-prev="{{'BACK-BUTTON' | translate}}" sa-prev-link="ctrl.prevLink()"></sd-bottom-nav>
+  </div>
+</div>

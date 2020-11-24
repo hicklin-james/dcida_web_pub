@@ -1,0 +1,78 @@
+<div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-spin fa-refresh"></i>
+</div>
+<div ng-show="!ctrl.loading">
+  <div class="space-bottom clearfix">
+    <div class="pull-right">
+      <span class="text-success flashing-success" ng-if="ctrl.saveSuccess">Saved! <i class="fa fa-lg fa-check-circle"></i></span>
+      <button class="btn btn-info" ng-disabled="!decisionAidEditForm.$dirty" ng-click="ctrl.save()">Save</button>
+      <button class="btn btn-success" ng-click="ctrl.saveAndPreview()">Preview</button>
+    </div>
+    <h2>My Properties</h2>
+  </div>
+  <div>
+    <sd-extra-info ng-show="ctrl.decisionAid.decision_aid_type === 'traditional'">
+      <p>The <strong>My Properties</strong> page is a popup within the results page that allows users to rank each property relative to other properties. It determines the order of the properties within the option grid.</p>
+    </sd-extra-info>
+    <sd-extra-info ng-show="ctrl.decisionAid.decision_aid_type !== 'traditional'"> 
+      <p>The <strong>My Properties</strong> page outlines each of the decision aid properties. It allows for the selection of important properties, and includes chart interaction so that the user can weigh their most important properties relative to each other.</p>
+      <p>You introduce the page using the <strong>Properties Information</strong> text box. You introduce the chart interaction using the <strong>Property Weight Information</strong> text box.</p>
+      <p>The <strong>Minimum Property Count</strong> is the minimum number of properties that must be selected for your decision aid. The user can always select additional properties on top of the minimum number. If they do not select enough properties, the chart visualization will not appear and they will be unable to continue with the decision aid.</p>
+      <p>The <strong>Chart Type</strong> can be either:
+        <ol>
+          <li>A pie chart</li>
+          <strong>or</strong>
+          <li>A stacked bar chart</li>
+        </ol>
+        You can see samples of each chart type by toggling between them.
+      </p>
+    </sd-extra-info>
+    <form name="decisionAidEditForm" ng-show="ctrl.decisionAid">
+      <div sd-error-scroll sa-errors="ctrl.errors"></div>
+      <div class="form-group">
+        <label for="properties-page-title" input-required>Page Name</label>
+        <sd-information>This title shows up in the sub-header of the page.</sd-information>
+        <input id="properties-page-title" class="form-control" ng-model="ctrl.decisionAidEdit.properties_page_label" />
+      </div>
+      <div class="form-group">
+        <label for="decision_aid_properties_information">Properties Information</label>
+        <sd-information>This information shows at the top of the properties page in your tool.</sd-information>
+        <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAid.id}}"><textarea class="form-control" id="decision_aid_properties_information" placeholder="My Properties Information" ng-model="ctrl.decisionAidEdit.properties_information" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'questionSelector', 'video']}"></textarea></sd-redactor-wrapper>
+      </div>
+      <div class="form-group">
+        <label for="decision_aid_minimum_property_count">Minimum Property Count</label>
+        <sd-information>The minimum number of properties that must be selected to continue.</sd-information>
+        <input class="form-control half-width" id="decision_aid_minimum_property_count" type="number" min="0" max="{{ctrl.decisionAid.properties_count}}" ng-model="ctrl.decisionAidEdit.minimum_property_count"></input>
+      </div>
+      <div class="form-group">
+        <label for="decision_aid_maximum_property_count">Maximum Property Count</label>
+        <sd-information>The maximum number of properties that must be selected to continue.</sd-information>
+        <input class="form-control half-width" id="decision_aid_maximum_property_count" type="number" min="0" max="{{ctrl.decisionAid.properties_count}}" ng-model="ctrl.decisionAidEdit.maximum_property_count"></input>
+      </div>
+      <div ng-show="ctrl.decisionAid.decision_aid_type === 'standard' || ctrl.decisionAid.decision_aid_type === 'treatment_rankings' || ctrl.decisionAid.decision_aid_type === 'traditional_no_results' || ctrl.decisionAid.decision_aid_type === 'standard_enhanced' || ctrl.decisionAid.decision_aid_type === 'best_worst_with_prefs_after_choice'">
+        <div class="form-group">
+          <label for="decision_aid_property_weight_information">Property Weight Information</label>
+          <sd-information>This information shows above the weighting task in your tool.</sd-information>
+          <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAid.id}}"><textarea class="form-control" id="decision_aid_property_weight_information" placeholder="Property Weight Information" ng-model="ctrl.decisionAidEdit.property_weight_information" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'questionSelector', 'video']}"></textarea></sd-redactor-wrapper>
+        </div>
+        <div class="form-group">
+          <label for="decision_aid_chart_type">Chart Type</label>
+          <sd-information>Choose which type of chart you would like to use.</sd-information>
+          <ul class="nav nav-tabs">
+            <li role="presentation" ng-class="{active: ctrl.decisionAidEdit.chart_type === 'pie'}"><a class="clickable" ng-click="ctrl.setChartType('pie')">Pie</a></li>
+            <li role="presentation" ng-class="{active: ctrl.decisionAidEdit.chart_type === 'bar'}"><a class="clickable" ng-click="ctrl.setChartType('bar')">Bar</a></li>
+          </ul>
+          <div>
+            <div class="half-space-top half-space-bottom">
+              <i class="fa fa-lg fa-info-circle dcida-info-icon"></i>
+              <span class="warning-text">The image below is a sample of what this chart looks like.</span>
+            </div>
+            <div>
+              <img class="img-responsive" ng-src="{{ctrl.chartImage()}}" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

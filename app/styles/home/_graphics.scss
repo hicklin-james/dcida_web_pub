@@ -1,0 +1,14 @@
+.horizontal-bar-chart {
+  .xaxis {
+    path {
+      fill: none;
+      stroke: grey;
+      stroke-width: 3px;
+    }
+  } 
+
+  .tick line {
+    stroke: grey;
+    stroke-width: 2;
+  }
+}

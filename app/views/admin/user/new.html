@@ -1,0 +1,14 @@
+<div ng-show="!ctrl.loading">
+  <div sd-error-scroll sa-errors="ctrl.errors"></div>
+  <h1>{{ctrl.title}}</h1>
+  <form class="form">
+    <div class="form-group">
+      <label for="user_email">Email</label>
+      <input id="user_email" class="form-control" ng-model="ctrl.userAuth.email"></input>
+    </div>
+
+    <div>
+      <button ng-click="ctrl.sendUserCreationEmail()" class="btn btn-primary">Send User Email</button>
+    </div>
+  </form>
+</div>

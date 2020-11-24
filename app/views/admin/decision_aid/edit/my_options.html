@@ -1,0 +1,158 @@
+<div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-spin fa-refresh"></i>
+</div>
+<div ng-show="!ctrl.loading">
+  <div class="space-bottom clearfix">
+    <div class="pull-right">
+      <span class="text-success flashing-success" ng-if="ctrl.saveSuccess">Saved! <i class="fa fa-lg fa-check-circle"></i></span>
+      <button class="btn btn-info" ng-disabled="!decisionAidEditForm.$dirty" ng-click="ctrl.save()">Save</button>
+      <!-- <button class="btn btn-success" ng-click="ctrl.saveAndPreview()">Preview</button>  -->
+    </div>
+    <h2>My Options</h2>
+  </div>
+  <sd-extra-info>
+    <p>The <strong>My Options</strong> pages outline each of the decision options in detail.</p>
+    <p>The <strong>Option Property Matrices</strong> are the <em>most important</em> aspects of your decision aid. It is where you define your possible options, the generic properties that each option has, and the specific information associated with each option and property (called option properties). The options are listed as the column headers, the properties are the first cell in each row, and the option properties are the inner table cells. The typical decision aid will have <strong>at least</strong> 2 options and 3 properties. Each option/property combination has an associated option property, which equates to at least 6 option properties in the minimal decision aid.</p>
+    <p>You can reorder your options and properties using the lists at the bottom of each sub decision.</p>
+    <p>Your tool must have at least one sub-decision. In many cases there is only one choice to be made, and this is adequate. Sometimes, you may have multiple decisions to make (e.g. choosing between taking an oral anticoagulant or not, and then choosing which oral anticoagulant to take). If this is the case, you can use the <strong>Add additional decision</strong> button at the bottom of the page to add your additional decisions.</p>
+  </sd-extra-info>
+  <!-- <form name="decisionAidEditForm" ng-show="ctrl.decisionAid">
+    <div class="form-group">
+      <label for="decision_aid_options_information">Options Information</label>
+      <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAid.id}}"><textarea class="form-control" id="decision_aid_options_information" placeholder="My Options Information" ng-model="ctrl.decisionAidEdit.options_information" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'questionSelector', 'video']}"></textarea></sd-redactor-wrapper>
+    </div>
+    <div class="form-group">
+      <label for="decision_aid_other_options_information">Other Options Information</label>
+      <sd-information>You can add additional information about options that won't appear in the decision aid here.</sd-information>
+      <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAid.id}}"><textarea class="form-control" id="decision_aid_other_options_information" placeholder="Other Options Information" ng-model="ctrl.decisionAidEdit.other_options_information" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'questionSelector', 'video']}"></textarea></sd-redactor-wrapper>
+    </div>
+  </form> -->
+  <form name="decisionAidEditForm" ng-show="ctrl.decisionAid">
+    <div sd-error-scroll sa-errors="ctrl.errors"></div>
+    <div ng-repeat="subDecision in ctrl.decisionAid.sub_decisions" class="space-bottom">
+      <div>
+        <div>
+          <div class="space-bottom">
+            <div class="clearfix space-bottom">
+              <h3>Decision {{subDecision.sub_decision_order}} <a ui-sref="subDecisionEdit (::{decisionAidId: ctrl.decisionAid.id, id: subDecision.id})"><i class="fa fa-pencil fa-fw"></i></a></h3>
+              <div class="clearfix pull-right">
+                <a class="btn btn-primary small-button" ui-sref="optionNew (::{decisionAidId: ctrl.decisionAid.id, sub_decision_id: subDecision.id})"><i class="fa fa-fw fa-plus"></i> Add Option</a>
+                <a class="btn btn-primary small-button" ui-sref="propertyNew (::{decisionAidId: ctrl.decisionAid.id})"><i class="fa fa-fw fa-plus"></i> Add Property</a>
+
+                <!-- <button class="btn btn-success" ng-click="ctrl.saveAndPreview()">Preview</button> -->
+                <!-- <button ng-click="count = count + 1" ng-init="count=0">Increment</button>
+                <button ng-click="count = 0"> Reset </button>
+                <span>count: {{count}}</span> -->
+              </div>
+            </div>
+          </div>
+          <h4>Option Property Matrix</h4>
+          <sd-information>
+            This table shows the decision options and properties in matrix form. The options are listed as the column headers, and the properties are listed as the first column in each row. The remaining cells correspond to the specific option properties.
+          </sd-information>
+          <div class="space-bottom">
+            <div><strong>Legend:</strong></div>
+            <div>
+              <span class="label label-success">MOP</span> - Multiple option properties (complete)
+            </div>
+            <div>
+              <span class="label label-warning">MOP</span> - Multiple option properties (incomplete)
+            </div>
+            <div>
+              <span class="label label-success">MO</span> - Multiple options
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table" ng-show="ctrl.groupedOptions[subDecision.id].length > 0 || ctrl.properties.length > 0">
+              <thead>
+                <tr>
+                  <th class="option-property-header text-center">
+                    Options/Properties
+                  </th>
+                  <th class="text-center option-header-cell" ng-repeat="option in ctrl.groupedOptions[subDecision.id] track by option.id">
+                    <div>{{::option.title}} <sup ng-show="option.has_sub_options"><span class="label label-success">MO</span></sup></div>
+                    <div class="inline-block" uib-dropdown dropdown-append-to-body>
+                      <a type="button" uib-dropdown-toggle aria-haspopup="true" aria-expanded="true">
+                        <div class="clickable" class="inline-block"><i class="fa fa-gear"></i><span class="caret"></span></div>
+                      </a>
+                      <ul uib-dropdown-menu>
+                        <li><a class="clickable" ng-click="ctrl.cloneOption(option)"><i class="fa fa-clone"></i> Clone</a></li>
+                        <li> <a ui-sref="optionEdit (::{decisionAidId: option.decision_aid_id, id: option.id})"><i class="fa fa-pencil"></i> Edit</a></li>
+                        <li><a class="clickable" ng-click="ctrl.deleteOption(option)"><i class="fa fa-trash fa-fw"></i> Delete</a></li>
+                      </ul>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="property in ctrl.properties track by property.id">
+                  <th class="text-center">
+                    <div>{{::property.title}}</div>
+                    <div uib-dropdown class="inline-block" dropdown-append-to-body>
+                      <a type="button" uib-dropdown-toggle aria-haspopup="true" aria-expanded="true">
+                        <div class="clickable" class="inline-block"><i class="fa fa-gear"></i><span class="caret"></span></div>
+                      </a>
+                      <ul uib-dropdown-menu>
+                        <li><a class="clickable" ng-click="ctrl.cloneProperty(property)"><i class="fa fa-clone"></i> Clone</a></li>
+                        <li> <a ui-sref="propertyEdit (::{ decisionAidId: property.decision_aid_id, id: property.id })"><i class="fa fa-pencil"></i> Edit</a></li>
+                        <li><a class="clickable" ng-click="ctrl.deleteProperty(property)"><i class="fa fa-trash fa-fw"></i> Delete</a></li>
+                      </ul>
+                    </div>
+                  </th>
+                  <td ng-repeat="option in ctrl.groupedOptions[subDecision.id] track by option.id" class="text-center">
+                    <div ng-if="ctrl.optionPropertiesHashCopy[option.id][property.id]">
+                      <div>
+                        <span ng-show="::!option.has_sub_options">{{::ctrl.optionPropertiesHashCopy[option.id][property.id].short_label}}</span>
+                        <span ng-show="::option.has_sub_options && ctrl.optionPropertiesHashCopy[option.id][property.id].complete" class="label label-success">MOP</span>
+                        <span ng-show="::option.has_sub_options && !ctrl.optionPropertiesHashCopy[option.id][property.id].complete" class="label label-warning">MOP</span>
+                      </div>
+                      <a ng-show="::option.has_sub_options" ui-sref="optionPropertyMultiEdit (::{decisionAidId: option.decision_aid_id, optionId: option.id, propertyId: property.id})"><i class="fa fa-pencil"></i></a>
+                      <a ng-show="::!option.has_sub_options" ui-sref="optionPropertyEdit (::{decisionAidId: option.decision_aid_id, optionId: option.id, propertyId: property.id, id: ctrl.optionPropertiesHashCopy[option.id][property.id].id})"><i class="fa fa-pencil"></i></a>
+                    </div>
+                    <div ng-hide="ctrl.optionPropertiesHashCopy[option.id][property.id]">
+                      <!--<div><span ng-show="option.has_sub_options" class="label label-success">MOP</span></div>-->
+                      <a ui-sref="optionPropertyNew (::{decisionAidId: option.decision_aid_id, optionId: option.id, propertyId: property.id})"><i class="fa fa-plus"></i></a>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="text-center" ng-show="ctrl.groupedOptions[subDecision.id].length === 0 && ctrl.properties.length === 0">
+              <span class="text-warning">There are no options or properties yet.</span> 
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="auto-overflow-y" ng-show="ctrl.groupedOptions[subDecision.id].length > 0">
+              <h4>Option Order</h4>
+              <ul sv-root sv-part="ctrl.groupedOptions[subDecision.id]" sv-on-sort="ctrl.onOptionSort($item, $partFrom, $partTo, $indexFrom, $indexTo)" class="sortable-list">
+                <li sv-element ng-repeat="option in ctrl.groupedOptions[subDecision.id] track by option.id">
+                  <i sv-handle class="half-space-right fa fa-arrows drag-arrows movable"></i>
+                  {{::option.title}}
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="auto-overflow-y" ng-show="ctrl.properties.length > 0">
+              <h4>Property Order</h4>
+              <ul sv-root sv-part="ctrl.properties" sv-on-sort="ctrl.onPropertySort($item, $partFrom, $partTo, $indexFrom, $indexTo)" class="sortable-list">
+                <li sv-element ng-repeat="prop in ctrl.properties track by prop.id">
+                  <i sv-handle class="half-space-right fa fa-arrows drag-arrows movable"></i>
+                  {{::prop.title}}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div> 
+      </div>
+    </div>
+
+    <div ng-class="space-bottom">
+      <div class="text-center">
+        <a class="btn btn-primary" ui-sref="subDecisionNew (::{decisionAidId: ctrl.decisionAid.id})"><i class="fa fa-fw fa-plus"></i> Add additional decision</a>
+      </div>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,123 @@
+<div class="modal-header clearfix">
+  <div class="pull-right">
+    <button class="btn btn-default" ng-click="ctrl.close()">Close</button>
+  </div>
+  <h3>Quiz Preview</h3>
+</div>
+<div class="modal-body">
+  <div class="space-top space-bottom text-center" ng-show="ctrl.loading">
+    <i class="fa fa-2x fa-spin fa-refresh"></i>
+  </div>
+  <div ng-if="!ctrl.loading">
+    <div ng-if="!ctrl.currQuestion" class="space-bottom" compile="ctrl.decisionAid.quiz_information_published"></div>
+    <div ng-if="ctrl.currQuestion" class="question-wrapper">
+      <div compile="ctrl.currQuestion.question_text_published"></div>
+      <div ng-switch="ctrl.currQuestion.question_response_type">
+<!-- beginning of RADIO preview -->
+        <div ng-switch-when="radio">
+          <div ng-switch="ctrl.currQuestion.question_response_style">
+              <div ng-switch-when="horizontal_radio">
+                <div class="row-fluid clearfix">
+                  <div ng-repeat="response in ctrl.currQuestion.question_responses" class="col-sm-2 half-space-bottom">
+                      <button class="btn btn-default full-width response-button"><span compile="response.question_response_value"></span></button>
+                  </div>
+                </div>
+              </div>
+              <div ng-switch-when="vertical_radio">
+                <table class="table">
+                  <tbody>
+                    <tr ng-repeat="response in ctrl.currQuestion.question_responses">
+                      <td>
+                          <span compile="response.question_response_val"></span>
+                      </td>
+                      <td>
+                        <i class="clickable fa fa-2x fa-circle-o"></i>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+        </div>
+<!-- end of RADIO preview -->
+<!-- beginning of Y?N? preview -->
+        <div ng-switch-when="yes_no">
+          <i class="clickable fa fa-2x fa-square-o"></i>
+        </div>
+<!-- end of Y/N preview -->
+<!-- begining of numeric preview -->
+        <div ng-switch-when="number">
+          <input class="form-control" type="number" />
+        </div>
+<!-- end of numeric preview -->
+<!-- begining of current treatment preview -->
+      <div ng-switch-when="current_treatment">  
+          <div class="row-fluid clearfix">
+            <div ng-repeat="option in ctrl.currQuestion.current_treatments" class="col-sm-2 half-space-bottom">
+              <button class="btn btn-default full-width response-button">{{option.title}}</button>
+            </div>
+          </div>
+        </div>
+<!-- end of current treatment preview -->
+<!-- beginning of TEXT preview -->
+        <div ng-switch-when="text">
+          <textarea rows="5" class="form-control"></textarea>
+        </div>
+<!-- end of TEXT preview -->
+<!-- beginning of GRID preview -->
+        <div ng-switch-when="grid">
+          <div ng-switch="ctrl.currQuestion.grid_questions[0].question_response_type">
+            <div ng-switch-when="radio">
+              <table class="table fixed-table-layout">
+                <thead>
+                  <th ng-class="[ctrl.questionClass]"></th>
+                  <th ng-class="[ctrl.responseClass]" class="text-center" ng-repeat="r in ctrl.currQuestion.grid_questions[0].question_responses">
+                    <span compile="r.question_response_value"></span>
+                  </th>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="q in ctrl.currQuestion.grid_questions">
+                    <td>
+                      {{q.question_text_published}}
+                    </td>
+                    <td class="text-center" ng-repeat="r in q.question_responses">
+                      <i class="clickable fa fa-2x fa-circle-o" type="checkbox"></i>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div ng-switch-when="yes_no">
+              <table class="table fixed-table-layout">
+                <thead>
+                  <th ng-class="[ctrl.questionClass]"></th>
+                  <th class="text-center" ng-class="[ctrl.responseClass]"></th>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="q in ctrl.currQuestion.grid_questions">
+                    <td>
+                      {{q.question_text_published}}
+                    </td>
+                    <td class="text-center">
+                      <i class="clickable fa fa-2x fa-circle-o"></i>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+<!-- end of GRID preview -->
+
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer clearfix">
+  <div class="pull-left">
+    <button class="btn btn-primary" ng-click="ctrl.prev()" ng-disabled="!ctrl.currQuestion">Prev</button>
+  </div>
+  <div class="pull-right">
+    <button class="btn btn-primary" ng-click="ctrl.next()" ng-disabled="ctrl.currQuestion.question_order === ctrl.questions.length">Next</button>
+  </div>
+</div>

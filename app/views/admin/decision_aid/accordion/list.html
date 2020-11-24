@@ -1,0 +1,87 @@
+<div class="modal-header">
+  <div class="form-group pull-left space-top">
+    <button type="button" ng-click="ctrl.new()" class="btn btn-success">New</button>
+  </div>
+  <div class="form-group pull-right space-top">
+    <button type="button" ng-click="ctrl.cancel()" class="btn btn-default">Close</button>
+    <button type="button" ng-disabled="!ctrl.currentlyEditing.title || ctrl.currentlyEditing.accordion_contents.length == 0" ng-click="ctrl.insert()" class="btn btn-info">Insert Current</button>
+    <button type="button" ng-disabled="!ctrl.currentlyEditing.title || ctrl.currentlyEditing.accordion_contents.length == 0" ng-click="ctrl.save()" class="btn btn-primary">Save</button>
+  </div>
+  <h2 class="text-center">
+    <span ng-show="ctrl.currentlyEditing.id">{{ctrl.currentlyEditing.title}}</span>
+    <span ng-show="!ctrl.currentlyEditing.id">New Accordion</span>
+  </h2>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-md-4 border-right">
+      <h4 class="space-bottom">Existing Accordions</h4>
+      <div ng-repeat="accordion in ctrl.accordions">
+        <h5>
+          <a class="text-info clickable" ng-click="ctrl.editAccordion(accordion)"><i class="fa fa-pencil"></i></a> 
+          <a class="text-info clickable" ng-click="ctrl.insertAccordion(accordion)"><i class="fa fa-reply-all"></i></a>
+          <a class="text-danger clickable" ng-click="ctrl.destroy(accordion)"><i class="fa fa-trash"></i></a>
+          {{accordion.title}} ({{accordion.id}})
+          <span ng-if="ctrl.currentlyEditing === accordion && ctrl.saved" class="text-success flashing-success inline-block">Saved! <i class="fa fa-check-circle-o"></i></span>
+        </h5>
+      </div>
+    </div>
+    <div class="col-md-8">
+      <sd-information ng-show="!ctrl.currentlyEditing.id">This is a new (unsaved) accordion. Use the "Save" button at the top or bottom of the window to permanently save this accordion.</sd-information>
+      <sd-information ng-show="ctrl.currentlyEditing.id" sa-info-color="text-success">This is an existing (saved) accordion. Use the "Save" button at the top or bottom of the window to permanently update your changes to this accordion.</sd-information>
+      <div class="form-group">
+        <label for="accordion_title">Title</label>
+        <input class="form-control" id="accordion_title" placeholder="Title" ng-model="ctrl.currentlyEditing.title" />
+      </div>
+      <div sv-root sv-part="ctrl.currentlyEditing.accordion_contents">
+        <div sv-element ng-repeat="ac in ctrl.currentlyEditing.accordion_contents" class="accordion-content-wrapper">
+          <div class="pull-right">
+            <span ng-click="ctrl.destroyPanel(ac)" class="clickable half-space-right"><i class="fa fa-lg fa-trash text-danger"></i></span>
+            <span sv-handle><i class="fa fa-lg fa-arrows movable handle"></i></span>
+          </div>
+          <div class="form-group">
+            <label for="ac_header">Panel Header</label>
+            <input class="form-control" id="ac_header" placeholder="Panel Header" ng-model="ac.header" />
+          </div>
+          <div class="accordion-content-expand clearfix">
+            <div class="text-center">
+              <a ng-if="!ac.expanded" ng-click="ctrl.expand(ac)" class="text-info clickable">
+                <span class="fa fa-stack">
+                  <i class="fa fa-stack-2x fa-circle-thin"></i>
+                  <i class="fa fa-stack-1x fa-arrow-down"></i>
+                </span>
+              </a>
+              <a ng-if="ac.expanded" ng-click="ctrl.unexpand(ac)" class="text-info clickable">
+                <span class="fa fa-stack">
+                  <i class="fa fa-stack-2x fa-circle-thin"></i>
+                  <i class="fa fa-stack-1x fa-arrow-up"></i>
+                </span>
+              </a>
+            </div>
+          </div>
+          <div ng-slide-down="ac.expanded" lazy-render duration="0.5" class="accordion-content-inner-wrapper">
+            <div class="form-group">
+              <label for="ac_panel_color">Panel Color</label>
+              <sd-color-picker sa-color-val-map="ctrl.colorMap" sa-color-model="ac.panel_color"></sd-color-picker>
+            </div>
+            <label class="clickable" for="ac_is_open_by_default"><span class="inline-block half-space-right">Open by default</span>
+              <input type="checkbox" id="ac_is_open_by_default" ng-model="ac.is_open_by_default" />
+            </label>
+            <div class="form-group">
+              <label for="ac_content">Panel Content</label>
+              <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAidId}}"><textarea class="form-control" id="ac_content" placeholder="Panel content" ng-model="ac.content" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'video']}"></textarea></sd-redactor-wrapper>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a ng-click="ctrl.addNewPanel()" class="clickable"><i class="fa fa-plus"></i> New Panel</a>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <div class="form-group pull-right space-top">
+    <button type="button" ng-click="ctrl.cancel()" class="btn btn-default">Close</button>
+    <button type="button" ng-disabled="!ctrl.currentlyEditing.title || ctrl.currentlyEditing.accordion_contents.length == 0" ng-click="ctrl.insert()" class="btn btn-info">Insert Current</button>
+    <button type="button" ng-disabled="!ctrl.currentlyEditing.title || ctrl.currentlyEditing.accordion_contents.length == 0" ng-click="ctrl.save()" class="btn btn-primary">Save</button>
+  </div>
+</div>

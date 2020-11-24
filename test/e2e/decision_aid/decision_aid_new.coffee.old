@@ -1,0 +1,140 @@
+mock = require('protractor-http-mock')
+SigninPage = require('../signin/signin_page')
+DecisionAidListPage = require('./decision_aid_list_page')
+DecisionAidNewPage = require('./decision_aid_new_page')
+
+describe 'decisionAidNew', () ->
+
+  beforeEach () ->
+    mock(['users', 'decision_aids'])
+    sipage = new SigninPage()
+    sipage.loginToDcida()
+    lipage = new DecisionAidListPage()
+    lipage.goToNewDecisionAidButton.click()
+    browser.waitForAngular()
+
+  it "should show an error if the title is missing", () ->
+    page = new DecisionAidNewPage()
+    page.setSlug("slug")
+    page.setDecisionAidType("Standard")
+
+    failedPost = {
+      request: {
+        path: "http://localhost:3000/api/decision_aids",
+        method: "POST"
+      },
+      response: {
+        status: 422,
+        data: {
+          errors: [
+            "Decision aid title can't be blank"
+          ]
+        }
+      }
+    }
+    mock.add(failedPost)
+
+    page.saveButton.click()
+
+    browser.waitForAngular()
+
+    expect(element(By.css(".alert.alert-danger")).isDisplayed()).toBe(true)
+
+  it "should show an error if the slug is missing", () ->
+    page = new DecisionAidNewPage()
+    page.setTitle("title")
+    page.setDecisionAidType("Standard")
+
+    failedPost = {
+      request: {
+        path: "http://localhost:3000/api/decision_aids",
+        method: "POST"
+      },
+      response: {
+        status: 422,
+        data: {
+          errors: [
+            "Decision aid slug can't be blank"
+          ]
+        }
+      }
+    }
+    mock.add(failedPost)
+
+    page.saveButton.click()
+
+    browser.waitForAngular()
+
+    expect(element(By.css(".alert.alert-danger")).isDisplayed()).toBe(true)
+
+  it 'should save a new decision aid if all attributes are filled out', () ->
+
+    page = new DecisionAidNewPage()
+
+    json = page.getStandardDecisionAidJson()
+    newMockedRequest = 
+      {
+        request: {
+          path: 'http://localhost:3000/api/decision_aids',
+          method: 'GET'
+        },
+        response: {
+          data: {
+            decision_aids: [
+              {
+                id: 1,
+                title: 'Standard Decision Aid',
+                slug: "sda",
+                description: "Description",
+                updated_at: null,
+                creator: "Joe Connington",
+                decision_aid_type: "standard"
+              },
+              {
+                id: 2,
+                title: 'BW Decision Aid',
+                slug: "BW",
+                description: "Description",
+                updated_at: null,
+                creator: "Joe Connington",
+                decision_aid_type: "best_worst"
+              },
+              {
+                id: 3,
+                title: 'DCE Decision Aid',
+                slug: "DCE",
+                description: "Description",
+                updated_at: null,
+                creator: "Joe Connington",
+                decision_aid_type: "dce"
+              },
+              {
+                id: 4,
+                title: 'TR Decision Aid',
+                slug: "TR",
+                description: "Description",
+                updated_at: null,
+                creator: "Joe Connington",
+                decision_aid_type: "option_rankings"
+              },
+                json
+            ]
+          }
+        }
+      }
+
+    mock.add(newMockedRequest)
+
+    page.createStandardDecisionAid()
+
+    browser.waitForAngular()
+    element(By.css(".header")).element(By.linkText("Decision Aids")).click()
+
+    browser.waitForAngular()
+
+    lipage = new DecisionAidListPage()
+
+    expect(lipage.header.isDisplayed()).toBe(true)
+    expect(lipage.getDecisionAidItems().count()).toEqual(5)
+
+  

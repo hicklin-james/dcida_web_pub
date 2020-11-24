@@ -1,0 +1,34 @@
+'use strict'
+
+describe 'Controller: DecisionAidListCtrl', ->
+
+  # load the controller's module
+  beforeEach angular.mock.module 'dcida20App'
+
+  DecisionAidListCtrl = {}
+  scope = {}
+  DecisionAid = {}
+
+  mockNumberOfDecisionAids = 5
+
+  DecisionAid.query = (fn) ->
+    decisionAids = []
+    for i in [0..mockNumberOfDecisionAids - 1]
+      decisionAids.push {}
+    fn(decisionAids)
+
+  # Initialize the controller and a mock scope
+  beforeEach inject ($controller, $rootScope) ->
+    scope = $rootScope.$new()
+    DecisionAidListCtrl = $controller 'DecisionAidListCtrl', {
+      $scope: scope
+      DecisionAid: DecisionAid
+    }
+
+  it "should correctly set the loading variable", () ->
+    expect(DecisionAidListCtrl.loading).toBe false
+
+  it 'should populate the @decisionAids variable with a list of decision aids', () ->
+    expect(DecisionAidListCtrl.decisionAids).toBeDefined()
+    expect(DecisionAidListCtrl.decisionAids.length).toEqual mockNumberOfDecisionAids
+    

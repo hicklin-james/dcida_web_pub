@@ -1,0 +1,85 @@
+<script type="text/ng-template" id="option_property_edit_node">
+  <div id="option_property_edit_wrapper">
+    <div class="form-group">
+      <label for="option_property_short_label">Short Label</label>
+      <sd-information>The short label for this option property.</sd-information>
+      <input class="form-control" id="option_property_short_label" placeholder="Short Label" ng-model="ctrl.currentlyEditing.short_label" />
+    </div>
+
+    <div class="form-group">
+      <label for="option_property_button_label">Button Label</label>
+      <sd-information>The button label for this option property.</sd-information>
+      <input class="form-control" id="option_property_button_label" placeholder="Button Label" ng-model="ctrl.currentlyEditing.button_label" />
+    </div>
+
+    <div ng-if="!ctrl.currentlyEditing.is_weighable">
+      <div class="form-group">
+        <label class="half-space-right" for="option_property_ranking_type">Ranking Type</label>
+        <sd-information>The ranking type for this option property. It can either be retrieved from a question response&#39;s numeric value or be assigned a fixed number.</sd-information>
+        <select class="form-control select-field" ng-model="ctrl.currentlyEditing.ranking_type" ng-options="rt.value as rt.key for rt in ctrl.rankingTypes" ng-change="ctrl.changedRankingType()"></select>
+      </div>
+
+      <div class="form-group">
+        <div ng-switch="ctrl.currentlyEditing.ranking_type">
+          <div ng-switch-when="integer">
+            <label for="option_property_ranking">Ranking value</label>
+            <input class="form-control half-width" ng-model="ctrl.currentlyEditing.ranking" />
+          </div>
+          <div ng-switch-when="question_response_value">
+            <label for="option_property_ranking">Ranking Value</label>
+            <input class="inline-block half-space-right" disabled="disabled" class="form-control half-width" ng-model="ctrl.currentlyEditing.ranking" />
+            <button class="inline-block btn btn-default" ng-click="ctrl.selectQuestion()" type="button">Select question</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="option_property_information">Information</label>
+      <sd-information>The main text information for this option property.</sd-information>
+      <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAidId}}"><textarea class="form-control" id="option_property_information" placeholder="Information" ng-model="ctrl.currentlyEditing.information" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'questionSelector', 'video']}"></textarea></sd-redactor-wrapper>
+    </div>
+    <input type="submit" value="Save" class="btn btn-primary" />
+  </div>
+</script>
+
+<div ng-if="loading" class="text-center" ng-show="ctrl.loading">
+  <i class="fa fa-2x fa-spin fa-refresh"></i>
+</div>
+<div ng-if="!loading">
+  <div class="pull-right half-space-bottom" ng-show="!ctrl.isNewOptionProperty && !ctrl.option.has_sub_options">
+    <button ng-click="ctrl.deleteOptionProperty()" class="btn btn-danger">Delete Option Property</button>
+  </div>
+  <h2>{{ctrl.title}}</h2>
+  <div sd-error-scroll sa-errors="ctrl.errors"></div>
+  <form class="space-bottom space-top" ng-submit="ctrl.saveOptionProperty()">
+    <div ng-switch="ctrl.option.has_sub_options">
+      <div ng-switch-when="true">
+        <h4>Options</h4>
+        <div class="half-space-top half-space-bottom">
+          <i class="fa fa-lg fa-info-circle dcida-info-icon"></i>
+          <span class="warning-text">The option associated with this property has multiple sub-options. You must define an option property for each of these sub-options. Use the dropdown below to define the option properties.</span>
+        </div>
+        <label>Select a sub-option</label>
+          <div class="half-space-right space-bottom">
+            <div uib-dropdown dropdown-append-to-body>
+              <a type="button" id="dropdownMenu1" uib-dropdown-toggle aria-haspopup="true" aria-expanded="true" class="btn btn-default">
+                <div class="clickable" class="inline-block">{{ctrl.currentlyEditing.option_label}} <span class="caret"></span>
+                </div>
+              </a>
+              <ul class="scrollable-menu" uib-dropdown-menu>
+                <li ng-repeat="op in ctrl.optionProperties">
+                  <a class="clickable" ng-click="ctrl.selectOptionProperty(op)">
+                    {{::op.option_label}}
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        <div ng-include="'option_property_edit_node'"></div>
+      </div>
+      <div ng-switch-when="false">
+        <div ng-include="'option_property_edit_node'"></div>
+      </div>
+    </div>
+  </form>
+</div>

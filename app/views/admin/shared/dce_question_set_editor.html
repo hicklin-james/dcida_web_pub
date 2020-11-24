@@ -1,0 +1,19 @@
+<div class="modal-header">
+  <h4>Question Set Editor</h4>
+</div>
+<div class="modal-body">
+  <div ng-show="ctrl.loading" class="text-center space-top space-bottom">
+    <i class="fa fa-lg fa-refresh fa-spin"></i>
+  </div>
+  <div>
+  	<sd-information>Use this screen to edit the titles of each question set </sd-information>
+  	<div ng-repeat="dceQuestionSet in ctrl.dceQuestionSets" class="form-group">
+  		<label>Question set {{$index+1}}</label>
+  	  <input class="form-control" ng-model="dceQuestionSet.question_title" />
+  	</div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button ng-click="ctrl.cancel()" class="btn btn-default pull-left">Cancel</button>
+  <button ng-click="ctrl.saveAndClose()" class="btn btn-primary pull-right">Save and close</button>
+</div>

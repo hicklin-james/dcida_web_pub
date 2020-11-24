@@ -1,0 +1,30 @@
+<div class="modal-header">
+  <h2 class="text-center">Setup Best-Worst Activity</H2>
+</div>
+<div class="modal-body">
+  <div sd-error-scroll sa-errors="ctrl.errors"></div>
+  <p>
+    Enter values for the number of question sets and number of attributes per question set below. Note that the generation may take a while <strong>(up to 5 minutes)</strong> depending on how many questions you have defined, the number of question sets, and the number of attributes per question set. DCIDA will inform you when your download is ready.
+  </p>
+  <div class="form-group">
+    <label for="decision_aid_user_uuid">Number of question sets:</label>
+    <input class="form-control half-width" ng-model="ctrl.numQuestions" />
+  </div>
+  <div class="form-group">
+    <label for="decision_aid_user_pid">Number of attributes per question:</label>
+    <input class="form-control half-width" ng-model="ctrl.numQuestionAttributes" />
+  </div>
+  <div class="form-group">
+    <label>Number of blocks:</label>
+    <input class="form-control half-width" ng-model="ctrl.numBlocks" />
+  </div>
+</div>
+<div class="modal-footer clearfix">
+  <div class="pull-left">
+    <button class="btn btn-primary" ng-click="ctrl.submitBwParams()">Download template files</button>&nbsp;
+    <i ng-class="{'ninja': !ctrl.downloadInProgress()}" class="fa fa-lg fa-refresh text-info fa-spin"></i>
+  </div>
+  <div class="pull-right">
+    <button class="btn btn-default inline-block half-space-right" ng-click="ctrl.close()">Close</button>
+  </div>
+</div>

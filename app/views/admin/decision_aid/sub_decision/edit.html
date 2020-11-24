@@ -1,0 +1,44 @@
+<div>
+  <div class="text-center" ng-show="ctrl.loading">
+    <i class="fa fa-2x fa-refresh fa-spin"></i>
+  </div>
+  <div ng-show="!ctrl.loading">
+    <h2>{{ctrl.title}}</h2>
+    <div sd-error-scroll sa-errors="ctrl.errors"></div>
+    <form>
+      <div class="form-group">
+          <label>My Choice Information</label>
+          <sd-information>
+          This text will appear above the results table for this sub decision.
+         </sd-information>
+          <sd-redactor-wrapper sa-include-question-selector sa-decision-aid-id="{{ctrl.decisionAidId}}"><textarea class="form-control" placeholder="My Choice Information" ng-model="ctrl.subDecision.my_choice_information" redactor="{plugins: ['imagemanager', 'accordion', 'graphics', 'questionSelector', 'video']}"></textarea></sd-redactor-wrapper>
+        </div>
+      <div class="form-group">
+        <label>Sub Decision Option Information</label>
+        <sd-information>
+          Commonly, decision aids will have sequential decisions. Check the options from the previous decision that you wish to cause a transition into this sequential decision. Options that are chosen but not checked here will transition to the quiz.
+        </sd-information>
+        <div ng-repeat="option in ctrl.options">
+          <label class="clickable">
+            <div class="inline-block half-space-right"><input ng-model="option.selected" class="clickable" type="checkbox" ng-click="ctrl.setSubOptions(option)" /></div>
+            <div class="inline-block">{{option.title}}</div>
+          </label>
+          <div class="space-left" ng-show="option.sub_options.length > 0">
+            <div ng-repeat="subOption in option.sub_options">
+              <label class="clickable">
+                <div class="inline-block half-space-right"><input ng-model="subOption.selected" class="clickable" type="checkbox" /></div>
+                <div class="inline-block">{{subOption.title}}</div>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div ng-show="ctrl.options.length === 0">
+          <p class="text-warning">There are no options in the previous decision, or this is the first decision.</p>
+        </div>
+      </div>
+      <div class="text-left">
+        <button type="button" class="btn btn-primary" ng-click="ctrl.saveSubDecision()">Save</button>
+      </div>
+    </form>
+  </div>
+</div>

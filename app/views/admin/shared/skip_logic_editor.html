@@ -1,0 +1,133 @@
+<div class="skip-logic-editor">
+  <div class="modal-header">
+    <div class="pull-right">
+      <button class="btn btn-default" ng-click="ctrl.cancel()">Cancel</button>
+      <button class="btn btn-success" ng-click="ctrl.closeSkipLogicEditor()">Save</button>
+    </div>
+    <h3>Skip Logic Editor</h3>
+  </div>
+  <div class="modal-body">
+    <div class="text-center space-top space-bottom" ng-show="ctrl.loading">
+      <i class="fa fa-2x fa-spin fa-refresh"></i>
+    </div>
+    <div ng-show="!ctrl.loading">
+      <div sd-error-scroll sa-errors="ctrl.errors" sa-scroll-modal="true"></div>
+      <div class="text-center " ng-show="ctrl.skipLogicTargets.length === 0">
+        <span class="text-warning">There are no skip targets defined. Add a new one using the button below!</span>
+      </div>
+      <div class="skip-logic-target-wrapper">
+        <div ng-repeat="slt in ctrl.skipLogicTargets">
+          <div>
+            <h5>Target {{$index+1}}:
+          </div>
+          <div class="half-space-top half-space-left half-space-right half-space-bottom well">
+            <div class="pull-right">
+              <i class="fa fa-lg fa-trash text-danger clickable" ng-click="ctrl.removeSkipLogicTarget(slt, $index)"></i>
+            </div>
+            <div class="form-inline">
+              <div class="form-group">
+                <label for="skip_logic_target_target_entity">Target</label>
+                <!-- <sd-information ng-show="$index === 0">There are various ways to use skip logic. Choose your skip logic type using this dropdown.</sd-information> -->
+                <select required name="skip_logic_target_target_entity" class="form-control select-field" ng-model="slt.target_entity" ng-options="te.value as te.key for te in ctrl.targetEntities"></select>
+              </div>
+
+              <div ng-switch="slt.target_entity" class="form-group">
+                <div ng-switch-when="question_page">
+                  <div>
+                    <label for="question_page_entity">Question Page</label>
+                    <select required name="question_page_entity" class="form-control select-field" ng-model="slt.skip_question_page_id" ng-options="qp.id as qp.name for qp in ctrl.questionPages"></select>
+                  </div>
+                </div>
+                <div ng-switch-when="external_page">
+                  <div>
+                    <label>External Page Url</label>
+                    <input class="form-control" ng-model="slt.skip_page_url" />
+                    <label>Include query params</label>
+                    <input type="checkbox" ng-model="slt.include_query_params" />
+                  </div>
+                </div>
+                <div ng-switch-when="other_section">
+                  <div>
+                    <label>Section target</label>
+                    <select class="form-control select-field" ng-model="slt.skip_page_url" ng-options="st.value as st.key for st in ctrl.skipSectionTargets"></select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="skip-logic-conditions">
+              <h4>Conditions</h4>
+              <div class="text-center" ng-show="slt.skip_logic_conditions.length === 0">
+                <span class="text-warning">There are no conditions defined for this skip logic target. Add a new one using the button below!</span>
+              </div>
+              <div class="skip-logic-conditions-wrapper">
+                <div ng-repeat="slc in slt.skip_logic_conditions" class="half-space-top">
+                  <div class="form-group" style="margin-bottom: 10px !important;">
+                    <i class="fa fa-trash text-danger clickable" ng-click="ctrl.removeSkipLogicCondition(slc, slt, $index)"></i>
+                    <label for="skip_logic_condition_entity">Condition entity</label>
+                    <!-- <sd-information ng-show="$index === 0">There are various ways to use skip logic. Choose your skip logic type using this dropdown.</sd-information> -->
+                    <select required name="skip_logic_condition_entity" class="form-control select-field" ng-model="slc.condition_entity" ng-options="ce.value as ce.key for ce in ctrl.conditionEntities" ng-change="ctrl.updatedConditionEntity()"></select>
+                  </div>
+                  <div class="form-inline" ng-switch="slc.condition_entity">
+                    <div ng-switch-when="dce_question_set_response">
+                      <div class="form-group">
+                        <label for="dce_entity_lookup">DCE Question #</label>
+                        <select required name="dce_entity_lookup" class="form-control select-field" ng-model="slc.entity_lookup" ng-options="dqs.questionSetValue as dqs.displayValue for dqs in ctrl.dceQuestionSets"></select>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="dce_entity_value_to_match">DCE Response Value</label>
+                        <select required name="dce_entity_value_to_match" class="form-control select-field" ng-model="slc.value_to_match" ng-options="dqsr.responseValue as dqsr.displayValue for dqsr in ctrl.dceQuestionSetResponses"></select>
+                      </div>
+                    </div>
+                    <div ng-switch-when="question_response">
+                      <div>
+                        <div class="form-group">
+                          <label for="question_entity_lookup">Question</label>
+                          <select required name="question_entity_lookup" class="form-control select-field" ng-model="slc.entity_lookup">
+                            <option ng-repeat="question in ctrl.questions" value="{{question.id}}" ng-disabled="question.question_response_type === 'grid'">
+                              {{question.question_text | htmlToPlaintext | ellipsify:30}}
+                            </option>
+                          </select>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="question_response_entity_value_to_match">Question response value</label>
+                          <div ng-switch="ctrl.switchQuestionId(slc.entity_lookup)" class="inline-block">
+                            <div ng-switch-when="radio" class="inline-block">
+                              <select required name="question_response_entity_value_to_match" class="form-control select-field inline-block" ng-model="slc.value_to_match">
+                                <option value="{{response.id}}" ng-repeat="response in ctrl.responsesForQuestion(slc.entity_lookup)">
+                                  {{response.question_response_value | ellipsify:30}}
+                                </option>
+                              </select>
+                            </div>
+                            <div ng-switch-when="yes_no" class="inline-block">
+                              <select required name="question_response_entity_value_to_match" class="form-control select-field inline-block" ng-model="slc.value_to_match">
+                                <option value="{{response.id}}" ng-repeat="response in ctrl.responsesForQuestion(slc.entity_lookup)">
+                                  {{response.question_response_value | ellipsify:30}}
+                                </option>
+                              </select>
+                            </div>
+                            <div ng-switch-when="grid">
+                              Grid
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-primary space-top" ng-click="ctrl.addSkipLogicCondition(slt)"><i class="fa fa-fw fa-plus"></i> Add condition to this target</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="space-top space-bottom clearfix">
+        <div class="pull-right">
+          <button type="button" class="btn btn-primary" ng-click="ctrl.addSkipLogicTarget()"><i class="fa fa-fw fa-plus"></i> Add Skip Logic Target</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

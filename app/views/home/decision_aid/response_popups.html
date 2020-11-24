@@ -1,0 +1,28 @@
+<div class="modal-header">
+  <div class="pull-right">
+    <button class="btn btn-default" ng-click="ctrl.closeIntroPopup()">Close</button>
+  </div>
+  <h4>Your response{{ctrl.responsePopups.length > 1 ? 's' : ''}}</h4>
+</div>
+<div class="modal-body">
+  <div class="response-popup-modal">
+    <h4>Question:</h4>
+    <div compile="ctrl.responsePopups[ctrl.currentResponseIndex].question_text"></div>
+    <div ng-show="ctrl.responsePopups[ctrl.currentResponseIndex].grid_question_text">
+      <h4>Sub question:</h4>
+      <div compile="ctrl.responsePopups[ctrl.currentResponseIndex].grid_question_text"></div>
+    </div>
+    <h4>Your response:</h4>
+    <div compile="ctrl.responsePopups[ctrl.currentResponseIndex].response"></div>
+    <hr />
+    <div compile="ctrl.responsePopups[ctrl.currentResponseIndex].popup_info"></div>
+  </div>
+</div>
+<div class="modal-footer">
+  <div class="text-center">
+     <div class="btn-group" ng-hide="ctrl.responsePopups.length === 1">
+      <button class="btn btn-primary" ng-click="ctrl.prevResponse()" ng-disabled="ctrl.currentResponseIndex === 0"><i class="fa fa-arrow-left fa-fw"></i>Prev Question</button>
+      <button class="btn btn-primary" ng-click="ctrl.nextResponse()" ng-disabled="ctrl.currentResponseIndex === ctrl.responsePopups.length - 1">Next Question<i class="fa fa-arrow-right fa-fw"></i></button>
+    </div>
+  </div>
+</div>

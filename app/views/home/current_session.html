@@ -1,0 +1,20 @@
+<div class="modal-header">
+  <h2 class="text-center">Session Information</H2>
+</div>
+<div class="modal-body">
+  <div class="space-bottom">
+    <h5 class="space-bottom">
+      This is your current session information. Save the information displayed on this page if you would like to return to DCIDA at any point and resume your session.
+    </h5>
+    <h5>UUID: <strong>{{::ctrl.decisionAidUser.uuid}}</strong></h5>
+    <h5>PID: <strong>{{::ctrl.decisionAidUser.pid}}</strong></h5>
+  </div>
+  <div>
+
+  </div>
+</div>
+<div class="modal-footer">
+  <div class=" pull-right btn-group">
+    <button class="btn btn-primary" ng-click="ctrl.close()">Close</button>
+  </div>
+</div>
